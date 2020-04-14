@@ -98,12 +98,20 @@ class LogicLinkkf(object):
                     video_url = re.findall(regex2, data3)[0]
                 else:
                     logger.error("새로운 유형의 url 발생! %s %s %s" % (url, url2, url3))
+            elif('kakao' in url2):
+                # kakao 계열 처리, 외부 API 이용
+                payload = {'inputUrl' : url2}
+                kakaoUrl = 'http://webtool.cusis.net/wp-pages/download-kakaotv-video/video.php'
+                data2 = requests.post(kakaoUrl, json=payload, headers={'referer':'http://webtool.cusis.net/download-kakaotv-video/'}).content
+                time.sleep(3) # 서버 부하 방지를 위해 단시간에 너무 많은 URL전송을 하면 IP를 차단합니다.
+                url3 = json.loads(data2)
+                logger.info("download url2 : %s , url3 : %s" % (url2, url3))
+                video_url = url3
             else:
                 logger.error("새로운 유형의 url 발생! %s %s" % (url, url2))
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
-        
         return video_url
 
     @staticmethod

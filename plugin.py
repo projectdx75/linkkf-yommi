@@ -38,7 +38,7 @@ def plugin_unload():
     Logic.plugin_unload()
 
 plugin_info = {
-    'version' : '0.1.1.0',
+    'version' : '0.1.2.0',
     'name' : 'linkkf 다운로드',
     'category_name' : 'vod',
     'icon' : '',
