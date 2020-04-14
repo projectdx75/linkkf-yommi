@@ -119,7 +119,7 @@ class LogicQueue(object):
                 max_pf_count = 0 
                 save_path = ModelSetting.get('download_path')
                 if ModelSetting.get('auto_make_folder') == 'True':
-                    program_path = os.path.join(save_path, entity.info['program_title'])
+                    program_path = os.path.join(save_path, entity.info['save_folder'])
                     save_path = program_path
                 try:
                     if not os.path.exists(save_path):

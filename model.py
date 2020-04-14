@@ -46,6 +46,40 @@ class ModelSetting(db.Model):
             logger.error('Exception:%s %s', e, key)
             logger.error(traceback.format_exc())
 
+class ModelLinkkfProgram(db.Model):
+    __tablename__ = 'plugin_%s_program' % package_name
+    __table_args__ = {'mysql_collate': 'utf8_general_ci'}
+    __bind_key__ = package_name
+
+    id = db.Column(db.Integer, primary_key=True)
+    contents_json = db.Column(db.JSON)
+    created_time = db.Column(db.DateTime)
+
+    programcode = db.Column(db.String)
+    
+    save_folder = db.Column(db.String)
+    season = db.Column(db.Integer)
+    
+    def __init__(self, data):
+        self.created_time = datetime.now()
+        self.programcode = data['code']
+        self.save_folder = data['title']
+        self.season = data['season']
+
+    def __repr__(self):
+        #return "<Episode(id:%s, episode_code:%s, quality:%s)>" % (self.id, self.episode_code, self.quality)
+        return repr(self.as_dict())
+
+    def as_dict(self):
+        ret = {x.name: getattr(self, x.name) for x in self.__table__.columns}
+        return ret         
+    
+    def set_info(self, data):
+        self.contents_json = data        
+        self.programcode = data['code']
+        self.save_folder = data['save_folder']
+        self.season = data['season']
+
 class ModelLinkkf(db.Model):
     __tablename__ = 'plugin_%s_auto_episode' % package_name
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}

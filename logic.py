@@ -33,7 +33,7 @@ class Logic(object):
         'date_option' : '0', # 0:YYMMDD, 1:YYYY-MM-DD
         'auto_make_folder' : 'True',
         'max_ffmpeg_process_count' : '4', 
-        'auto_interval' : '5', 
+        'auto_interval' : '60', 
         'auto_start' : 'False', 
         'whitelist_program' : '',
     }

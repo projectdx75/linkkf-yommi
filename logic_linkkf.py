@@ -23,7 +23,7 @@ from framework.logger import get_logger
 
 # 패키지
 from .plugin import package_name, logger
-from .model import ModelSetting, ModelLinkkf
+from .model import ModelSetting, ModelLinkkf, ModelLinkkfProgram
 from .logic_queue import LogicQueue
 
 #########################################################
@@ -54,56 +54,171 @@ class LogicLinkkf(object):
             logger.error(traceback.format_exc())
 
     @staticmethod
-    def get_video_url(episode_id):
+    def get_video_url_from_url(url, url2):
+        video_url = None
+        logger.info("download url : %s , url2 : %s" % (url, url2))
         try:
-            url = '%s/%s' % (ModelSetting.get('linkkf_url'), episode_id)
-            data = LogicLinkkf.get_html(url)
-            tree = html.fromstring(data)
-            url2s = [tag.attrib['value']for tag in tree.xpath('//*[@id="body"]/div/div/span/center/select/option')]
-            print(url2s)
-            url2s = filter(lambda url:
-                    ('kfani' in url) |
-                    ('linkkf' in url) | 
-                    ('kftv' in url), url2s)
-            #url2 = random.choice(url2s)
-            url2 = url2s[0]
-
             if ('kfani' in url2):
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
                 LogicLinkkf.referer = url
                 data = LogicLinkkf.get_html(url2)
                 regex2 = r'"([^\"]*m3u8)"'
                 video_url = re.findall(regex2, data)[0]
-
-            if ('kftv' in url2):
+            elif ('kftv' in url2):
                 # kftv 계열 처리 => url의 id로 https://yt.kftv.live/getLinkStreamMd5/df6960891d226e24b117b850b44a2290 페이지 접속해서 json 받아오고, json에서 url을 추출해야함
-                md5 = urlparse.urlparse(url2).query.split('=')[1]
+                if('=' in url2):
+                    md5 = urlparse.urlparse(url2).query.split('=')[1]
+                elif('embedplay' in url2):
+                    md5 = url2.split('/')[-1]
                 url3 = 'https://yt.kftv.live/getLinkStreamMd5/' + md5
+                logger.info("download url : %s , url3 : %s" % (url, url3))
                 data3 = LogicLinkkf.get_html(url3)
                 data3dict = json.loads(data3)
                 # print(data3dict)
                 video_url = data3dict[0]['file']
-                
-            if( 'linkkf' in url2):
+            elif( 'linkkf' in url2):
                 # linkkf 계열 처리 => URL 리스트를 받아오고, 하나 골라 방문해서 m3u8을 받아온다.
                 LogicLinkkf.referer = url
-                data = LogicLinkkf.get_html(url2)
+                data2 = LogicLinkkf.get_html(url2)
                 # print(data)
-                regex = r'"(\/[^\"]*)"'
-                url3s = re.findall(regex, data)
+                regex = r"cat1 = [^\[]*([^\]]*)"
+                cat = re.findall(regex, data2)[0]
+                regex = r"\"([^\"]*)\""
+                url3s = re.findall(regex, cat)
                 url3 = random.choice(url3s)
-                url3 = urlparse.urljoin(url2, url3)
-                LogicLinkkf.referer = url2
-                data = LogicLinkkf.get_html(url3)
-                # print(data)
-                regex2 = r'"([^\"]*m3u8)"'
-                video_url = re.findall(regex2, data)[0]
+                logger.info("download url : %s , url3 : %s" % (url, url3))
+                if('kftv' in url3):
+                    return LogicLinkkf.get_video_url_from_url(url2, url3)
+                elif (url3.startswith('/')):
+                    url3 = urlparse.urljoin(url2, url3)
+                    LogicLinkkf.referer = url2
+                    data3 = LogicLinkkf.get_html(url3)
+                    # print(data)
+                    regex2 = r'"([^\"]*m3u8)"'
+                    video_url = re.findall(regex2, data3)[0]
+                else:
+                    logger.error("새로운 유형의 url 발생! %s %s %s" % (url, url2, url3))
+            else:
+                logger.error("새로운 유형의 url 발생! %s %s" % (url, url2))
+        except Exception as e:
+            logger.error('Exception:%s', e)
+            logger.error(traceback.format_exc())
+        
+        return video_url
+
+    @staticmethod
+    def get_video_url(episode_id):
+        try:
+            url = '%s/%s' % (ModelSetting.get('linkkf_url'), episode_id)
+            data = LogicLinkkf.get_html(url)
+            tree = html.fromstring(data)
+            url2s = [tag.attrib['value']for tag in tree.xpath('//*[@id="body"]/div/div/span/center/select/option')]
+            # url2s = filter(lambda url:
+            #         ('kfani' in url) |
+            #         ('linkkf' in url) | 
+            #         ('kftv' in url), url2s)
+            #url2 = random.choice(url2s)
             
+            video_url = None
+
+            for url2 in url2s:
+                try:
+                    if video_url is not None:
+                        continue
+                    ret = LogicLinkkf.get_video_url_from_url(url, url2)
+                    if(ret is not None):
+                        video_url = ret
+                except Exception as e:
+                    logger.error('Exception:%s', e)
+                    logger.error(traceback.format_exc())
+            
+            logger.info(video_url)
+
             return video_url
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
 
+    @staticmethod
+    def apply_new_title(new_title):
+        try:
+            ret = {}
+            if LogicLinkkf.current_data is not None:
+                program = db.session.query(ModelLinkkfProgram) \
+                    .filter_by(programcode=LogicLinkkf.current_data['code']) \
+                    .first()
+                new_title = Util.change_text_for_use_filename(new_title)
+                LogicLinkkf.current_data['save_folder'] = new_title
+                program.save_folder = new_title
+                db.session.commit()
+                
+                for entity in LogicLinkkf.current_data['episode']:
+                    entity['save_folder'] = new_title
+                    entity['filename'] = LogicLinkkf.get_filename(LogicLinkkf.current_data['save_folder'], LogicLinkkf.current_data['season'], entity['title'])
+                #    tmp = data['filename'].split('.')
+                #    tmp[0] = new_title
+                #    data['filename'] = '.'.join(tmp)
+                return LogicLinkkf.current_data
+            else:
+                ret['ret'] = False
+                ret['log'] = 'No current data!!'
+        except Exception as e:
+            logger.error('Exception:%s', e)
+            logger.error(traceback.format_exc())
+            ret['ret'] = False
+            ret['log'] = str(e)
+        return ret
+
+    @staticmethod
+    def apply_new_season(new_season):
+        try:
+            ret = {}
+            season = int(new_season)
+            if LogicLinkkf.current_data is not None:
+                program = db.session.query(ModelLinkkfProgram) \
+                    .filter_by(programcode=LogicLinkkf.current_data['code']) \
+                    .first()
+                LogicLinkkf.current_data['season'] = season
+                program.season = season
+                db.session.commit()
+                
+                for entity in LogicLinkkf.current_data['episode']:
+                    entity['filename'] = LogicLinkkf.get_filename(LogicLinkkf.current_data['save_folder'], LogicLinkkf.current_data['season'], entity['title'])
+                return LogicLinkkf.current_data
+            else:
+                ret['ret'] = False
+                ret['log'] = 'No current data!!'
+        except Exception as e:
+            logger.error('Exception:%s', e)
+            logger.error(traceback.format_exc())
+            ret['ret'] = False
+            ret['log'] = str(e)
+        return ret
+
+    @staticmethod
+    def add_whitelist():
+        ret = {}
+        try:
+            code = str(LogicLinkkf.current_data['code'])
+            whitelist_program = ModelSetting.get('whitelist_program') 
+            whitelist_programs = [str(x.strip().replace(' ', '')) for x in whitelist_program.replace('\n', ',').split(',')]
+            if(code not in whitelist_programs):
+                whitelist_programs.append(code)
+                whitelist_programs = filter(lambda x: x != '', whitelist_programs) # remove blank code
+                whitelist_program = ','.join(whitelist_programs)
+                entity = db.session.query(ModelSetting).filter_by(key='whitelist_program').with_for_update().first()
+                entity.value = whitelist_program
+                db.session.commit()
+                return LogicLinkkf.current_data
+            else:
+                ret['ret'] = False
+                ret['log'] = "이미 추가되어 있습니다."
+        except Exception as e:
+            logger.error('Exception:%s', e)
+            logger.error(traceback.format_exc())
+            ret['ret'] = False
+            ret['log'] = str(e)
+        return ret
 
     @staticmethod
     def get_title_info(code):
@@ -141,16 +256,31 @@ class LogicLinkkf(object):
             data['episode'] = []
             tags = tree.xpath('//*[@id="relatedpost"]/ul/li/a')
             re1 = re.compile(r'\/(?P<code>\d+)')
+
+            data['save_folder'] = data['title']
+
+            program = db.session.query(ModelLinkkfProgram) \
+                .filter_by(programcode=code) \
+                .first()
+
+            if(program is None):
+                program = ModelLinkkfProgram(data)
+                db.session.add(program)
+                db.session.commit()
+            else:
+                data['save_folder'] = program.save_folder
+                data['season'] = program.season
             
             for t in tags:
                 entity = {}
                 entity['program_code'] = data['code']
-                entity['program_title'] = Util.change_text_for_use_filename(data['title'])
+                entity['program_title'] = data['title']
+                entity['save_folder'] = Util.change_text_for_use_filename(data['save_folder'])
                 entity['code'] = re1.search(t.attrib['href']).group('code')
                 data['episode'].append(entity)
                 entity['image'] = data['poster_url']
                 entity['title'] = t.text_content().strip().encode('utf8')
-                entity['filename'] = LogicLinkkf.get_filename(data['title'], entity['title'])
+                entity['filename'] = LogicLinkkf.get_filename(data['save_folder'], data['season'], entity['title'])
             data['ret'] = True
             LogicLinkkf.current_data = data
             return data
@@ -161,24 +291,20 @@ class LogicLinkkf(object):
             return data
     
     @staticmethod
-    def get_filename(maintitle, title):
+    def get_filename(maintitle, season, title):
         try:
             match = re.compile(r'(?P<title>.*?)\s?((?P<season>\d+)기)?\s?((?P<epi_no>\d+)화)').search(title)
             if match:
-                if match.group('season') is not None:
-                    season = int(match.group('season'))
-                    if season < 10:
-                        season = '0%s' % season
-                    else:
-                        season = '%s' % season
-                else:
-                    season = '01'
-
                 epi_no = int(match.group('epi_no'))
                 if epi_no < 10:
                     epi_no = '0%s' % epi_no
                 else:
                     epi_no = '%s' % epi_no
+
+                if int(season) < 10:
+                    season = '0%s' % season
+                else:
+                    season = '%s' % season
 
                 #title_part = match.group('title').strip()
                 #ret = '%s.S%sE%s%s.720p-SA.mp4' % (maintitle, season, epi_no, date_str)

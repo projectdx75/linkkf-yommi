@@ -38,7 +38,7 @@ def plugin_unload():
     Logic.plugin_unload()
 
 plugin_info = {
-    'version' : '0.1.0.0',
+    'version' : '0.1.1.0',
     'name' : 'linkkf 다운로드',
     'category_name' : 'vod',
     'icon' : '',
@@ -109,6 +109,21 @@ def ajax(sub):
         try:
             new_title = request.form['new_title']
             ret = LogicLinkkf.apply_new_title(new_title)
+            return jsonify(ret)
+        except Exception as e: 
+            logger.error('Exception:%s', e)
+            logger.error(traceback.format_exc())
+    elif sub == 'apply_new_season':
+        try:
+            new_season = request.form['new_season']
+            ret = LogicLinkkf.apply_new_season(new_season)
+            return jsonify(ret)
+        except Exception as e: 
+            logger.error('Exception:%s', e)
+            logger.error(traceback.format_exc())
+    elif sub == 'add_whitelist':
+        try:
+            ret = LogicLinkkf.add_whitelist()
             return jsonify(ret)
         except Exception as e: 
             logger.error('Exception:%s', e)
