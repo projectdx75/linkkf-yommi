@@ -117,7 +117,7 @@ class LogicLinkkf(object):
     @staticmethod
     def get_video_url(episode_id):
         try:
-            url = '%s/%s' % (ModelSetting.get('linkkf_url'), episode_id)
+            url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
             data = LogicLinkkf.get_html(url)
             tree = html.fromstring(data)
             url2s = [tag.attrib['value']for tag in tree.xpath('//*[@id="body"]/div/div/span/center/select/option')]
