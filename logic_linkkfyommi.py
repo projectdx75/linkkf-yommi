@@ -334,8 +334,9 @@ class LogicLinkkfYommi(object):
                     'code'] == code and LogicLinkkfYommi.current_data['ret']:
                 return LogicLinkkfYommi.current_data
             url = '%s/%s' % (ModelSetting.get('linkkf_url'), code)
-            logger.info(url)
+            # logger.info(url)
             data = LogicLinkkfYommi.get_html(url)
+            logger.info(data)
             tree = html.fromstring(data)
 
             data = {}
@@ -466,9 +467,9 @@ class LogicLinkkfYommi(object):
             for code in whitelist_programs:
                 logger.info('auto download start : %s', code)
                 downloaded = db.session.query(ModelLinkkf) \
-                            .filter(ModelLinkkf.completed.is_(True)) \
-                            .filter_by(programcode=code) \
-                            .with_for_update().all()
+                    .filter(ModelLinkkf.completed.is_(True)) \
+                    .filter_by(programcode=code) \
+                    .with_for_update().all()
                 dl_codes = [dl.episodecode for dl in downloaded]
                 logger.info('downloaded codes :%s', dl_codes)
                 data = LogicLinkkfYommi.get_title_info(code)
