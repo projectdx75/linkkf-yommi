@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
-import os
+import os, traceback
 import sys
-import traceback
 import logging
 import threading
-import Queue
+# import Queue
+from .logic_queue import LogicQueue
 import json
 import time
 from datetime import datetime
