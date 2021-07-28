@@ -17,7 +17,7 @@ from framework.util import Util
 from framework.logger import get_logger
 
 # 패키지
-from .plugin import package_name, logger
+# from .plugin import package_name, logger
 from .model import ModelSetting
 from .logic_queue import LogicQueue
 from .logic_linkkfyommi import LogicLinkkfYommi

@@ -50,6 +50,14 @@ blueprint = Blueprint(package_name, package_name, url_prefix='/%s' % package_nam
 # def plugin_unload():
 #     Logic.plugin_unload()
 
+# 메뉴 구성.
+menu = {
+    'main': [package_name, 'linkkf-yommi'],
+    'sub': [['setting', '설정'], ['request', '요청'], ['queue', '큐'],
+            ['log', '로그']],
+    'category': 'vod',
+}
+
 plugin_info = {
     'version': '0.1.4.0',
     'name': 'linkkf-yommi 다운로드',
@@ -62,13 +70,6 @@ plugin_info = {
 }
 #########################################################
 
-# 메뉴 구성.
-menu = {
-    'main': [package_name, 'linkkf-yommi'],
-    'sub': [['setting', '설정'], ['request', '요청'], ['queue', '큐'],
-            ['log', '로그']],
-    'category': 'vod',
-}
 
 def plugin_load():
     Logic.plugin_load()
