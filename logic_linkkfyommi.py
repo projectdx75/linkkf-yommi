@@ -380,6 +380,7 @@ class LogicLinkkfYommi(object):
 
             data['episode'] = []
             tags = tree.xpath('//*[@id="relatedpost"]/ul/li/a')
+            logger.info("tags", tags)
             re1 = re.compile(r'\/(?P<code>\d+)')
 
             data['save_folder'] = data['title']
@@ -405,7 +406,8 @@ class LogicLinkkfYommi(object):
                 entity['code'] = re1.search(t.attrib['href']).group('code')
                 data['episode'].append(entity)
                 entity['image'] = data['poster_url']
-                entity['title'] = t.text_content().strip().encode('utf8')
+                # entity['title'] = t.text_content().strip().encode('utf8')
+                entity['title'] = t.text_content().strip()
                 entity['filename'] = LogicLinkkfYommi.get_filename(
                     data['save_folder'], data['season'], entity['title'])
             data['ret'] = True
