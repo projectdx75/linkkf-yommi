@@ -52,7 +52,7 @@ class LogicLinkkfYommi(object):
             LogicLinkkfYommi.referer = url
             page = LogicLinkkfYommi.session.get(
                 url, headers=LogicLinkkfYommi.headers)
-            print("page", page)
+            logger.info("page", page)
 
             return page.content.decode('utf8')
         except Exception as e:
@@ -338,7 +338,7 @@ class LogicLinkkfYommi(object):
             data = LogicLinkkfYommi.get_html(url)
             # logger.info(data)
             tree = html.fromstring(
-                data.text)
+                data)
             logger.info(tree)
 
             data = {}
@@ -348,7 +348,7 @@ class LogicLinkkfYommi(object):
             # tmp = tree.xpath('/html/body/div[2]/div/div/article/center/strong'
             #                  )[0].text_content().strip().encode('utf8')
             tmp = tree.xpath('//*[@id="body"]/div/div[1]/article/center/strong'
-                             )[0].text_content().strip().encode('utf8')
+                             )[0].text_content().strip()
             # print(tmp)
             logger.info(tmp)
             match = re.compile(r'(?P<season>\d+)기').search(tmp)
