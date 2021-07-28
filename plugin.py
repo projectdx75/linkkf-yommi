@@ -20,8 +20,7 @@ from framework.util import Util, AlchemyEncoder
 from system.logic import SystemLogic
 
 # 패키지
-package_name = __name__.split('.')[0]
-logger = get_logger(package_name)
+
 from .logic import Logic
 from .logic_linkkfyommi import LogicLinkkfYommi
 from .logic_queue import QueueEntity, LogicQueue
@@ -31,6 +30,10 @@ from .model import ModelSetting
 #                       url_prefix='/%s' % package_name,
 #                       template_folder=os.path.join(os.path.dirname(__file__),
 #                                                    'templates'))
+
+package_name = __name__.split('.')[0]
+logger = get_logger(package_name)
+
 #########################################################
 # 플러그인 공용
 #########################################################
@@ -46,17 +49,9 @@ blueprint = Blueprint(package_name, package_name, url_prefix='/%s' % package_nam
 
 # def plugin_unload():
 #     Logic.plugin_unload()
-def plugin_load():
-    Logic.plugin_load()
-    LogicQueue.queue_load()
-
-
-def plugin_unload():
-    Logic.plugin_unload()
-
 
 plugin_info = {
-    'version': '0.1.3.0',
+    'version': '0.1.4.0',
     'name': 'linkkf-yommi 다운로드',
     'category_name': 'vod',
     'icon': '',
@@ -75,6 +70,13 @@ menu = {
     'category': 'vod',
 }
 
+def plugin_load():
+    Logic.plugin_load()
+    LogicQueue.queue_load()
+
+
+def plugin_unload():
+    Logic.plugin_unload()
 
 #########################################################
 # WEB Menu
