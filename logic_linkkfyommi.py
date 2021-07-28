@@ -338,7 +338,7 @@ class LogicLinkkfYommi(object):
             data = LogicLinkkfYommi.get_html(url)
             # logger.info(data)
             tree = html.fromstring(
-                data, parser=html.XMLParser(encoding='utf-8'))
+                data.text)
             logger.info(tree)
 
             data = {}
