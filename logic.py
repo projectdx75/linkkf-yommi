@@ -23,7 +23,8 @@ from .logic_queue import LogicQueue
 from .logic_linkkfyommi import LogicLinkkfYommi
 
 #########################################################
-
+package_name = __name__.split('.')[0]
+logger = get_logger(package_name)
 
 class Logic(object):
     db_default = {

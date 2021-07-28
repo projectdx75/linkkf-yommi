@@ -14,7 +14,8 @@ from framework import db, app, path_app_root
 # 패키지
 # from .plugin import package_name, logger
 
-
+package_name = __name__.split('.')[0]
+logger = get_logger(package_name)
 db_file = os.path.join(path_app_root, 'data', 'db', '%s.db' % package_name)
 app.config['SQLALCHEMY_BINDS'][package_name] = 'sqlite:///%s' % (db_file)
 
@@ -27,7 +28,7 @@ class ModelSetting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(100), unique=True, nullable=False)
     value = db.Column(db.String, nullable=False)
- 
+
     def __init__(self, key, value):
         self.key = key
         self.value = value
@@ -56,10 +57,10 @@ class ModelLinkkfProgram(db.Model):
     created_time = db.Column(db.DateTime)
 
     programcode = db.Column(db.String)
-    
+
     save_folder = db.Column(db.String)
     season = db.Column(db.Integer)
-    
+
     def __init__(self, data):
         self.created_time = datetime.now()
         self.programcode = data['code']
@@ -72,10 +73,10 @@ class ModelLinkkfProgram(db.Model):
 
     def as_dict(self):
         ret = {x.name: getattr(self, x.name) for x in self.__table__.columns}
-        return ret         
-    
+        return ret
+
     def set_info(self, data):
-        self.contents_json = data        
+        self.contents_json = data
         self.programcode = data['code']
         self.save_folder = data['save_folder']
         self.season = data['season']
@@ -90,9 +91,9 @@ class ModelLinkkf(db.Model):
     created_time = db.Column(db.DateTime)
 
     programcode = db.Column(db.String)
-    
+
     episodecode = db.Column(db.String)
-    
+
     filename = db.Column(db.String)
     duration = db.Column(db.Integer)
     start_time = db.Column(db.DateTime)
@@ -101,7 +102,7 @@ class ModelLinkkf(db.Model):
     completed = db.Column(db.Boolean)
     user_abort = db.Column(db.Boolean)
     pf_abort = db.Column(db.Boolean)
-    etc_abort = db.Column(db.Integer) #ffmpeg 원인 1, 채널, 프로그램
+    etc_abort = db.Column(db.Integer)  # ffmpeg 원인 1, 채널, 프로그램
     ffmpeg_status = db.Column(db.Integer)
     temp_path = db.Column(db.String)
     save_path = db.Column(db.String)
@@ -132,10 +133,10 @@ class ModelLinkkf(db.Model):
 
     def as_dict(self):
         ret = {x.name: getattr(self, x.name) for x in self.__table__.columns}
-        return ret         
-    
+        return ret
+
     def set_info(self, data):
-        self.contents_json = data        
+        self.contents_json = data
         self.programcode = data['program_code']
         self.episodecode = data['code']
 #########################################################

@@ -25,7 +25,8 @@ import system
 from .model import ModelSetting, ModelLinkkf
 
 #########################################################
-
+package_name = __name__.split('.')[0]
+logger = get_logger(package_name)
 
 class QueueEntity:
     static_index = 1
