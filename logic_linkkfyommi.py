@@ -9,7 +9,8 @@ import threading
 import time
 import re
 import random
-import urlparse
+# import urlparse
+import urllib.parse
 import json
 # third-party
 import requests
