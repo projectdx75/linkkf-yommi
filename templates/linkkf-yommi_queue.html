@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div>
+<div width="100%">
   {{ macros.m_button_group([['reset_btn', '초기화'], ['delete_completed_btn', '완료 목록 삭제'], ['go_ffmpeg_btn', 'Go FFMPEG']])}}
 
   {{ macros.m_row_start('0') }}
@@ -11,10 +11,10 @@
   {{ macros.m_row_start('0') }}
   {{ macros.m_col(1,  macros.m_strong('Idx')) }}
   {{ macros.m_col(2,  macros.m_strong('CreatedTime')) }}
-  {{ macros.m_col(4,  macros.m_strong('Filename')) }}
-  {{ macros.m_col(5,  macros.m_strong('ProgramTitle')) }}
-  {{ macros.m_col(3,  macros.m_strong('Status')) }}
-  {{ macros.m_col(2,  macros.m_strong('Action')) }}
+  {{ macros.m_col(3,  macros.m_strong('Filename')) }}
+  {{ macros.m_col(3,  macros.m_strong('ProgramTitle')) }}
+  {{ macros.m_col(2,  macros.m_strong('Status')) }}
+  {{ macros.m_col(1,  macros.m_strong('Action')) }}
   {{ macros.m_row_end() }}
   {{ macros.m_hr_head_bottom() }}
   <div id="download_list_div"></div>
@@ -22,7 +22,7 @@
 
 
 <script type="text/javascript">
-var package_name = 'linkkf';
+var package_name = 'linkkf-yommi';
 var current_data = null;
 
 $(document).ready(function(){
@@ -62,19 +62,19 @@ function make_download_list(data) {
     str += m_row_start();
     str += m_col(1, data[i].entity_id);
     str += m_col(2, data[i].created_time);
-    str += m_col(4, data[i].info.filename);
-    str += m_col(5, data[i].info.program_title);
+    str += m_col(3, data[i].info.filename);
+    str += m_col(3, data[i].info.program_title);
 
     label = data[i].ffmpeg_status_kor
     if (data[i].ffmpeg_percent != 0) {
       label += '(' + data[i].ffmpeg_percent + '%)'
     }
     tmp = m_progress('progress_'+data[i].entity_id, data[i].ffmpeg_percent,  label)
-    str += m_col(3, tmp);
+    str += m_col(2, tmp);
 
     tmp = m_button('program_cancel_btn', '취소', [{'key':'id', 'value':data[i].entity_id}]);
     tmp = m_button_group(tmp)
-    str += m_col(2, tmp)
+    str += m_col(1, tmp)
     str += m_row_end();
     if (i != data.length -1) str += m_hr(0);
   }

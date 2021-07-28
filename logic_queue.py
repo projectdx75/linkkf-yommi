@@ -25,6 +25,7 @@ from .model import ModelSetting, ModelLinkkf
 
 #########################################################
 
+
 class QueueEntity:
     static_index = 1
     entity_list = []
@@ -69,26 +70,26 @@ class LogicQueue(object):
             if LogicQueue.download_queue is None:
                 LogicQueue.download_queue = Queue.Queue()
             if LogicQueue.download_thread is None:
-                LogicQueue.download_thread = threading.Thread(target=LogicQueue.download_thread_function, args=())
-                LogicQueue.download_thread.daemon = True  
+                LogicQueue.download_thread = threading.Thread(
+                    target=LogicQueue.download_thread_function, args=())
+                LogicQueue.download_thread.daemon = True
                 LogicQueue.download_thread.start()
-        except Exception as e: 
+        except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
 
-    
     @staticmethod
     def download_thread_function():
         while True:
             try:
                 entity = LogicQueue.download_queue.get()
-                logger.debug('Queue receive item:%s %s', entity.title_id, entity.episode_id)
+                logger.debug('Queue receive item:%s %s', entity.title_id,
+                             entity.episode_id)
                 LogicAni.process(entity)
-                LogicQueue.download_queue.task_done()    
-            except Exception as e: 
+                LogicQueue.download_queue.task_done()
+            except Exception as e:
                 logger.error('Exception:%s', e)
                 logger.error(traceback.format_exc())
-
 
     @staticmethod
     def download_thread_function():
@@ -96,48 +97,67 @@ class LogicQueue(object):
         while True:
             try:
                 while True:
-                    if LogicQueue.current_ffmpeg_count < int(ModelSetting.get('max_ffmpeg_process_count')):
+                    if LogicQueue.current_ffmpeg_count < int(
+                            ModelSetting.get('max_ffmpeg_process_count')):
                         break
                     #logger.debug(LogicQueue.current_ffmpeg_count)
                     time.sleep(5)
                 entity = LogicQueue.download_queue.get()
                 if entity.cancel:
                     continue
-                    
+
                 episode = ModelLinkkf('auto', info=entity.info)
                 db.session.add(episode)
                 db.session.commit()
-                
-                from .logic_linkkf import LogicLinkkf
-                entity.url = LogicLinkkf.get_video_url(entity.info['code'])
+
+                from .logic_linkkfyommi import LogicLinkkfYommi
+                entity.url = LogicLinkkfYommi.get_video_url(
+                    entity.info['code'])
+                logger.info('url1: %s', entity.url[0])
+                print(entity.url)
                 if entity.url is None:
                     self.ffmpeg_status_kor = 'URL실패'
                     plugin.socketio_list_refresh()
                     continue
 
                 import ffmpeg
-                max_pf_count = 0 
+                max_pf_count = 0
+                referer = None
                 save_path = ModelSetting.get('download_path')
                 if ModelSetting.get('auto_make_folder') == 'True':
-                    program_path = os.path.join(save_path, entity.info['save_folder'])
+                    program_path = os.path.join(save_path,
+                                                entity.info['save_folder'])
                     save_path = program_path
                 try:
                     if not os.path.exists(save_path):
                         os.makedirs(save_path)
                 except:
                     logger.debug('program path make fail!!')
+
                 # 파일 존재여부 체크
-                if os.path.exists(os.path.join(save_path, entity.info['filename'])):
+                if entity.url[1] is not None:
+                    referer = entity.url[1]
+                    logger.info('referer: %s', referer)
+
+                if os.path.exists(
+                        os.path.join(save_path, entity.info['filename'])):
                     entity.ffmpeg_status_kor = '파일 있음'
                     entity.ffmpeg_percent = 100
                     plugin.socketio_list_refresh()
                     continue
-                f = ffmpeg.Ffmpeg(entity.url, entity.info['filename'], plugin_id=entity.entity_id, listener=LogicQueue.ffmpeg_listener, max_pf_count=max_pf_count, call_plugin=package_name, save_path=save_path)
+                f = ffmpeg.Ffmpeg(entity.url[0],
+                                  entity.info['filename'],
+                                  plugin_id=entity.entity_id,
+                                  listener=LogicQueue.ffmpeg_listener,
+                                  max_pf_count=max_pf_count,
+                                  referer=referer,
+                                  call_plugin=package_name,
+                                  save_path=save_path)
                 f.start()
-                
+
                 LogicQueue.current_ffmpeg_count += 1
-                LogicQueue.download_queue.task_done()    
-            except Exception as e: 
+                LogicQueue.download_queue.task_done()
+            except Exception as e:
                 logger.error('Exception:%s', e)
                 logger.error(traceback.format_exc())
 
@@ -148,7 +168,8 @@ class LogicQueue(object):
         refresh_type = None
         if arg['type'] == 'status_change':
             if arg['status'] == ffmpeg.Status.DOWNLOADING:
-                episode = db.session.query(ModelLinkkf).filter_by(episodecode=arg['plugin_id']).with_for_update().first()
+                episode = db.session.query(ModelLinkkf).filter_by(
+                    episodecode=arg['plugin_id']).with_for_update().first()
                 if episode:
                     episode.ffmpeg_status = int(arg['status'])
                     episode.duration = arg['data']['duration']
@@ -159,8 +180,12 @@ class LogicQueue(object):
                 pass
         elif arg['type'] == 'last':
             LogicQueue.current_ffmpeg_count += -1
-            episode = db.session.query(ModelLinkkf).filter_by(episodecode=arg['plugin_id']).with_for_update().first()
-            if arg['status'] == ffmpeg.Status.WRONG_URL or arg['status'] == ffmpeg.Status.WRONG_DIRECTORY or arg['status'] == ffmpeg.Status.ERROR or arg['status'] == ffmpeg.Status.EXCEPTION:
+            episode = db.session.query(ModelLinkkf).filter_by(
+                episodecode=arg['plugin_id']).with_for_update().first()
+            if arg['status'] == ffmpeg.Status.WRONG_URL or arg[
+                    'status'] == ffmpeg.Status.WRONG_DIRECTORY or arg[
+                        'status'] == ffmpeg.Status.ERROR or arg[
+                            'status'] == ffmpeg.Status.EXCEPTION:
                 episode.etc_abort = 1
             elif arg['status'] == ffmpeg.Status.USER_STOP:
                 episode.user_abort = True
@@ -168,7 +193,8 @@ class LogicQueue(object):
             if arg['status'] == ffmpeg.Status.COMPLETED:
                 episode.completed = True
                 episode.end_time = datetime.now()
-                episode.download_time = (episode.end_time - episode.start_time).seconds
+                episode.download_time = (episode.end_time -
+                                         episode.start_time).seconds
                 episode.filesize = arg['data']['filesize']
                 episode.filesize_str = arg['data']['filesize_str']
                 episode.download_speed = arg['data']['download_speed']
@@ -202,7 +228,6 @@ class LogicQueue(object):
         arg['status'] = str(arg['status'])
         plugin.socketio_callback('status', arg)
 
-
     @staticmethod
     def add_queue(info):
         try:
@@ -215,7 +240,6 @@ class LogicQueue(object):
             logger.error(traceback.format_exc())
         return False
 
-
     @staticmethod
     def program_auto_command(req):
         try:
@@ -224,7 +248,7 @@ class LogicQueue(object):
             entity_id = int(req.form['entity_id'])
             logger.debug('command :%s %s', command, entity_id)
             entity = QueueEntity.get_entity_by_entity_id(entity_id)
-            
+
             ret = {}
             if command == 'cancel':
                 if entity.ffmpeg_status == -1:
@@ -263,11 +287,10 @@ class LogicQueue(object):
                 QueueEntity.entity_list = new_list
                 plugin.socketio_list_refresh()
                 ret['ret'] = 'refresh'
-            
-        except Exception as e: 
+
+        except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
             ret['ret'] = 'notify'
             ret['log'] = str(e)
         return ret
-

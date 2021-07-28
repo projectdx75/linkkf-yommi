@@ -29,11 +29,13 @@ from .logic_queue import LogicQueue
 #########################################################
 
 
-class LogicLinkkf(object):
+class LogicLinkkfYommi(object):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
-        'Accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-        'Accept-Language' : 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
+        'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+        'Accept':
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
     }
 
     session = None
@@ -43,11 +45,14 @@ class LogicLinkkf(object):
     @staticmethod
     def get_html(url):
         try:
-            if LogicLinkkf.session is None:
-                LogicLinkkf.session = requests.Session()
-            LogicLinkkf.headers['referer'] = LogicLinkkf.referer
-            LogicLinkkf.referer = url
-            page = LogicLinkkf.session.get(url, headers=LogicLinkkf.headers)
+            if LogicLinkkfYommi.session is None:
+                LogicLinkkfYommi.session = requests.Session()
+            LogicLinkkfYommi.headers['referer'] = LogicLinkkfYommi.referer
+            LogicLinkkfYommi.referer = url
+            page = LogicLinkkfYommi.session.get(
+                url, headers=LogicLinkkfYommi.headers)
+            print("page", page)
+
             return page.content.decode('utf8')
         except Exception as e:
             logger.error('Exception:%s', e)
@@ -56,92 +61,174 @@ class LogicLinkkf(object):
     @staticmethod
     def get_video_url_from_url(url, url2):
         video_url = None
-        logger.info("download url : %s , url2 : %s" % (url, url2))
+        referer_url = None
+        # logger.info("dx: url", url)
+        # logger.info("dx: urls2", url2)
+
+        logger.info("dx download url : %s , url2 : %s" % (url, url2))
         try:
             if ('kfani' in url2):
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
-                LogicLinkkf.referer = url
-                data = LogicLinkkf.get_html(url2)
+                LogicLinkkfYommi.referer = url
+                data = LogicLinkkfYommi.get_html(url2)
                 regex2 = r'"([^\"]*m3u8)"'
                 video_url = re.findall(regex2, data)[0]
             elif ('kftv' in url2):
                 # kftv 계열 처리 => url의 id로 https://yt.kftv.live/getLinkStreamMd5/df6960891d226e24b117b850b44a2290 페이지 접속해서 json 받아오고, json에서 url을 추출해야함
-                if('=' in url2):
+                if ('=' in url2):
                     md5 = urlparse.urlparse(url2).query.split('=')[1]
-                elif('embedplay' in url2):
+                elif ('embedplay' in url2):
                     md5 = url2.split('/')[-1]
                 url3 = 'https://yt.kftv.live/getLinkStreamMd5/' + md5
                 logger.info("download url : %s , url3 : %s" % (url, url3))
-                data3 = LogicLinkkf.get_html(url3)
+                data3 = LogicLinkkfYommi.get_html(url3)
                 data3dict = json.loads(data3)
                 # print(data3dict)
                 video_url = data3dict[0]['file']
-            elif( 'linkkf' in url2):
+
+            elif ('linkkf' in url2):
                 # linkkf 계열 처리 => URL 리스트를 받아오고, 하나 골라 방문해서 m3u8을 받아온다.
-                LogicLinkkf.referer = url
-                data2 = LogicLinkkf.get_html(url2)
-                # print(data)
+                referer_url = url
+                data2 = LogicLinkkfYommi.get_html(url2)
+                # print(data2)
+                regex = r"cat1 = [^\[]*([^\]]*)"
+                cat = re.findall(regex, data2)[0]
+                # logger.info("cat: %s", cat)
+                regex = r"\"([^\"]*)\""
+                url3s = re.findall(regex, cat)
+                url3 = random.choice(url3s)
+                logger.info("url3: %s", url3)
+                logger.info("download url : %s , url3 : %s" % (url, url3))
+                if ('kftv' in url3):
+                    return LogicLinkkfYommi.get_video_url_from_url(url2, url3)
+                elif (url3.startswith('/')):
+                    url3 = urlparse.urljoin(url2, url3)
+                    print('url3 = ', url3)
+                    LogicLinkkfYommi.referer = url2
+                    data3 = LogicLinkkfYommi.get_html(url3)
+                    # print(data3)
+                    logger.info('data3: %s', data3)
+                    # regex2 = r'"([^\"]*m3u8)"'
+                    regex2 = r'"([^\"]*mp4|m3u8)"'
+                    video_url = re.findall(regex2, data3)[0]
+                    logger.info('video_url: %s', video_url)
+                    referer_url = url3
+
+                else:
+                    logger.error("새로운 유형의 url 발생! %s %s %s" %
+                                 (url, url2, url3))
+            elif ('kakao' in url2):
+                # kakao 계열 처리, 외부 API 이용
+                payload = {'inputUrl': url2}
+                kakaoUrl = 'http://webtool.cusis.net/wp-pages/download-kakaotv-video/video.php'
+                data2 = requests.post(
+                    kakaoUrl,
+                    json=payload,
+                    headers={
+                        'referer':
+                        'http://webtool.cusis.net/download-kakaotv-video/'
+                    }).content
+                time.sleep(3)  # 서버 부하 방지를 위해 단시간에 너무 많은 URL전송을 하면 IP를 차단합니다.
+                url3 = json.loads(data2)
+                logger.info("download url2 : %s , url3 : %s" % (url2, url3))
+                video_url = url3
+            elif ('#V' in url2):  # V 패턴 추가
+                LogicLinkkfYommi.referer = url
+                data2 = LogicLinkkfYommi.get_html(url2)
+                print('#v routine')
+                print(data2)
+
                 regex = r"cat1 = [^\[]*([^\]]*)"
                 cat = re.findall(regex, data2)[0]
                 regex = r"\"([^\"]*)\""
                 url3s = re.findall(regex, cat)
                 url3 = random.choice(url3s)
                 logger.info("download url : %s , url3 : %s" % (url, url3))
-                if('kftv' in url3):
-                    return LogicLinkkf.get_video_url_from_url(url2, url3)
+                if ('kftv' in url3):
+                    return LogicLinkkfYommi.get_video_url_from_url(url2, url3)
                 elif (url3.startswith('/')):
                     url3 = urlparse.urljoin(url2, url3)
-                    LogicLinkkf.referer = url2
-                    data3 = LogicLinkkf.get_html(url3)
+                    LogicLinkkfYommi.referer = url2
+                    data3 = LogicLinkkfYommi.get_html(url3)
+                    print("내용: %s", data3)
+                    logger.info("movie content: %s", data3)
                     # print(data)
-                    regex2 = r'"([^\"]*m3u8)"'
+                    # regex2 = r'"([^\"]*m3u8)"'
+                    regex2 = r'"([^\"]*mp4)"'
                     video_url = re.findall(regex2, data3)[0]
                 else:
-                    logger.error("새로운 유형의 url 발생! %s %s %s" % (url, url2, url3))
-            elif('kakao' in url2):
-                # kakao 계열 처리, 외부 API 이용
-                payload = {'inputUrl' : url2}
-                kakaoUrl = 'http://webtool.cusis.net/wp-pages/download-kakaotv-video/video.php'
-                data2 = requests.post(kakaoUrl, json=payload, headers={'referer':'http://webtool.cusis.net/download-kakaotv-video/'}).content
-                time.sleep(3) # 서버 부하 방지를 위해 단시간에 너무 많은 URL전송을 하면 IP를 차단합니다.
-                url3 = json.loads(data2)
-                logger.info("download url2 : %s , url3 : %s" % (url2, url3))
-                video_url = url3
+                    logger.error("새로운 유형의 url 발생! %s %s %s" %
+                                 (url, url2, url3))
+
+            elif ('#M2' in url2):
+                LogicLinkkfYommi.referer = url
+                data2 = LogicLinkkfYommi.get_html(url2)
+                print(data2)
+
+                regex = r"cat1 = [^\[]*([^\]]*)"
+                cat = re.findall(regex, data2)[0]
+                regex = r"\"([^\"]*)\""
+                url3s = re.findall(regex, cat)
+                url3 = random.choice(url3s)
+                logger.info("download url : %s , url3 : %s" % (url, url3))
+                if ('kftv' in url3):
+                    return LogicLinkkfYommi.get_video_url_from_url(url2, url3)
+                elif (url3.startswith('/')):
+                    url3 = urlparse.urljoin(url2, url3)
+                    LogicLinkkfYommi.referer = url2
+                    data3 = LogicLinkkfYommi.get_html(url3)
+                    print("내용: %s", data3)
+                    logger.info("movie content: %s", data3)
+                    # regex2 = r'"([^\"]*m3u8)"'
+                    regex2 = r'"([^\"]*mp4)"'
+                    video_url = re.findall(regex2, data3)[0]
+                else:
+                    logger.error("새로운 유형의 url 발생! %s %s %s" %
+                                 (url, url2, url3))
             else:
                 logger.error("새로운 유형의 url 발생! %s %s" % (url, url2))
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
-        return video_url
+        return [video_url, referer_url]
 
     @staticmethod
     def get_video_url(episode_id):
         try:
             url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
-            data = LogicLinkkf.get_html(url)
+            data = LogicLinkkfYommi.get_html(url)
             tree = html.fromstring(data)
-            url2s = [tag.attrib['value']for tag in tree.xpath('//*[@id="body"]/div/div/span/center/select/option')]
+            url2s = [
+                tag.attrib['value'] for tag in tree.xpath(
+                    '//*[@id="body"]/div/div/span/center/select/option')
+            ]
             # url2s = filter(lambda url:
             #         ('kfani' in url) |
-            #         ('linkkf' in url) | 
+            #         ('linkkf' in url) |
             #         ('kftv' in url), url2s)
             #url2 = random.choice(url2s)
-            
+
+            logger.info('dx: url', url)
+            logger.info('dx: urls2', url2s)
+
             video_url = None
+            referer_url = None  # dx
 
             for url2 in url2s:
                 try:
                     if video_url is not None:
                         continue
-                    ret = LogicLinkkf.get_video_url_from_url(url, url2)
-                    if(ret is not None):
+                    ret = LogicLinkkfYommi.get_video_url_from_url(url, url2)
+                    if (ret is not None):
                         video_url = ret
+                        referer_url = url2
                 except Exception as e:
                     logger.error('Exception:%s', e)
                     logger.error(traceback.format_exc())
-            
+
             logger.info(video_url)
 
+            # return [video_url, referer_url]
             return video_url
         except Exception as e:
             logger.error('Exception:%s', e)
@@ -151,22 +238,25 @@ class LogicLinkkf(object):
     def apply_new_title(new_title):
         try:
             ret = {}
-            if LogicLinkkf.current_data is not None:
+            if LogicLinkkfYommi.current_data is not None:
                 program = db.session.query(ModelLinkkfProgram) \
-                    .filter_by(programcode=LogicLinkkf.current_data['code']) \
+                    .filter_by(programcode=LogicLinkkfYommi.current_data['code']) \
                     .first()
                 new_title = Util.change_text_for_use_filename(new_title)
-                LogicLinkkf.current_data['save_folder'] = new_title
+                LogicLinkkfYommi.current_data['save_folder'] = new_title
                 program.save_folder = new_title
                 db.session.commit()
-                
-                for entity in LogicLinkkf.current_data['episode']:
+
+                for entity in LogicLinkkfYommi.current_data['episode']:
                     entity['save_folder'] = new_title
-                    entity['filename'] = LogicLinkkf.get_filename(LogicLinkkf.current_data['save_folder'], LogicLinkkf.current_data['season'], entity['title'])
+                    entity['filename'] = LogicLinkkfYommi.get_filename(
+                        LogicLinkkfYommi.current_data['save_folder'],
+                        LogicLinkkfYommi.current_data['season'],
+                        entity['title'])
                 #    tmp = data['filename'].split('.')
                 #    tmp[0] = new_title
                 #    data['filename'] = '.'.join(tmp)
-                return LogicLinkkf.current_data
+                return LogicLinkkfYommi.current_data
             else:
                 ret['ret'] = False
                 ret['log'] = 'No current data!!'
@@ -182,17 +272,20 @@ class LogicLinkkf(object):
         try:
             ret = {}
             season = int(new_season)
-            if LogicLinkkf.current_data is not None:
+            if LogicLinkkfYommi.current_data is not None:
                 program = db.session.query(ModelLinkkfProgram) \
-                    .filter_by(programcode=LogicLinkkf.current_data['code']) \
+                    .filter_by(programcode=LogicLinkkfYommi.current_data['code']) \
                     .first()
-                LogicLinkkf.current_data['season'] = season
+                LogicLinkkfYommi.current_data['season'] = season
                 program.season = season
                 db.session.commit()
-                
-                for entity in LogicLinkkf.current_data['episode']:
-                    entity['filename'] = LogicLinkkf.get_filename(LogicLinkkf.current_data['save_folder'], LogicLinkkf.current_data['season'], entity['title'])
-                return LogicLinkkf.current_data
+
+                for entity in LogicLinkkfYommi.current_data['episode']:
+                    entity['filename'] = LogicLinkkfYommi.get_filename(
+                        LogicLinkkfYommi.current_data['save_folder'],
+                        LogicLinkkfYommi.current_data['season'],
+                        entity['title'])
+                return LogicLinkkfYommi.current_data
             else:
                 ret['ret'] = False
                 ret['log'] = 'No current data!!'
@@ -207,17 +300,22 @@ class LogicLinkkf(object):
     def add_whitelist():
         ret = {}
         try:
-            code = str(LogicLinkkf.current_data['code'])
-            whitelist_program = ModelSetting.get('whitelist_program') 
-            whitelist_programs = [str(x.strip().replace(' ', '')) for x in whitelist_program.replace('\n', ',').split(',')]
-            if(code not in whitelist_programs):
+            code = str(LogicLinkkfYommi.current_data['code'])
+            whitelist_program = ModelSetting.get('whitelist_program')
+            whitelist_programs = [
+                str(x.strip().replace(' ', ''))
+                for x in whitelist_program.replace('\n', ',').split(',')
+            ]
+            if (code not in whitelist_programs):
                 whitelist_programs.append(code)
-                whitelist_programs = filter(lambda x: x != '', whitelist_programs) # remove blank code
+                whitelist_programs = filter(
+                    lambda x: x != '', whitelist_programs)  # remove blank code
                 whitelist_program = ','.join(whitelist_programs)
-                entity = db.session.query(ModelSetting).filter_by(key='whitelist_program').with_for_update().first()
+                entity = db.session.query(ModelSetting).filter_by(
+                    key='whitelist_program').with_for_update().first()
                 entity.value = whitelist_program
                 db.session.commit()
-                return LogicLinkkf.current_data
+                return LogicLinkkfYommi.current_data
             else:
                 ret['ret'] = False
                 ret['log'] = "이미 추가되어 있습니다."
@@ -231,28 +329,37 @@ class LogicLinkkf(object):
     @staticmethod
     def get_title_info(code):
         try:
-            if LogicLinkkf.current_data is not None and LogicLinkkf.current_data['code'] == code and LogicLinkkf.current_data['ret']:
-                return LogicLinkkf.current_data
+            if LogicLinkkfYommi.current_data is not None and LogicLinkkfYommi.current_data[
+                    'code'] == code and LogicLinkkfYommi.current_data['ret']:
+                return LogicLinkkfYommi.current_data
             url = '%s/%s' % (ModelSetting.get('linkkf_url'), code)
-            data = LogicLinkkf.get_html(url)
+            data = LogicLinkkfYommi.get_html(url)
             tree = html.fromstring(data)
 
             data = {}
             data['code'] = code
             data['ret'] = False
-            tmp = tree.xpath('/html/body/div[2]/div/div/article/center/strong')[0].text_content().strip().encode('utf8')
+            tmp = tree.xpath('/html/body/div[2]/div/div/article/center/strong'
+                             )[0].text_content().strip().encode('utf8')
             match = re.compile(r'(?P<season>\d+)기').search(tmp)
             if match:
                 data['season'] = match.group('season')
             else:
                 data['season'] = '1'
-            data['title'] = tmp.replace(data['season']+u'기', '').strip()
-            data['title'] = Util.change_text_for_use_filename(data['title']).replace('OVA', '').strip()
+            data['title'] = tmp.replace(data['season'] + u'기', '').strip()
+            data['title'] = Util.change_text_for_use_filename(
+                data['title']).replace('OVA', '').strip()
             try:
-                data['poster_url'] = tree.xpath('//*[@id="body"]/div/div/div[1]/center/img')[0].attrib['data-src']
-                data['detail'] = [{'info':tree.xpath('/html/body/div[2]/div/div/div[1]')[0].text_content().strip().encode('utf8')}]
+                data['poster_url'] = tree.xpath(
+                    '//*[@id="body"]/div/div/div[1]/center/img'
+                )[0].attrib['data-src']
+                data['detail'] = [{
+                    'info':
+                    tree.xpath('/html/body/div[2]/div/div/div[1]')
+                    [0].text_content().strip().encode('utf8')
+                }]
             except:
-                data['detail'] = [{'정보없음':''}]
+                data['detail'] = [{'정보없음': ''}]
                 data['poster_url'] = None
 
             tmp = tree.xpath('//*[@id="relatedpost"]/ul/li')
@@ -271,37 +378,41 @@ class LogicLinkkf(object):
                 .filter_by(programcode=code) \
                 .first()
 
-            if(program is None):
+            if (program is None):
                 program = ModelLinkkfProgram(data)
                 db.session.add(program)
                 db.session.commit()
             else:
                 data['save_folder'] = program.save_folder
                 data['season'] = program.season
-            
+
             for t in tags:
                 entity = {}
                 entity['program_code'] = data['code']
                 entity['program_title'] = data['title']
-                entity['save_folder'] = Util.change_text_for_use_filename(data['save_folder'])
+                entity['save_folder'] = Util.change_text_for_use_filename(
+                    data['save_folder'])
                 entity['code'] = re1.search(t.attrib['href']).group('code')
                 data['episode'].append(entity)
                 entity['image'] = data['poster_url']
                 entity['title'] = t.text_content().strip().encode('utf8')
-                entity['filename'] = LogicLinkkf.get_filename(data['save_folder'], data['season'], entity['title'])
+                entity['filename'] = LogicLinkkfYommi.get_filename(
+                    data['save_folder'], data['season'], entity['title'])
             data['ret'] = True
-            LogicLinkkf.current_data = data
+            LogicLinkkfYommi.current_data = data
             return data
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
             data['log'] = str(e)
             return data
-    
+
     @staticmethod
     def get_filename(maintitle, season, title):
         try:
-            match = re.compile(r'(?P<title>.*?)\s?((?P<season>\d+)기)?\s?((?P<epi_no>\d+)화)').search(title)
+            match = re.compile(
+                r'(?P<title>.*?)\s?((?P<season>\d+)기)?\s?((?P<epi_no>\d+)화)'
+            ).search(title)
             if match:
                 epi_no = int(match.group('epi_no'))
                 if epi_no < 10:
@@ -320,7 +431,7 @@ class LogicLinkkf(object):
             else:
                 logger.debug('NOT MATCH')
                 ret = '%s.720p-SA.mp4' % title
-            
+
             return Util.change_text_for_use_filename(ret)
         except Exception as e:
             logger.error('Exception:%s', e)
@@ -329,22 +440,25 @@ class LogicLinkkf(object):
     @staticmethod
     def get_info_by_code(code):
         try:
-            if LogicLinkkf.current_data is not None:
-                for t in LogicLinkkf.current_data['episode']:
+            if LogicLinkkfYommi.current_data is not None:
+                for t in LogicLinkkfYommi.current_data['episode']:
                     if t['code'] == code:
                         return t
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
-    
+
     @staticmethod
     def scheduler_function():
         try:
             logger.debug('Linkkf scheduler_function start..')
 
-            whitelist_program = ModelSetting.get('whitelist_program') 
-            whitelist_programs = [x.strip().replace(' ', '') for x in whitelist_program.replace('\n', ',').split(',')]
-            
+            whitelist_program = ModelSetting.get('whitelist_program')
+            whitelist_programs = [
+                x.strip().replace(' ', '')
+                for x in whitelist_program.replace('\n', ',').split(',')
+            ]
+
             for code in whitelist_programs:
                 logger.info('auto download start : %s', code)
                 downloaded = db.session.query(ModelLinkkf) \
@@ -353,14 +467,14 @@ class LogicLinkkf(object):
                             .with_for_update().all()
                 dl_codes = [dl.episodecode for dl in downloaded]
                 logger.info('downloaded codes :%s', dl_codes)
-                data = LogicLinkkf.get_title_info(code)
+                data = LogicLinkkfYommi.get_title_info(code)
                 for episode in data['episode']:
                     e_code = episode['code']
-                    if(e_code not in dl_codes):
+                    if (e_code not in dl_codes):
                         logger.info('Logic Queue added :%s', e_code)
                         LogicQueue.add_queue(episode)
-                        
+
             logger.debug('=======================================')
-        except Exception as e: 
+        except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
