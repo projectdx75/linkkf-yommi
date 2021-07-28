@@ -334,6 +334,7 @@ class LogicLinkkfYommi(object):
                     'code'] == code and LogicLinkkfYommi.current_data['ret']:
                 return LogicLinkkfYommi.current_data
             url = '%s/%s' % (ModelSetting.get('linkkf_url'), code)
+            logger.info(url)
             data = LogicLinkkfYommi.get_html(url)
             tree = html.fromstring(data)
 
