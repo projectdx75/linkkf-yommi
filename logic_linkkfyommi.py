@@ -23,12 +23,13 @@ from framework.util import Util
 from framework.logger import get_logger
 
 # 패키지
-from .plugin import package_name, logger
+# from .plugin import package_name, logger
 from .model import ModelSetting, ModelLinkkf, ModelLinkkfProgram
 from .logic_queue import LogicQueue
 
 #########################################################
-
+package_name = __name__.split('.')[0]
+logger = get_logger(package_name)
 
 class LogicLinkkfYommi(object):
     headers = {
