@@ -26,15 +26,29 @@ from .logic import Logic
 from .logic_linkkfyommi import LogicLinkkfYommi
 from .logic_queue import QueueEntity, LogicQueue
 from .model import ModelSetting
-blueprint = Blueprint(package_name,
-                      package_name,
-                      url_prefix='/%s' % package_name,
-                      template_folder=os.path.join(os.path.dirname(__file__),
-                                                   'templates'))
+# blueprint = Blueprint(package_name,
+#                       package_name,
+#                       url_prefix='/%s' % package_name,
+#                       template_folder=os.path.join(os.path.dirname(__file__),
+#                                                    'templates'))
+#########################################################
+# 플러그인 공용
+#########################################################
+blueprint = Blueprint(package_name, package_name, url_prefix='/%s' % package_name,
+                      template_folder=os.path.join(
+                          os.path.dirname(__file__), 'templates'),
+                      static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 
 
+# def plugin_load():
+#     Logic.plugin_load()
+
+
+# def plugin_unload():
+#     Logic.plugin_unload()
 def plugin_load():
     Logic.plugin_load()
+    LogicQueue.queue_load()
 
 
 def plugin_unload():
