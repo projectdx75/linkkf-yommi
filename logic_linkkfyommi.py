@@ -337,7 +337,8 @@ class LogicLinkkfYommi(object):
             # logger.info(url)
             data = LogicLinkkfYommi.get_html(url)
             # logger.info(data)
-            tree = html.fromstring(data)
+            tree = html.fromstring(
+                data, parser=html.XMLParser(encoding='utf-8'))
             logger.info(tree)
 
             data = {}
@@ -348,7 +349,7 @@ class LogicLinkkfYommi(object):
             #                  )[0].text_content().strip().encode('utf8')
             tmp = tree.xpath('//*[@id="body"]/div/div[1]/article/center/strong'
                              )[0].text_content().strip().encode('utf8')
-            print(tmp)
+            # print(tmp)
             logger.info(tmp)
             match = re.compile(r'(?P<season>\d+)기').search(tmp)
             if match:
