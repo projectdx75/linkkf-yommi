@@ -12,7 +12,7 @@ from datetime import datetime
 from framework.logger import get_logger
 from framework import db, app, path_app_root
 # 패키지
-from .plugin import package_name, logger
+# from .plugin import package_name, logger
 
 
 db_file = os.path.join(path_app_root, 'data', 'db', '%s.db' % package_name)

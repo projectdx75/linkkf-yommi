@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
-import os, traceback
+import os
+import traceback
 import sys
 import logging
 import threading
@@ -19,7 +20,7 @@ from framework.util import Util
 from framework.logger import get_logger
 
 # 패키지
-from .plugin import package_name, logger
+# from .plugin import package_name, logger
 import system
 from .model import ModelSetting, ModelLinkkf
 
