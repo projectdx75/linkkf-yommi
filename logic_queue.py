@@ -6,7 +6,7 @@ import sys
 import logging
 import threading
 # import Queue
-from .logic_queue import LogicQueue
+# from .logic_queue import LogicQueue
 import json
 import time
 from datetime import datetime
