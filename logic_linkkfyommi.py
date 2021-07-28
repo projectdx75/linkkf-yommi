@@ -336,13 +336,17 @@ class LogicLinkkfYommi(object):
             url = '%s/%s' % (ModelSetting.get('linkkf_url'), code)
             # logger.info(url)
             data = LogicLinkkfYommi.get_html(url)
-            logger.info(data)
+            # logger.info(data)
             tree = html.fromstring(data)
+            logger.info(tree)
 
             data = {}
             data['code'] = code
             data['ret'] = False
-            tmp = tree.xpath('/html/body/div[2]/div/div/article/center/strong'
+            # //*[@id="body"]/div/div[1]/article/center/strong
+            # tmp = tree.xpath('/html/body/div[2]/div/div/article/center/strong'
+            #                  )[0].text_content().strip().encode('utf8')
+            tmp = tree.xpath('//*[@id="body"]/div/div[1]/article/center/strong'
                              )[0].text_content().strip().encode('utf8')
             print(tmp)
             logger.info(tmp)
