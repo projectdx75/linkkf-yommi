@@ -342,6 +342,7 @@ class LogicLinkkfYommi(object):
             data['ret'] = False
             tmp = tree.xpath('/html/body/div[2]/div/div/article/center/strong'
                              )[0].text_content().strip().encode('utf8')
+            print(tmp)
             match = re.compile(r'(?P<season>\d+)기').search(tmp)
             if match:
                 data['season'] = match.group('season')
