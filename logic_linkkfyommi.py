@@ -412,6 +412,7 @@ class LogicLinkkfYommi(object):
                 entity['filename'] = LogicLinkkfYommi.get_filename(
                     data['save_folder'], data['season'], entity['title'])
             data['ret'] = True
+            logger.info('data', data)
             LogicLinkkfYommi.current_data = data
             return data
         except Exception as e:

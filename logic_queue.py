@@ -6,6 +6,7 @@ import traceback
 import sys
 import logging
 import threading
+import queue
 # import Queue
 # from .logic_queue import LogicQueue
 import json
@@ -70,7 +71,8 @@ class LogicQueue(object):
     def queue_start():
         try:
             if LogicQueue.download_queue is None:
-                LogicQueue.download_queue = Queue.Queue()
+                LogicQueue.download_queue = queue.Queue()
+            # LogicQueue.download_queue = Queue.Queue()
             if LogicQueue.download_thread is None:
                 LogicQueue.download_thread = threading.Thread(
                     target=LogicQueue.download_thread_function, args=())
