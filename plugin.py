@@ -125,10 +125,11 @@ def ajax(sub):
     elif sub == 'analysis':
         try:
             code = request.form['code']
-            ret = LogicLinkkfYommi.get_title_info(code)
-            logger.info(ret)
+            data = LogicLinkkfYommi.get_title_info(code)
+            logger.info(data)
             # return jsonify(ret)
-            return ret
+            # return ret
+            return jsonify({'ret': 'success', 'data': data})
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
