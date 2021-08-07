@@ -126,6 +126,7 @@ def ajax(sub):
         try:
             code = request.form['code']
             ret = LogicLinkkfYommi.get_title_info(code)
+            logger.info(ret)
             return jsonify(ret)
         except Exception as e:
             logger.error('Exception:%s', e)
