@@ -126,8 +126,15 @@ def ajax(sub):
         try:
             code = request.form['code']
             data = LogicLinkkfYommi.get_title_info(code)
+
+            logger.info(type(data))
             # logger.info(data.decode('utf-8'))
-            retData = json.dumps(data).encode("utf-8")
+            # retData = json.dumps(data).encode("utf-8")
+            json_string = json.dumps(data, ensure_ascii=False)
+            #creating a Response object to set the content type and the encoding
+            retData = Response(
+                json_string, content_type="application/json; charset=utf-8")
+    # return response
 
             # return jsonify(ret)
             return retData
