@@ -339,7 +339,7 @@ class LogicLinkkfYommi(object):
             html_content = LogicLinkkfYommi.get_html(url)
             # logger.info(data)
             tree = html.fromstring(
-                html_content.decode('utf-8'))
+                html_content)
             logger.info(tree)
 
             data = {}
@@ -375,7 +375,9 @@ class LogicLinkkfYommi(object):
 
             # tmp = tree.xpath('//*[@id="relatedpost"]/ul/li')
             tmp = tree.xpath(
-                '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
+                '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article')
+
+            logger.info(tmp)
             if tmp is not None:
                 data['episode_count'] = len(tmp)
             else:
