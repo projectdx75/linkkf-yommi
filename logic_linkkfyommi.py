@@ -373,14 +373,18 @@ class LogicLinkkfYommi(object):
                 data['detail'] = [{'정보없음': ''}]
                 data['poster_url'] = None
 
-            tmp = tree.xpath('//*[@id="relatedpost"]/ul/li')
+            # tmp = tree.xpath('//*[@id="relatedpost"]/ul/li')
+            tmp = tree.xpath(
+                '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
             if tmp is not None:
                 data['episode_count'] = len(tmp)
             else:
                 data['episode_count'] = '0'
 
             data['episode'] = []
-            tags = tree.xpath('//*[@id="relatedpost"]/ul/li/a')
+            tags = tree.xpath(
+                '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
+            # tags = tree.xpath('//*[@id="relatedpost"]/ul/li/a')
             logger.info("tags", tags)
             re1 = re.compile(r'\/(?P<code>\d+)')
 
