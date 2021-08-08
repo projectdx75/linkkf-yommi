@@ -406,7 +406,7 @@ class LogicLinkkfYommi(object):
                 data['save_folder'] = program.save_folder
                 data['season'] = program.season
 
-            idx = 0
+            idx = 1
             for t in tags:
                 entity = {}
                 entity['program_code'] = data['code']
