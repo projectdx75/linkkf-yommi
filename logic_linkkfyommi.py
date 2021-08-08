@@ -337,7 +337,7 @@ class LogicLinkkfYommi(object):
             url = '%s/%s' % (ModelSetting.get('linkkf_url'), code)
             # logger.info(url)
             html_content = LogicLinkkfYommi.get_html(url)
-            logger.info(html_content)
+            # logger.info(html_content)
             tree = html.fromstring(
                 html_content)
             logger.info(tree)
@@ -383,9 +383,10 @@ class LogicLinkkfYommi(object):
                 data['episode_count'] = '0'
 
             data['episode'] = []
-            tags = tree.xpath(
-                '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
-            # tags = tree.xpath('//*[@id="relatedpost"]/ul/li/a')
+            # tags = tree.xpath(
+            #     '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
+            tags = tree.xpath('//article/a')
+
             logger.info("tags", tags)
             re1 = re.compile(r'\/(?P<code>\d+)')
 
