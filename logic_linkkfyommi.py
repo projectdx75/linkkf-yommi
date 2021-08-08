@@ -10,7 +10,7 @@ import time
 import re
 import random
 # import urlparse
-import urllib.parse
+from urllib.parse import urlparse
 import json
 # third-party
 import requests
@@ -197,7 +197,8 @@ class LogicLinkkfYommi(object):
     @staticmethod
     def get_video_url(episode_id):
         try:
-            url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
+            # url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
+            url = episode_id
             data = LogicLinkkfYommi.get_html(url)
             tree = html.fromstring(data)
             url2s = [
@@ -405,6 +406,7 @@ class LogicLinkkfYommi(object):
                 data['save_folder'] = program.save_folder
                 data['season'] = program.season
 
+            idx = 0
             for t in tags:
                 entity = {}
                 entity['program_code'] = data['code']
@@ -412,13 +414,15 @@ class LogicLinkkfYommi(object):
                 entity['save_folder'] = Util.change_text_for_use_filename(
                     data['save_folder'])
                 # entity['code'] = re1.search(t.attrib['href']).group('code')
-                entity['code'] = 'code'
+                entity['code'] = idx
+                entity['url'] = t.attrib['href']
                 data['episode'].append(entity)
                 entity['image'] = data['poster_url']
                 # entity['title'] = t.text_content().strip().encode('utf8')
                 entity['title'] = t.text_content().strip()
                 entity['filename'] = LogicLinkkfYommi.get_filename(
                     data['save_folder'], data['season'], entity['title'])
+                idx = idx + 1
             data['ret'] = True
             logger.info('data', data)
             LogicLinkkfYommi.current_data = data
