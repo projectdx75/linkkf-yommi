@@ -158,7 +158,7 @@ class LogicQueue(object):
                                   plugin_id=entity.entity_id,
                                   listener=LogicQueue.ffmpeg_listener,
                                   max_pf_count=max_pf_count,
-                                  referer=referer,
+                                  #   referer=referer,
                                   call_plugin=package_name,
                                   save_path=save_path)
                 f.start()
