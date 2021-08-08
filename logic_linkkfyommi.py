@@ -200,6 +200,7 @@ class LogicLinkkfYommi(object):
             # url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
             url = episode_id
             data = LogicLinkkfYommi.get_html(url)
+            logger.info(data)
             tree = html.fromstring(data)
             url2s = [
                 tag.attrib['value'] for tag in tree.xpath(
