@@ -211,7 +211,7 @@ class LogicLinkkfYommi(object):
                 url3 = random.choice(url3s)
                 logger.info("download url : %s , url3 : %s" % (url, url3))
 
-            elif ('#k' in url2):
+            elif ('#k2' in url2):
                 LogicLinkkfYommi.referer = url
                 data2 = LogicLinkkfYommi.get_html(url2)
                 logger.info(data2)
