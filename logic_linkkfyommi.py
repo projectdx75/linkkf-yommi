@@ -348,8 +348,8 @@ class LogicLinkkfYommi(object):
             # //*[@id="body"]/div/div[1]/article/center/strong
             # tmp = tree.xpath('/html/body/div[2]/div/div/article/center/strong'
             #                  )[0].text_content().strip().encode('utf8')
-            tmp = tree.xpath('//*[@id="body"]/div/div[1]/article/center/strong'
-                             )[0].text_content().strip()
+            tmp = tree.xpath(
+                '//*[@id="body"]/div/div[1]/article/center/strong')[0].text_content().strip()
             # print(tmp)
             logger.info(tmp)
             match = re.compile(r'(?P<season>\d+)기').search(tmp)
