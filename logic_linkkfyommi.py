@@ -337,7 +337,7 @@ class LogicLinkkfYommi(object):
             url = '%s/%s' % (ModelSetting.get('linkkf_url'), code)
             # logger.info(url)
             html_content = LogicLinkkfYommi.get_html(url)
-            # logger.info(data)
+            logger.info(html_content)
             tree = html.fromstring(
                 html_content)
             logger.info(tree)
