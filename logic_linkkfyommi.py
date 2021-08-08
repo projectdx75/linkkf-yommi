@@ -374,8 +374,7 @@ class LogicLinkkfYommi(object):
                 data['poster_url'] = None
 
             # tmp = tree.xpath('//*[@id="relatedpost"]/ul/li')
-            tmp = tree.xpath(
-                '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
+            tmp = tree.xpath('//article/a')
 
             logger.info(tmp)
             if tmp is not None:
