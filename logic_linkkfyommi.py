@@ -414,7 +414,7 @@ class LogicLinkkfYommi(object):
                 entity['save_folder'] = Util.change_text_for_use_filename(
                     data['save_folder'])
                 # entity['code'] = re1.search(t.attrib['href']).group('code')
-                entity['code'] = data['code'] + idx
+                entity['code'] = data['code'] + str(idx)
                 entity['url'] = t.attrib['href']
                 data['episode'].append(entity)
                 entity['image'] = data['poster_url']
