@@ -120,7 +120,7 @@ class LogicQueue(object):
                 entity.url = LogicLinkkfYommi.get_video_url(
                     entity.info['url'])
 
-                logger.info(entity.info['url'])
+                logger.info('entity.info: %s', entity.info['url'])
                 logger.info('url1: %s', entity.url[0])
                 print(entity.url)
                 if entity.url is None:
