@@ -388,7 +388,8 @@ class LogicLinkkfYommi(object):
             tags = tree.xpath('//article/a')
 
             logger.info("tags", tags)
-            re1 = re.compile(r'\/(?P<code>\d+)')
+            # re1 = re.compile(r'\/(?P<code>\d+)')
+            re1 = re.compile(r'\-([^-])+\.')
 
             data['save_folder'] = data['title']
 
