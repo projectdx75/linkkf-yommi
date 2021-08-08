@@ -205,7 +205,7 @@ class LogicLinkkfYommi(object):
             tree = html.fromstring(data)
             url2s = [
                 tag.attrib['value'] for tag in tree.xpath(
-                    '//*[@id="body"]/div/div/span/center/select/option')
+                    '//*[@id="body"]/div/span/center/select/option')
             ]
             # url2s = filter(lambda url:
             #         ('kfani' in url) |

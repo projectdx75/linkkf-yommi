@@ -121,8 +121,8 @@ class LogicQueue(object):
                     entity.info['url'])
 
                 logger.info('entity.info: %s', entity.info['url'])
-                logger.info('url1: %s', entity.url[0])
-                print(entity.url)
+                # logger.info('url1: %s', entity.url[0])
+                # print(entity.url)
                 if entity.url is None:
                     self.ffmpeg_status_kor = 'URL실패'
                     plugin.socketio_list_refresh()
