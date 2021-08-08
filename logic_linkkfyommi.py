@@ -366,8 +366,8 @@ class LogicLinkkfYommi(object):
                 )[0].attrib['data-src']
                 data['detail'] = [{
                     'info':
-                    tree.xpath('/html/body/div[2]/div/div/div[1]')
-                    [0].text_content().strip().encode('utf8')
+                    tree.xpath('/html/body/div[2]/div/div[1]/div[1]')
+                    [0].text_content().strip()
                 }]
             except:
                 data['detail'] = [{'정보없음': ''}]
