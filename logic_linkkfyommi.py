@@ -222,6 +222,17 @@ class LogicLinkkfYommi(object):
                 url3s = re.findall(regex, cat)
                 url3 = random.choice(url3s)
                 logger.info("download url : %s , url3 : %s" % (url, url3))
+            elif ('mopipi' in url2):
+                LogicLinkkfYommi.referer = url
+                data2 = LogicLinkkfYommi.get_html(url2)
+                logger.info(data2)
+
+                regex = r"cat1 = [^\[]*([^\]]*)"
+                cat = re.findall(regex, data2)[0]
+                regex = r"\"([^\"]*)\""
+                url3s = re.findall(regex, cat)
+                url3 = random.choice(url3s)
+                logger.info("download url : %s , url3 : %s" % (url, url3))
 
             else:
                 logger.error("새로운 유형의 url 발생! %s %s" % (url, url2))
