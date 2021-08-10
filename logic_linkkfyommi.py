@@ -226,12 +226,15 @@ class LogicLinkkfYommi(object):
                 LogicLinkkfYommi.referer = url
                 data2 = LogicLinkkfYommi.get_html(url2)
                 logger.info(data2)
+                match = re.compile(
+                    'src\=\"(?P<video_url>http.*?\.mp4)').search(data2)
+                video_url = match.group('video_url')
 
-                regex = r"cat1 = [^\[]*([^\]]*)"
-                cat = re.findall(regex, data2)[0]
-                regex = r"\"([^\"]*)\""
-                url3s = re.findall(regex, cat)
-                url3 = random.choice(url3s)
+                match = re.compile(
+                    r'src\=\"(?P<vtt_url>http.*?.vtt').search(data2)
+                logger.info("match group: %s", match.group('video_url'))
+                vtt_url = match.group('vtt_url')
+
                 logger.info("download url : %s , url3 : %s" % (url, url3))
 
             else:
