@@ -14,18 +14,20 @@
   </nav>
   <form id="setting">
     <div class="tab-content" id="nav-tabContent">
-    {{ macros.setting_input_text_and_buttons('linkkf_url', 'Linkkf URL', [['go_btn', 'GO']], value=arg['linkkf_url'], desc=None) }}
-    {{ macros.setting_input_text('download_path', '저장 폴더', value=arg['download_path'], desc='정상적으로 완료된 파일이 이동할 폴더 입니다. ') }}
-    {{ macros.setting_checkbox('auto_make_folder', '제목 폴더 생성', value=arg['auto_make_folder'], desc='제목으로 폴더를 생성하고 폴더 안에 다운로드합니다.') }}
-    {{ macros.setting_input_int('max_ffmpeg_process_count', '동시 다운로드 수', value=arg['max_ffmpeg_process_count'], desc='동시에 다운로드 할 에피소드 갯수입니다.') }}
-    {{ macros.setting_global_scheduler_button(arg['scheduler'], arg['is_running']) }}
-    {{ macros.setting_input_int('auto_interval', '스케쥴링 실행 주기', value=arg['auto_interval'], min='1', placeholder='10', desc='minute 단위') }}
-    {{ macros.setting_checkbox('auto_start', '시작시 자동실행', value=arg['auto_start'], desc='On : 시작시 자동으로 스케쥴러에 등록됩니다.') }}
-    {{ macros.setting_input_textarea('whitelist_program', '자동 다운로드 codes', value=arg['whitelist_program'], desc=['이 곳에 있는 code들을 스케쥴러 일정마다 자동으로 다운로드합니다.', ', 또는 Enter로 구분']) }}
-    <div id="linkkf_auto_make_folder_div" class="collapse">
-      {{ macros.setting_input_text('linkkf_finished_insert', '완결 표시', col='3', value=arg['linkkf_finished_insert'], desc=['완결된 컨텐츠 폴더명 앞에 넣을 문구입니다.']) }}
-      {{ macros.setting_checkbox('linkkf_auto_make_season_folder', '시즌 폴더 생성', value=arg['linkkf_auto_make_season_folder'], desc=['On : Season 번호 폴더를 만듭니다.']) }}
-    </div>
+    {{ macros.m_tab_content_start('normal', true) }}
+      {{ macros.setting_input_text_and_buttons('linkkf_url', 'Linkkf URL', [['go_btn', 'GO']], value=arg['linkkf_url'], desc=None) }}
+      {{ macros.setting_input_text('download_path', '저장 폴더', value=arg['download_path'], desc='정상적으로 완료된 파일이 이동할 폴더 입니다. ') }}
+      {{ macros.setting_checkbox('auto_make_folder', '제목 폴더 생성', value=arg['auto_make_folder'], desc='제목으로 폴더를 생성하고 폴더 안에 다운로드합니다.') }}
+      {{ macros.setting_input_int('max_ffmpeg_process_count', '동시 다운로드 수', value=arg['max_ffmpeg_process_count'], desc='동시에 다운로드 할 에피소드 갯수입니다.') }}
+      {{ macros.setting_global_scheduler_button(arg['scheduler'], arg['is_running']) }}
+      {{ macros.setting_input_int('auto_interval', '스케쥴링 실행 주기', value=arg['auto_interval'], min='1', placeholder='10', desc='minute 단위') }}
+      {{ macros.setting_checkbox('auto_start', '시작시 자동실행', value=arg['auto_start'], desc='On : 시작시 자동으로 스케쥴러에 등록됩니다.') }}
+      {{ macros.setting_input_textarea('whitelist_program', '자동 다운로드 codes', value=arg['whitelist_program'], desc=['이 곳에 있는 code들을 스케쥴러 일정마다 자동으로 다운로드합니다.', ', 또는 Enter로 구분']) }}
+      <div id="linkkf_auto_make_folder_div" class="collapse">
+        {{ macros.setting_input_text('linkkf_finished_insert', '완결 표시', col='3', value=arg['linkkf_finished_insert'], desc=['완결된 컨텐츠 폴더명 앞에 넣을 문구입니다.']) }}
+        {{ macros.setting_checkbox('linkkf_auto_make_season_folder', '시즌 폴더 생성', value=arg['linkkf_auto_make_season_folder'], desc=['On : Season 번호 폴더를 만듭니다.']) }}
+     </div>
+     {{ macros.m_tab_content_end() }}
     <!-- {{ macros.setting_button([['global_setting_save_btn', '저장save']]) }} -->
     </div>  
   </form>
