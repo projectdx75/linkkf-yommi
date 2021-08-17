@@ -26,7 +26,7 @@
       {{ macros.setting_input_text('linkkf_finished_insert', '완결 표시', col='3', value=arg['linkkf_finished_insert'], desc=['완결된 컨텐츠 폴더명 앞에 넣을 문구입니다.']) }}
       {{ macros.setting_checkbox('linkkf_auto_make_season_folder', '시즌 폴더 생성', value=arg['linkkf_auto_make_season_folder'], desc=['On : Season 번호 폴더를 만듭니다.']) }}
     </div>
-    {{ macros.setting_button([['global_setting_save_btn', '저장save']]) }}
+    <!-- {{ macros.setting_button([['global_setting_save_btn', '저장save']]) }} -->
     </div>  
   </form>
 </div> <!--전체-->
@@ -37,14 +37,12 @@ var package_name = 'linkkf-yommi';
 
 $(document).ready(function(){
   use_collapse('include_date');
+  use_collapse('linkkf_auto_make_folder');
+
 });
 
 $('#include_date').change(function() {
   use_collapse('include_date');
-});
-
-$(document).ready(function(){
-  use_collapse('linkkf_auto_make_folder');
 });
 
 $('#linkkf_auto_make_folder').change(function() {
