@@ -30,6 +30,9 @@ class Logic(object):
     db_default = {
         "linkkf_url": "https://panogas.com/",
         'download_path': os.path.join(path_data, 'linkkf-yommi'),
+        'linkkf_auto_make_folder' : 'True',
+        'linkkf_auto_make_season_folder' : 'True',        
+        'linkkf_finished_insert' : u'[완결]',
         'include_date': 'False',
         'date_option': '0',  # 0:YYMMDD, 1:YYYY-MM-DD
         'auto_make_folder': 'True',
