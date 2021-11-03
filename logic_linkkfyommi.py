@@ -440,7 +440,7 @@ class LogicLinkkfYommi(object):
             data['episode'] = []
             # tags = tree.xpath(
             #     '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
-            tags = tree.xpath('//article/a')
+            tags = tree.xpath('//ul/a')
 
             logger.info("tags", tags)
             # re1 = re.compile(r'\/(?P<code>\d+)')
