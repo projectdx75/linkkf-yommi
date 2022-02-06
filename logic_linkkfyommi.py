@@ -293,7 +293,8 @@ class LogicLinkkfYommi(object):
                         continue
                     ret = LogicLinkkfYommi.get_video_url_from_url(url, url2)
                     print(f'ret::::> {ret}')
-                    if (ret is not None):
+
+                    if ret is not None:
                         video_url = ret
                         referer_url = url2
                 except Exception as e:
