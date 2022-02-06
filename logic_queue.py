@@ -157,7 +157,14 @@ class LogicQueue(object):
                 # 파일 존재여부 체크
                 if entity.url[1] is not None:
                     referer = entity.url[1]
-                    headers = {"Referer": f"{referer}"}
+                    headers = {
+                        'User-Agent':
+                            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+                        'Accept':
+                            'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                        'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+                        "Referer": f"{referer}"
+                    }
                     logger.info('referer: %s', referer)
 
                 if os.path.exists(
