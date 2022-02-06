@@ -303,7 +303,7 @@ class LogicQueue(object):
                     idx = entity.ffmpeg_arg['data']['idx']
                     import ffmpeg
                     ffmpeg.Ffmpeg.stop_by_idx(idx)
-                    # plugin.socketio_list_refresh()
+                    plugin.socketio_list_refresh()
                     ret['ret'] = 'refresh'
             elif command == 'reset':
                 if LogicQueue.download_queue is not None:
