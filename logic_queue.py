@@ -29,6 +29,7 @@ from .model import ModelSetting, ModelLinkkf
 package_name = __name__.split('.')[0]
 logger = get_logger(package_name)
 
+
 class QueueEntity:
     static_index = 1
     entity_list = []
@@ -104,7 +105,7 @@ class LogicQueue(object):
                     if LogicQueue.current_ffmpeg_count < int(
                             ModelSetting.get('max_ffmpeg_process_count')):
                         break
-                    #logger.debug(LogicQueue.current_ffmpeg_count)
+                    # logger.debug(LogicQueue.current_ffmpeg_count)
                     time.sleep(5)
                 entity = LogicQueue.download_queue.get()
                 if entity.cancel:
@@ -171,7 +172,7 @@ class LogicQueue(object):
 
     @staticmethod
     def ffmpeg_listener(**arg):
-        #logger.debug(arg)
+        # logger.debug(arg)
         import ffmpeg
         refresh_type = None
         if arg['type'] == 'status_change':
@@ -191,9 +192,9 @@ class LogicQueue(object):
             episode = db.session.query(ModelLinkkf).filter_by(
                 episodecode=arg['plugin_id']).with_for_update().first()
             if arg['status'] == ffmpeg.Status.WRONG_URL or arg[
-                    'status'] == ffmpeg.Status.WRONG_DIRECTORY or arg[
-                        'status'] == ffmpeg.Status.ERROR or arg[
-                            'status'] == ffmpeg.Status.EXCEPTION:
+                'status'] == ffmpeg.Status.WRONG_DIRECTORY or arg[
+                'status'] == ffmpeg.Status.ERROR or arg[
+                'status'] == ffmpeg.Status.EXCEPTION:
                 episode.etc_abort = 1
             elif arg['status'] == ffmpeg.Status.USER_STOP:
                 episode.user_abort = True
@@ -266,12 +267,12 @@ class LogicQueue(object):
                     ret['ret'] = 'refresh'
                 elif entity.ffmpeg_status != 5:
                     ret['ret'] = 'notify'
-                    ret['log'] = '다운로드중 상태가 아닙니다.'
+                    ret['log'] = '다운로드 중인 상태가 아닙니다.'
                 else:
                     idx = entity.ffmpeg_arg['data']['idx']
                     import ffmpeg
                     ffmpeg.Ffmpeg.stop_by_idx(idx)
-                    #plugin.socketio_list_refresh()
+                    # plugin.socketio_list_refresh()
                     ret['ret'] = 'refresh'
             elif command == 'reset':
                 if LogicQueue.download_queue is not None:
