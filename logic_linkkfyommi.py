@@ -424,9 +424,13 @@ class LogicLinkkfYommi(object):
             data['title'] = Util.change_text_for_use_filename(
                 data['title']).replace('OVA', '').strip()
             try:
+                # data['poster_url'] = tree.xpath(
+                #     '//*[@id="body"]/div/div/div[1]/center/img'
+                # )[0].attrib['data-src']
+
                 data['poster_url'] = tree.xpath(
-                    '//*[@id="body"]/div/div/div[1]/center/img'
-                )[0].attrib['data-src']
+                    '//*[@id="body"]/div/div[1]/div[1]/center/img'
+                )[0].attrib['src']
                 data['detail'] = [{
                     'info':
                     tree.xpath('/html/body/div[2]/div/div[1]/div[1]')
@@ -564,7 +568,7 @@ class LogicLinkkfYommi(object):
                         logger.info('Logic Queue added :%s', e_code)
                         LogicQueue.add_queue(episode)
 
-            logger.debug('=======================================')
+            logger.debug('========================================')
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
