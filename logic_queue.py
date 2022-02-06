@@ -12,6 +12,7 @@ import queue
 import json
 import time
 from datetime import datetime
+import requests
 # third-party
 
 # sjva 공용
@@ -98,6 +99,8 @@ class LogicQueue(object):
 
     @staticmethod
     def download_thread_function():
+        headers = None
+
         import plugin
         while True:
             try:
@@ -146,6 +149,7 @@ class LogicQueue(object):
                 # 파일 존재여부 체크
                 if entity.url[1] is not None:
                     referer = entity.url[1]
+                    headers = f'Referer: "{referer}"'
                     logger.info('referer: %s', referer)
 
                 if os.path.exists(
@@ -166,6 +170,15 @@ class LogicQueue(object):
 
                 LogicQueue.current_ffmpeg_count += 1
                 LogicQueue.download_queue.task_done()
+
+                # srt file
+                from framework.common.util import write_file, convert_vtt_to_srt
+                srt_filepath = os.path.join(save_path, entity.info['filename'].replace('.mp4', '.ko.srt'))
+                if entity.url[2] is not None and not os.path.exists(srt_filepath):
+                    vtt_data = requests.get(entity.url[2], headers=headers).text
+                    srt_data = convert_vtt_to_srt(vtt_data)
+                    write_file(srt_data, srt_filepath)
+
             except Exception as e:
                 logger.error('Exception:%s', e)
                 logger.error(traceback.format_exc())
