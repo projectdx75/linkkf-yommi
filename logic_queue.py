@@ -157,7 +157,7 @@ class LogicQueue(object):
                 # 파일 존재여부 체크
                 if entity.url[1] is not None:
                     referer = entity.url[1]
-                    headers = f'Referer: "{referer}"'
+                    headers = f'"Referer": "{referer}"'
                     logger.info('referer: %s', referer)
 
                 if os.path.exists(
