@@ -521,7 +521,7 @@ class LogicLinkkfYommi(object):
 
                 #title_part = match.group('title').strip()
                 #ret = '%s.S%sE%s%s.720p-SA.mp4' % (maintitle, season, epi_no, date_str)
-                ret = '%s.S%sE%s.mp4' % (maintitle, season, epi_no)
+                ret = '%s.S%sE%s.720p-LK.mp4' % (maintitle, season, epi_no)
             else:
                 logger.debug('NOT MATCH')
                 ret = '%s.720p-SA.mp4' % title
