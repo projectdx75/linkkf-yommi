@@ -75,7 +75,8 @@ class LogicLinkkfYommi(object):
                 data = LogicLinkkfYommi.get_html(url2)
                 print(data)
                 logger.info("dx: data", data)
-                regex2 = r'"([^\"]*m3u8)"'
+                regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"(\K[^"]+)'
+
                 video_url = re.findall(regex2, data)[0]
             elif ('kftv' in url2):
                 # kftv 계열 처리 => url의 id로 https://yt.kftv.live/getLinkStreamMd5/df6960891d226e24b117b850b44a2290 페이지 접속해서 json 받아오고, json에서 url을 추출해야함
