@@ -70,7 +70,7 @@ class LogicQueue(object):
     download_thread = None
     current_ffmpeg_count = 0
 
-    default_route_socketio(P, self)
+    # default_route_socketio(P, self)
 
     def refresh_status(self):
         self.module_logic.socketio_callback('status', self.as_dict())
