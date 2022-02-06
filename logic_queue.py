@@ -181,10 +181,17 @@ class LogicQueue(object):
 
                 # srt file
                 from framework.common.util import write_file, convert_vtt_to_srt
+
+                from urllib import parse
+
+                ourls = parse.urlparse(entity.url[0])
+                print(ourls)
+                base_url = f'{ourls.scheme}://{ourls.netloc}'
+                vtt_url = base_url + entity.url[2]
                 srt_filepath = os.path.join(save_path, entity.info['filename'].replace('.mp4', '.ko.srt'))
                 logger.info('srt_filepath::: %s', srt_filepath)
                 if entity.url[2] is not None and not os.path.exists(srt_filepath):
-                    vtt_data = requests.get(entity.url[2], headers=headers).text
+                    vtt_data = requests.get(vtt_url, headers=headers).text
                     srt_data = convert_vtt_to_srt(vtt_data)
                     write_file(srt_data, srt_filepath)
 
