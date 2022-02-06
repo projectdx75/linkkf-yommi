@@ -430,7 +430,7 @@ class LogicLinkkfYommi(object):
 
                 data['poster_url'] = tree.xpath(
                     '//*[@id="body"]/div/div[1]/div[1]/center/img'
-                )[0].attrib['src']
+                )[0].attrib['data-lazy-src']
                 data['detail'] = [{
                     'info':
                     tree.xpath('/html/body/div[2]/div/div[1]/div[1]')
