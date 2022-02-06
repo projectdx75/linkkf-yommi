@@ -75,7 +75,7 @@ class LogicLinkkfYommi(object):
                 data = LogicLinkkfYommi.get_html(url2)
                 print(data)
                 logger.info("dx: data", data)
-                regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"(\K[^"]+)'
+                regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
 
                 video_url = re.findall(regex2, data)[0]
             elif ('kftv' in url2):
