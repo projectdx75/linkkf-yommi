@@ -186,7 +186,9 @@ class LogicQueue(object):
 
                 ourls = parse.urlparse(entity.url[0])
                 print(ourls)
+                logger.info('ourls:::>', ourls)
                 base_url = f'{ourls.scheme}://{ourls.netloc}'
+                logger.info('base_url:::>', base_url)
                 vtt_url = base_url + entity.url[2]
                 srt_filepath = os.path.join(save_path, entity.info['filename'].replace('.mp4', '.ko.srt'))
                 logger.info('srt_filepath::: %s', srt_filepath)
