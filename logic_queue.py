@@ -125,8 +125,8 @@ class LogicQueue(object):
                     entity.info['url'])
 
                 logger.info('entity.info: %s', entity.info['url'])
-                # logger.info('url1: %s', entity.url[0])
-                # print(entity.url)
+                logger.info('url1: %s', entity.url[0])
+                print(entity.url)
                 if entity.url is None:
                     self.ffmpeg_status_kor = 'URL실패'
                     plugin.socketio_list_refresh()
@@ -174,6 +174,7 @@ class LogicQueue(object):
                 # srt file
                 from framework.common.util import write_file, convert_vtt_to_srt
                 srt_filepath = os.path.join(save_path, entity.info['filename'].replace('.mp4', '.ko.srt'))
+                logger.info('srt_filepath::: %s', srt_filepath)
                 if entity.url[2] is not None and not os.path.exists(srt_filepath):
                     vtt_data = requests.get(entity.url[2], headers=headers).text
                     srt_data = convert_vtt_to_srt(vtt_data)
