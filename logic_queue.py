@@ -283,7 +283,7 @@ class LogicQueue(object):
     @staticmethod
     def program_auto_command(req):
         try:
-            import plugin
+            from . import plugin
             command = req.form['command']
             entity_id = int(req.form['entity_id'])
             logger.debug('command :%s %s', command, entity_id)
