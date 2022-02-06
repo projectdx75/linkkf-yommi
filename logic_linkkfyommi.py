@@ -85,6 +85,11 @@ class LogicLinkkfYommi(object):
                         continue
                     video_url = i
 
+                match = re.compile(r'src\=\"(?P<vtt_url>http.*?.vtt').search(data)
+                logger.info("match group: %s", match.group('video_url'))
+                vtt_url = match.group('vtt_url')
+                logger.info("vtt_url: %s", vtt_url)
+
             elif ('kftv' in url2):
                 # kftv 계열 처리 => url의 id로 https://yt.kftv.live/getLinkStreamMd5/df6960891d226e24b117b850b44a2290 페이지 접속해서 json 받아오고, json에서 url을 추출해야함
                 if ('=' in url2):
