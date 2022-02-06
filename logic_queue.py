@@ -70,6 +70,11 @@ class LogicQueue(object):
     download_thread = None
     current_ffmpeg_count = 0
 
+    default_route_socketio(P, self)
+
+    def refresh_status(self):
+        self.module_logic.socketio_callback('status', self.as_dict())
+
     @staticmethod
     def queue_start():
         try:
@@ -101,8 +106,8 @@ class LogicQueue(object):
     @staticmethod
     def download_thread_function():
         headers = None
-
-        import plugin
+        from . import plugin
+        # import plugin
         while True:
             try:
                 while True:
