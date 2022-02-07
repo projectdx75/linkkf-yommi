@@ -167,6 +167,8 @@ class LogicQueue(object):
                     }
                     logger.info('referer: %s', referer)
 
+                logger.info('filename::::>>>> %s', entity.info['filename'])
+                logger.info('파일체크::::>', os.path.join(save_path, entity.info['filename']))
                 if os.path.exists(
                         os.path.join(save_path, entity.info['filename'])):
                     entity.ffmpeg_status_kor = '파일 있음'
