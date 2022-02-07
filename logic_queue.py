@@ -169,12 +169,12 @@ class LogicQueue(object):
 
                 logger.info('filename::::>>>> %s', entity.info['filename'])
                 logger.info('파일체크::::>', os.path.join(save_path, entity.info['filename']))
-                if os.path.exists(
-                        os.path.join(save_path, entity.info['filename'])):
+                if os.path.exists(os.path.join(save_path, entity.info['filename'])):
                     entity.ffmpeg_status_kor = '파일 있음'
                     entity.ffmpeg_percent = 100
                     plugin.socketio_list_refresh()
                     continue
+
                 f = ffmpeg.Ffmpeg(entity.url[0],
                                   entity.info['filename'],
                                   plugin_id=entity.entity_id,
