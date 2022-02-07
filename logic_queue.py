@@ -38,6 +38,7 @@ class QueueEntity:
     entity_list = []
 
     def __init__(self, info):
+        logger.info('info:::::>> %s', info)
         self.entity_id = info['code']
         self.info = info
         self.url = None
