@@ -55,7 +55,7 @@ class LogicLinkkfYommi(object):
             LogicLinkkfYommi.referer = url
             page = LogicLinkkfYommi.session.get(
                 url, headers=LogicLinkkfYommi.headers)
-            logger.info("page", page)
+            # logger.info("page", page)
 
             return page.content.decode('utf8')
         except Exception as e:
@@ -71,30 +71,30 @@ class LogicLinkkfYommi(object):
         # logger.info("dx: url", url)
         # logger.info("dx: urls2", url2)
 
-        logger.info("dx download url : %s , url2 : %s" % (url, url2))
+        # logger.info("dx download url : %s , url2 : %s" % (url, url2))
         try:
             if 'kfani' in url2:
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
 
                 data = LogicLinkkfYommi.get_html(url2)
                 # print(data)
-                logger.info("dx: data", data)
+                # logger.info("dx: data", data)
                 regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
 
                 temp_url = re.findall(regex2, data)[0]
                 video_url = ''
                 ref = 'https://kfani.me'
                 for i in temp_url:
-                    print(i)
+                    # print(i)
                     if i is None:
                         continue
                     video_url = i
                     # video_url = '{1} -headers \'Referer: "{0}"\' -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref, video_url)
 
                 match = re.compile(r'<track.+src\=\"(?P<vtt_url>.*?.vtt)').search(data)
-                logger.info("match group: %s", match.group('vtt_url'))
+                # logger.info("match group: %s", match.group('vtt_url'))
                 vtt_url = match.group('vtt_url')
-                logger.info("vtt_url: %s", vtt_url)
+                # logger.info("vtt_url: %s", vtt_url)
                 referer_url = LogicLinkkfYommi.referer
 
             elif 'kftv' in url2:
@@ -105,7 +105,7 @@ class LogicLinkkfYommi(object):
                 elif 'embedplay' in url2:
                     md5 = url2.split('/')[-1]
                 url3 = 'https://yt.kftv.live/getLinkStreamMd5/' + md5
-                logger.info("download url : %s , url3 : %s" % (url, url3))
+                # logger.info("download url : %s , url3 : %s" % (url, url3))
                 data3 = LogicLinkkfYommi.get_html(url3)
                 data3dict = json.loads(data3)
                 # print(data3dict)
@@ -122,8 +122,8 @@ class LogicLinkkfYommi(object):
                 regex = r"\"([^\"]*)\""
                 url3s = re.findall(regex, cat)
                 url3 = random.choice(url3s)
-                logger.info("url3: %s", url3)
-                logger.info("download url : %s , url3 : %s" % (url, url3))
+                # logger.info("url3: %s", url3)
+                # logger.info("download url : %s , url3 : %s" % (url, url3))
                 if 'kftv' in url3:
                     return LogicLinkkfYommi.get_video_url_from_url(url2, url3)
                 elif url3.startswith('/'):
@@ -132,11 +132,11 @@ class LogicLinkkfYommi(object):
                     LogicLinkkfYommi.referer = url2
                     data3 = LogicLinkkfYommi.get_html(url3)
                     # print(data3)
-                    logger.info('data3: %s', data3)
+                    # logger.info('data3: %s', data3)
                     # regex2 = r'"([^\"]*m3u8)"'
                     regex2 = r'"([^\"]*mp4|m3u8)"'
                     video_url = re.findall(regex2, data3)[0]
-                    logger.info('video_url: %s', video_url)
+                    # logger.info('video_url: %s', video_url)
                     referer_url = url3
 
                 else:
@@ -155,7 +155,7 @@ class LogicLinkkfYommi(object):
                     }).content
                 time.sleep(3)  # 서버 부하 방지를 위해 단시간에 너무 많은 URL전송을 하면 IP를 차단합니다.
                 url3 = json.loads(data2)
-                logger.info("download url2 : %s , url3 : %s" % (url2, url3))
+                # logger.info("download url2 : %s , url3 : %s" % (url2, url3))
                 video_url = url3
             elif '#V' in url2:  # V 패턴 추가
                 print('#v routine')
@@ -168,15 +168,15 @@ class LogicLinkkfYommi(object):
                 regex = r"\"([^\"]*)\""
                 url3s = re.findall(regex, cat)
                 url3 = random.choice(url3s)
-                logger.info("download url : %s , url3 : %s" % (url, url3))
+                # logger.info("download url : %s , url3 : %s" % (url, url3))
                 if 'kftv' in url3:
                     return LogicLinkkfYommi.get_video_url_from_url(url2, url3)
                 elif url3.startswith('/'):
                     url3 = urlparse.urljoin(url2, url3)
                     LogicLinkkfYommi.referer = url2
                     data3 = LogicLinkkfYommi.get_html(url3)
-                    print("내용: %s", data3)
-                    logger.info("movie content: %s", data3)
+                    # print("내용: %s", data3)
+                    # logger.info("movie content: %s", data3)
                     # print(data)
                     # regex2 = r'"([^\"]*m3u8)"'
                     regex2 = r'"([^\"]*mp4)"'
@@ -195,15 +195,15 @@ class LogicLinkkfYommi(object):
                 regex = r"\"([^\"]*)\""
                 url3s = re.findall(regex, cat)
                 url3 = random.choice(url3s)
-                logger.info("download url : %s , url3 : %s" % (url, url3))
+                # logger.info("download url : %s , url3 : %s" % (url, url3))
                 if 'kftv' in url3:
                     return LogicLinkkfYommi.get_video_url_from_url(url2, url3)
                 elif url3.startswith('/'):
                     url3 = urlparse.urljoin(url2, url3)
                     LogicLinkkfYommi.referer = url2
                     data3 = LogicLinkkfYommi.get_html(url3)
-                    print("내용: %s", data3)
-                    logger.info("movie content: %s", data3)
+                    # print("내용: %s", data3)
+                    # logger.info("movie content: %s", data3)
                     # regex2 = r'"([^\"]*m3u8)"'
                     regex2 = r'"([^\"]*mp4)"'
                     video_url = re.findall(regex2, data3)[0]
@@ -213,42 +213,42 @@ class LogicLinkkfYommi(object):
             elif '😀#i' in url2:
                 LogicLinkkfYommi.referer = url
                 data2 = LogicLinkkfYommi.get_html(url2)
-                logger.info(data2)
+                # logger.info(data2)
 
                 regex = r"cat1 = [^\[]*([^\]]*)"
                 cat = re.findall(regex, data2)[0]
                 regex = r"\"([^\"]*)\""
                 url3s = re.findall(regex, cat)
                 url3 = random.choice(url3s)
-                logger.info("download url : %s , url3 : %s" % (url, url3))
+                # logger.info("download url : %s , url3 : %s" % (url, url3))
 
             elif '#k' in url2:
                 data2 = LogicLinkkfYommi.get_html(url2)
-                logger.info(data2)
+                # logger.info(data2)
 
                 regex = r"cat1 = [^\[]*([^\]]*)"
                 cat = re.findall(regex, data2)[0]
                 regex = r"\"([^\"]*)\""
                 url3s = re.findall(regex, cat)
                 url3 = random.choice(url3s)
-                logger.info("download url : %s , url3 : %s" % (url, url3))
+                # logger.info("download url : %s , url3 : %s" % (url, url3))
 
             elif '#k2' in url2:
                 data2 = LogicLinkkfYommi.get_html(url2)
-                logger.info(data2)
+                # logger.info(data2)
 
                 regex = r"cat1 = [^\[]*([^\]]*)"
                 cat = re.findall(regex, data2)[0]
                 regex = r"\"([^\"]*)\""
                 url3s = re.findall(regex, cat)
                 url3 = random.choice(url3s)
-                logger.info("download url : %s , url3 : %s" % (url, url3))
-            elif ('mopipi' in url2):
+                # logger.info("download url : %s , url3 : %s" % (url, url3))
+            elif 'mopipi' in url2:
                 LogicLinkkfYommi.referer = url
                 data2 = LogicLinkkfYommi.get_html(url2)
-                logger.info(data2)
+                # logger.info(data2)
                 match = re.compile(
-                    'src\=\"(?P<video_url>http.*?\.mp4)').search(data2)
+                    r'src\=\"(?P<video_url>http.*?\.mp4)').search(data2)
                 video_url = match.group('video_url')
 
                 match = re.compile(
@@ -256,7 +256,7 @@ class LogicLinkkfYommi(object):
                 logger.info("match group: %s", match.group('video_url'))
                 vtt_url = match.group('vtt_url')
 
-                logger.info("download url : %s , url3 : %s" % (url, url3))
+                # logger.info("download url : %s , url3 : %s" % (url, url3))
 
             else:
                 logger.error("새로운 유형의 url 발생! %s %s" % (url, url2))
@@ -271,7 +271,7 @@ class LogicLinkkfYommi(object):
         try:
             # url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
             url = episode_id
-            logger.info("url: %s" % url)
+            # logger.info("url: %s" % url)
             data = LogicLinkkfYommi.get_html(url)
             # logger.info(data)
             tree = html.fromstring(data)
@@ -285,8 +285,8 @@ class LogicLinkkfYommi(object):
             #         ('kftv' in url), url2s)
             # url2 = random.choice(url2s)
 
-            logger.info('dx: url', url)
-            logger.info('dx: urls2', url2s)
+            # logger.info('dx: url', url)
+            # logger.info('dx: urls2', url2s)
 
             video_url = None
             referer_url = None  # dx
@@ -408,7 +408,8 @@ class LogicLinkkfYommi(object):
     @staticmethod
     def get_title_info(code):
         try:
-            if LogicLinkkfYommi.current_data is not None and LogicLinkkfYommi.current_data['code'] == code and LogicLinkkfYommi.current_data['ret']:
+            if LogicLinkkfYommi.current_data is not None and LogicLinkkfYommi.current_data['code'] == code and \
+                    LogicLinkkfYommi.current_data['ret']:
                 return LogicLinkkfYommi.current_data
             url = '%s/%s' % (ModelSetting.get('linkkf_url'), code)
             # logger.info(url)
@@ -416,18 +417,16 @@ class LogicLinkkfYommi(object):
             # logger.info(html_content)
             tree = html.fromstring(
                 html_content)
-            logger.info(tree)
+            # logger.info(tree)
 
-            data = {}
-            data['code'] = code
-            data['ret'] = False
+            data = {'code': code, 'ret': False}
             # //*[@id="body"]/div/div[1]/article/center/strong
             # tmp = tree.xpath('/html/body/div[2]/div/div/article/center/strong'
             #                  )[0].text_content().strip().encode('utf8')
             tmp = tree.xpath(
                 '//*[@id="body"]/div/div[1]/article/center/strong')[0].text_content().strip()
             # print(tmp)
-            logger.info(tmp)
+            # logger.info(tmp)
             match = re.compile(r'(?P<season>\d+)기').search(tmp)
             if match:
                 data['season'] = match.group('season')
@@ -458,7 +457,7 @@ class LogicLinkkfYommi(object):
             # 수정된
             tmp = tree.xpath('//ul/a')
 
-            logger.info(tmp)
+            # logger.info(tmp)
             if tmp is not None:
                 data['episode_count'] = len(tmp)
             else:
@@ -469,7 +468,7 @@ class LogicLinkkfYommi(object):
             #     '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
             tags = tree.xpath('//ul/a')
 
-            logger.info("tags", tags)
+            # logger.info("tags", tags)
             # re1 = re.compile(r'\/(?P<code>\d+)')
             re1 = re.compile(r'\-([^-])+\.')
 
@@ -508,7 +507,7 @@ class LogicLinkkfYommi(object):
                     data['save_folder'], data['season'], entity['title'])
                 idx = idx + 1
             data['ret'] = True
-            logger.info('data', data)
+            # logger.info('data', data)
             LogicLinkkfYommi.current_data = data
 
             # srt 파일 처리

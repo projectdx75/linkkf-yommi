@@ -38,7 +38,7 @@ class QueueEntity:
     entity_list = []
 
     def __init__(self, info):
-        logger.info('info:::::>> %s', info)
+        # logger.info('info:::::>> %s', info)
         self.entity_id = info['code']
         self.info = info
         self.url = None
@@ -130,12 +130,12 @@ class LogicQueue(object):
                 entity.url = LogicLinkkfYommi.get_video_url(
                     entity.info['url'])
 
-                logger.info('entity.info: %s', entity.info['url'])
-                logger.info('url1: %s', entity.url[0])
+                # logger.info('entity.info: %s', entity.info['url'])
+                # logger.info('url1: %s', entity.url[0])
                 # print(entity)
-                logger.info('entity: %s', entity.__dict__)
+                # logger.info('entity: %s', entity.__dict__)
 
-                logger.info('entity.url:::> %s', entity.url)
+                # logger.info('entity.url:::> %s', entity.url)
                 if entity.url[0] is None:
                     self.ffmpeg_status_kor = 'URL실패'
                     plugin.socketio_list_refresh()
@@ -168,10 +168,10 @@ class LogicQueue(object):
                         # 'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
                         "Referer": f"{referer}"
                     }
-                    logger.info('referer: %s', referer)
+                    # logger.info('referer: %s', referer)
 
-                logger.info('filename::::>>>> %s', entity.info['filename'])
-                logger.info('파일체크::::>', os.path.join(save_path, entity.info['filename']))
+                # logger.info('filename::::>>>> %s', entity.info['filename'])
+                # logger.info('파일체크::::>', os.path.join(save_path, entity.info['filename']))
                 if os.path.exists(os.path.join(save_path, entity.info['filename'])):
                     entity.ffmpeg_status_kor = '파일 있음'
                     entity.ffmpeg_percent = 100
@@ -203,13 +203,13 @@ class LogicQueue(object):
                 from urllib import parse
 
                 ourls = parse.urlparse(entity.url[1])
-                print(ourls)
-                logger.info('ourls:::>', ourls)
+                # print(ourls)
+                # logger.info('ourls:::>', ourls)
                 base_url = f'{ourls.scheme}://{ourls.netloc}'
-                logger.info('base_url:::>', base_url)
+                # logger.info('base_url:::>', base_url)
                 vtt_url = base_url + entity.url[2]
                 srt_filepath = os.path.join(save_path, entity.info['filename'].replace('.mp4', '.ko.srt'))
-                logger.info('srt_filepath::: %s', srt_filepath)
+                # logger.info('srt_filepath::: %s', srt_filepath)
                 if entity.url[2] is not None and not os.path.exists(srt_filepath):
                     vtt_data = requests.get(vtt_url, headers=headers).text
                     srt_data = convert_vtt_to_srt(vtt_data)
