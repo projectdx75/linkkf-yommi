@@ -97,7 +97,7 @@ class LogicQueue(object):
                 entity = LogicQueue.download_queue.get()
                 logger.debug('Queue receive item:%s %s', entity.title_id,
                              entity.episode_id)
-                LogicAni.process(entity)
+                # LogicAni.process(entity)
                 LogicQueue.download_queue.task_done()
             except Exception as e:
                 logger.error('Exception:%s', e)
