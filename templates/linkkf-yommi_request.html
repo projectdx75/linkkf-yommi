@@ -160,9 +160,9 @@ $("body").on('click', '#add_whitelist', function(e){
 
 $("body").on('click', '#apply_new_title_btn', function(e){
   e.preventDefault();
-  new_title = document.getElementById("new_title").value
+  let new_title = document.getElementById("new_title").value
   $.ajax({
-    url: '/' + package_name + '/ajax/apply_new_title',
+    url: '/' + package_name + '/ajax/',
     type: "POST",
     cache: false,
     data: {new_title:new_title},
@@ -172,6 +172,7 @@ $("body").on('click', '#apply_new_title_btn', function(e){
         $.notify('<strong>적용하였습니다.</strong><br>', {
           type: 'success'
         });
+        console.log(ret)
         make_program(ret)
       } else {
         $.notify('<strong>적용 실패</strong><br>' + ret.log, {

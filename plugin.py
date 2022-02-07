@@ -200,7 +200,7 @@ def ajax(sub):
                     tmp = LogicQueue.add_queue(info)
                     count += 1
             ret['ret'] = 'success'
-            ret['log'] = count
+            ret['log'] = str(count)
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
