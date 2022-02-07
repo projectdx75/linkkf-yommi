@@ -273,7 +273,7 @@ class LogicLinkkfYommi(object):
             url = episode_id
             logger.info("url: %s" % url)
             data = LogicLinkkfYommi.get_html(url)
-            logger.info(data)
+            # logger.info(data)
             tree = html.fromstring(data)
             url2s = [
                 tag.attrib['value'] for tag in tree.xpath(
@@ -408,8 +408,7 @@ class LogicLinkkfYommi(object):
     @staticmethod
     def get_title_info(code):
         try:
-            if LogicLinkkfYommi.current_data is not None and LogicLinkkfYommi.current_data[
-                'code'] == code and LogicLinkkfYommi.current_data['ret']:
+            if LogicLinkkfYommi.current_data is not None and LogicLinkkfYommi.current_data['code'] == code and LogicLinkkfYommi.current_data['ret']:
                 return LogicLinkkfYommi.current_data
             url = '%s/%s' % (ModelSetting.get('linkkf_url'), code)
             # logger.info(url)
@@ -502,7 +501,7 @@ class LogicLinkkfYommi(object):
                 entity['image'] = data['poster_url']
                 # entity['title'] = t.text_content().strip().encode('utf8')
                 entity['title'] = t.text_content().strip()
-                entity['season'] = data['season']
+                # entity['season'] = data['season']
                 entity['filename'] = LogicLinkkfYommi.get_filename(
                     data['save_folder'], data['season'], entity['title'])
                 idx = idx + 1
