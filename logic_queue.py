@@ -132,7 +132,7 @@ class LogicQueue(object):
                 logger.info('entity.info: %s', entity.info['url'])
                 logger.info('url1: %s', entity.url[0])
                 print(entity)
-                logger.info('entity: %s', entity)
+                logger.info('entity: %s', repr(entity))
 
                 logger.info('entity.url:::> %s', entity.url)
                 if entity.url[0] is None:
