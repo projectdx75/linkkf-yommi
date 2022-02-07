@@ -85,7 +85,7 @@ class LogicLinkkfYommi(object):
                     if i is None:
                         continue
                     video_url = i
-                    video_url = '-headers "Referer: {0}\r\n" {1}'.format(url2, video_url)
+                    video_url = '{1} -headers "Referer: {0}\r\n"'.format(url2, video_url)
 
                 match = re.compile(r'<track.+src\=\"(?P<vtt_url>.*?.vtt)').search(data)
                 logger.info("match group: %s", match.group('vtt_url'))
