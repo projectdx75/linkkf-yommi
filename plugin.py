@@ -25,6 +25,7 @@ from .logic import Logic
 from .logic_linkkfyommi import LogicLinkkfYommi
 from .logic_queue import QueueEntity, LogicQueue
 from .model import ModelSetting
+
 # blueprint = Blueprint(package_name,
 #                       package_name,
 #                       url_prefix='/%s' % package_name,
@@ -41,7 +42,6 @@ blueprint = Blueprint(package_name, package_name, url_prefix='/%s' % package_nam
                       template_folder=os.path.join(
                           os.path.dirname(__file__), 'templates'),
                       static_folder=os.path.join(os.path.dirname(__file__), 'static'))
-
 
 # def plugin_load():
 #     Logic.plugin_load()
@@ -65,9 +65,11 @@ plugin_info = {
     'icon': '',
     'developer': 'projectdx && persuade',
     'description': 'linkkf 사이트에서 애니 다운로드',
-    'home': 'http://yommi.duckdns.org:30000/yommi/linkkf-yommi',
+    'home': 'https://github.com/projectdx75/linkkf-yommi',
     'more': '',
 }
+
+
 #########################################################
 
 
@@ -78,6 +80,7 @@ def plugin_load():
 
 def plugin_unload():
     Logic.plugin_unload()
+
 
 #########################################################
 # WEB Menu
@@ -135,7 +138,7 @@ def ajax(sub):
             # creating a Response object to set the content type and the encoding
             # retData = Response(
             # json_string, content_type="application/json; charset=utf-8")
-    # return response
+            # return response
 
             # return jsonify(ret)
             # return retData
