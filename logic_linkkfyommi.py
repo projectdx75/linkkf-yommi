@@ -479,7 +479,7 @@ class LogicLinkkfYommi(object):
                 .filter_by(programcode=code) \
                 .first()
 
-            if (program is None):
+            if program is None:
                 program = ModelLinkkfProgram(data)
                 db.session.add(program)
                 db.session.commit()

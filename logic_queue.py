@@ -150,7 +150,7 @@ class LogicQueue(object):
                                                 entity.info['save_folder'])
                     save_path = program_path
                     if ModelSetting.get('linkkf_auto_make_season_folder'):
-                        save_path = os.path.join(save_path, 'Season %s' % int(entity.season))
+                        save_path = os.path.join(save_path, 'Season %s' % int(entity.info.season))
                 try:
                     if not os.path.exists(save_path):
                         os.makedirs(save_path)
