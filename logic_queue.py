@@ -148,7 +148,7 @@ class LogicQueue(object):
                     program_path = os.path.join(save_path,
                                                 entity.info['save_folder'])
                     save_path = program_path
-                    if ModelSetting.get_bool('linkkf_auto_make_season_folder'):
+                    if ModelSetting.get('linkkf_auto_make_season_folder'):
                         save_path = os.path.join(save_path, 'Season %s' % int(entity.season))
                 try:
                     if not os.path.exists(save_path):
@@ -239,10 +239,7 @@ class LogicQueue(object):
             LogicQueue.current_ffmpeg_count += -1
             episode = db.session.query(ModelLinkkf).filter_by(
                 episodecode=arg['plugin_id']).with_for_update().first()
-            if arg['status'] == ffmpeg.Status.WRONG_URL or arg[
-                'status'] == ffmpeg.Status.WRONG_DIRECTORY or arg[
-                'status'] == ffmpeg.Status.ERROR or arg[
-                'status'] == ffmpeg.Status.EXCEPTION:
+            if arg['status'] == ffmpeg.Status.WRONG_URL or arg['status'] == ffmpeg.Status.WRONG_DIRECTORY or arg['status'] == ffmpeg.Status.ERROR or arg['status'] == ffmpeg.Status.EXCEPTION:
                 episode.etc_abort = 1
             elif arg['status'] == ffmpeg.Status.USER_STOP:
                 episode.user_abort = True

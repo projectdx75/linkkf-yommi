@@ -48,6 +48,14 @@ class ModelSetting(db.Model):
             logger.error('Exception:%s %s', e, key)
             logger.error(traceback.format_exc())
 
+    # @staticmethod
+    # def get_bool(key):
+    #     try:
+    #         return (ModelSetting.get(key) == 'True')
+    #     except Exception as exception:
+    #         logger.error('Exception:%s %s', exception, key)
+    #         logger.error(traceback.format_exc())
+
 
 class ModelLinkkfProgram(db.Model):
     __tablename__ = 'plugin_%s_program' % package_name
