@@ -75,7 +75,8 @@ plugin_info = {
 
 def plugin_load():
     Logic.plugin_load()
-    LogicQueue.queue_load()
+    # 
+    # LogicQueue.queue_load()
 
 
 def plugin_unload():

@@ -1,1 +1,11 @@
-{"more": "", "version": "0.1.3.0", "name": "linkkf-yommi \ub2e4\uc6b4\ub85c\ub4dc", "developer": "projectdx && persuade", "home": "http://yommi.duckdns.org:30000/yommi/linkkf-yommi", "description": "linkkf \uc0ac\uc774\ud2b8\uc5d0\uc11c \uc560\ub2c8 \ub2e4\uc6b4\ub85c\ub4dc", "icon": "", "category_name": "vod"}
+{
+    "version": "0.1.4.0",
+    "name": "linkkf-yommi 다운로드",
+    "category_name": "vod",
+    "icon": "",
+    "developer": "projectdx && persuade",
+    "description": "linkkf 사이트에서 애니 다운로드",
+    "home": "https://github.com/projectdx75/linkkf-yommi",
+    "more": "",
+    "category": "vod"
+}
