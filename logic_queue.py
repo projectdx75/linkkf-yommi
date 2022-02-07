@@ -175,7 +175,11 @@ class LogicQueue(object):
                     plugin.socketio_list_refresh()
                     continue
 
-                headers = {'User-agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"', 'Referer: "https://kfani.mehttps://kfani.me"'}
+                headers = {
+                    'User-agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                    'Chrome/71.0.3554.0 Safari/537.36Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ('
+                    'KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"',
+                    'Referer: "https://kfani.me"'}
 
                 f = ffmpeg.Ffmpeg(entity.url[0],
                                   entity.info['filename'],
@@ -184,8 +188,8 @@ class LogicQueue(object):
                                   max_pf_count=max_pf_count,
                                   #   referer=referer,
                                   call_plugin=package_name,
-                                  headers=headers,
-                                  save_path=save_path)
+                                  save_path=save_path,
+                                  headers=headers)
                 f.start()
 
                 LogicQueue.current_ffmpeg_count += 1
