@@ -31,12 +31,14 @@ from .logic_queue import LogicQueue
 package_name = __name__.split('.')[0]
 logger = get_logger(package_name)
 
+
 class LogicLinkkfYommi(object):
     headers = {
         'User-Agent':
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 '
+            'Safari/537.36',
         'Accept':
-        'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
         'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
     }
 
@@ -149,7 +151,7 @@ class LogicLinkkfYommi(object):
                     json=payload,
                     headers={
                         'referer':
-                        'http://webtool.cusis.net/download-kakaotv-video/'
+                            'http://webtool.cusis.net/download-kakaotv-video/'
                     }).content
                 time.sleep(3)  # 서버 부하 방지를 위해 단시간에 너무 많은 URL전송을 하면 IP를 차단합니다.
                 url3 = json.loads(data2)
@@ -281,7 +283,7 @@ class LogicLinkkfYommi(object):
             #         ('kfani' in url) |
             #         ('linkkf' in url) |
             #         ('kftv' in url), url2s)
-            #url2 = random.choice(url2s)
+            # url2 = random.choice(url2s)
 
             logger.info('dx: url', url)
             logger.info('dx: urls2', url2s)
@@ -407,7 +409,7 @@ class LogicLinkkfYommi(object):
     def get_title_info(code):
         try:
             if LogicLinkkfYommi.current_data is not None and LogicLinkkfYommi.current_data[
-                    'code'] == code and LogicLinkkfYommi.current_data['ret']:
+                'code'] == code and LogicLinkkfYommi.current_data['ret']:
                 return LogicLinkkfYommi.current_data
             url = '%s/%s' % (ModelSetting.get('linkkf_url'), code)
             # logger.info(url)
@@ -445,8 +447,8 @@ class LogicLinkkfYommi(object):
                 )[0].attrib['data-lazy-src']
                 data['detail'] = [{
                     'info':
-                    tree.xpath('/html/body/div[2]/div/div[1]/div[1]')
-                    [0].text_content().strip()
+                        tree.xpath('/html/body/div[2]/div/div[1]/div[1]')
+                        [0].text_content().strip()
                 }]
             except:
                 data['detail'] = [{'정보없음': ''}]
@@ -509,7 +511,6 @@ class LogicLinkkfYommi(object):
 
             # srt 파일 처리
 
-
             return data
         except Exception as e:
             logger.error('Exception:%s', e)
@@ -535,8 +536,8 @@ class LogicLinkkfYommi(object):
                 else:
                     season = '%s' % season
 
-                #title_part = match.group('title').strip()
-                #ret = '%s.S%sE%s%s.720p-SA.mp4' % (maintitle, season, epi_no, date_str)
+                # title_part = match.group('title').strip()
+                # ret = '%s.S%sE%s%s.720p-SA.mp4' % (maintitle, season, epi_no, date_str)
                 ret = '%s.S%sE%s.720p-LK.mp4' % (maintitle, season, epi_no)
             else:
                 logger.debug('NOT MATCH')

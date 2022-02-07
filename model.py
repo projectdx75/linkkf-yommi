@@ -11,6 +11,7 @@ from datetime import datetime
 # sjva 공용
 from framework.logger import get_logger
 from framework import db, app, path_app_root
+
 # 패키지
 # from .plugin import package_name, logger
 
@@ -47,6 +48,7 @@ class ModelSetting(db.Model):
             logger.error('Exception:%s %s', e, key)
             logger.error(traceback.format_exc())
 
+
 class ModelLinkkfProgram(db.Model):
     __tablename__ = 'plugin_%s_program' % package_name
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
@@ -68,7 +70,7 @@ class ModelLinkkfProgram(db.Model):
         self.season = data['season']
 
     def __repr__(self):
-        #return "<Episode(id:%s, episode_code:%s, quality:%s)>" % (self.id, self.episode_code, self.quality)
+        # return "<Episode(id:%s, episode_code:%s, quality:%s)>" % (self.id, self.episode_code, self.quality)
         return repr(self.as_dict())
 
     def as_dict(self):
@@ -80,6 +82,7 @@ class ModelLinkkfProgram(db.Model):
         self.programcode = data['code']
         self.save_folder = data['save_folder']
         self.season = data['season']
+
 
 class ModelLinkkf(db.Model):
     __tablename__ = 'plugin_%s_auto_episode' % package_name
@@ -125,10 +128,10 @@ class ModelLinkkf(db.Model):
         self.retry = 0
         self.call = call
         self.set_info(info)
-        #logger.info(str(self))
+        # logger.info(str(self))
 
     def __repr__(self):
-        #return "<Episode(id:%s, episode_code:%s, quality:%s)>" % (self.id, self.episode_code, self.quality)
+        # return "<Episode(id:%s, episode_code:%s, quality:%s)>" % (self.id, self.episode_code, self.quality)
         return repr(self.as_dict())
 
     def as_dict(self):

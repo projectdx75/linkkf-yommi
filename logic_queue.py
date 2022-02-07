@@ -70,8 +70,6 @@ class LogicQueue(object):
     download_thread = None
     current_ffmpeg_count = 0
 
-    # default_route_socketio(P, self)
-
     def refresh_status(self):
         self.module_logic.socketio_callback('status', self.as_dict())
 
@@ -132,7 +130,8 @@ class LogicQueue(object):
 
                 logger.info('entity.info: %s', entity.info['url'])
                 logger.info('url1: %s', entity.url[0])
-                print(entity.url)
+                print(entity)
+                logger.info('entity: %s', entity)
 
                 logger.info('entity.url:::> %s', entity.url)
                 if entity.url[0] is None:
@@ -148,6 +147,8 @@ class LogicQueue(object):
                     program_path = os.path.join(save_path,
                                                 entity.info['save_folder'])
                     save_path = program_path
+                    # if ModelSetting.get_bool('linkkf_auto_make_season_folder'):
+                    #     save_path = os.path.join(save_path, 'Season %s' % int(season))
                 try:
                     if not os.path.exists(save_path):
                         os.makedirs(save_path)
@@ -195,9 +196,8 @@ class LogicQueue(object):
                 LogicQueue.current_ffmpeg_count += 1
                 LogicQueue.download_queue.task_done()
 
-                # srt file
+                # vtt file to srt file
                 from framework.common.util import write_file, convert_vtt_to_srt
-
                 from urllib import parse
 
                 ourls = parse.urlparse(entity.url[1])

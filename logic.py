@@ -26,13 +26,14 @@ from .logic_linkkfyommi import LogicLinkkfYommi
 package_name = __name__.split('.')[0]
 logger = get_logger(package_name)
 
+
 class Logic(object):
     db_default = {
-        "linkkf_url": "https://panogas.com/",
+        "linkkf_url": "https://linkkf.app",
         'download_path': os.path.join(path_data, 'linkkf-yommi'),
-        'linkkf_auto_make_folder' : 'True',
-        'linkkf_auto_make_season_folder' : 'True',        
-        'linkkf_finished_insert' : u'[완결]',
+        'linkkf_auto_make_folder': 'True',
+        'linkkf_auto_make_season_folder': 'True',
+        'linkkf_finished_insert': u'[완결]',
         'include_date': 'False',
         'date_option': '0',  # 0:YYMMDD, 1:YYYY-MM-DD
         'auto_make_folder': 'True',
