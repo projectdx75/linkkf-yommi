@@ -502,6 +502,7 @@ class LogicLinkkfYommi(object):
                 entity['image'] = data['poster_url']
                 # entity['title'] = t.text_content().strip().encode('utf8')
                 entity['title'] = t.text_content().strip()
+                entity['season'] = data['season']
                 entity['filename'] = LogicLinkkfYommi.get_filename(
                     data['save_folder'], data['season'], entity['title'])
                 idx = idx + 1
