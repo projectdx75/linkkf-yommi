@@ -80,12 +80,13 @@ class LogicLinkkfYommi(object):
 
                 temp_url = re.findall(regex2, data)[0]
                 video_url = ''
+                ref = 'https://kfani.me/'
                 for i in temp_url:
                     print(i)
                     if i is None:
                         continue
                     video_url = i
-                    video_url = '{1} -headers $\'Referer: {0};\''.format(url2, video_url)
+                    video_url = '{1} -headers $\'Referer: {0};\''.format(ref, video_url)
 
                 match = re.compile(r'<track.+src\=\"(?P<vtt_url>.*?.vtt)').search(data)
                 logger.info("match group: %s", match.group('vtt_url'))
