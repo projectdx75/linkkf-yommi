@@ -86,7 +86,7 @@ class LogicLinkkfYommi(object):
                     if i is None:
                         continue
                     video_url = i
-                    video_url = '{1} -headers "Referer: {0}" -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref, video_url)
+                    video_url = '{1} -headers \'Referer: "{0}"\' -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref, video_url)
 
                 match = re.compile(r'<track.+src\=\"(?P<vtt_url>.*?.vtt)').search(data)
                 logger.info("match group: %s", match.group('vtt_url'))
