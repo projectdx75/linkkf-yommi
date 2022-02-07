@@ -497,8 +497,10 @@ class LogicLinkkfYommi(object):
                 # entity['code'] = re1.search(t.attrib['href']).group('code')
                 entity['code'] = data['code'] + str(idx)
                 entity['url'] = t.attrib['href']
+                entity['season'] = data['season']
                 data['episode'].append(entity)
                 entity['image'] = data['poster_url']
+
                 # entity['title'] = t.text_content().strip().encode('utf8')
                 entity['title'] = t.text_content().strip()
                 # entity['season'] = data['season']
