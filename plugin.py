@@ -59,7 +59,7 @@ menu = {
 }
 
 plugin_info = {
-    'version': '0.1.4.1',
+    'version': '0.1.4.3',
     'name': 'linkkf-yommi',
     'category_name': 'vod',
     'icon': '',
@@ -125,6 +125,14 @@ def ajax(sub):
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
+    elif sub == 'scheduler':
+        go = request.form['scheduler']
+        logger.debug('scheduler :%s', go)
+        if go == 'true':
+            Logic.scheduler_start()
+        else:
+            Logic.scheduler_stop()
+        return jsonify(go)
     # 요청
     elif sub == 'analysis':
         try:
