@@ -59,8 +59,8 @@ menu = {
 }
 
 plugin_info = {
-    'version': '0.1.4.0',
-    'name': 'linkkf-yommi 다운로드',
+    'version': '0.1.4.1',
+    'name': 'linkkf-yommi',
     'category_name': 'vod',
     'icon': '',
     'developer': 'projectdx && persuade',
