@@ -7,10 +7,12 @@ import json
 from datetime import datetime
 
 # third-party
+from sqlalchemy import or_, and_, func, not_, desc
 
 # sjva 공용
 from framework.logger import get_logger
 from framework import db, app, path_app_root
+from framework.util import Util
 
 # 패키지
 # from .plugin import package_name, logger
@@ -102,9 +104,7 @@ class ModelLinkkf(db.Model):
     created_time = db.Column(db.DateTime)
 
     programcode = db.Column(db.String)
-
     episodecode = db.Column(db.String)
-
     filename = db.Column(db.String)
     duration = db.Column(db.Integer)
     start_time = db.Column(db.DateTime)
@@ -150,4 +150,45 @@ class ModelLinkkf(db.Model):
         self.contents_json = data
         self.programcode = data['program_code']
         self.episodecode = data['code']
+
+    @classmethod
+    def web_list(cls, req):
+        ret = {}
+        page = int(req.form['page']) if 'page' in req.form else 1
+        page_size = 30
+        job_id = ''
+        search = req.form['search_word'] if 'search_word' in req.form else ''
+        option = req.form['option'] if 'option' in req.form else 'all'
+        order = req.form['order'] if 'order' in req.form else 'desc'
+        query = cls.make_query(search=search, order=order, option=option)
+        count = query.count()
+        query = query.limit(page_size).offset((page-1)*page_size)
+        lists = query.all()
+        ret['list'] = [item.as_dict() for item in lists]
+        ret['paging'] = Util.get_paging_info(count, page, page_size)
+        return ret
+
+    @classmethod
+    def make_query(cls, search='', order='desc', option='all'):
+        query = db.session.query(cls)
+        if search is not None and search != '':
+            if search.find('|') != -1:
+                tmp = search.split('|')
+                conditions = []
+                for tt in tmp:
+                    if tt != '':
+                        conditions.append(cls.filename.like('%'+tt.strip()+'%') )
+                query = query.filter(or_(*conditions))
+            elif search.find(',') != -1:
+                tmp = search.split(',')
+                for tt in tmp:
+                    if tt != '':
+                        query = query.filter(cls.filename.like('%'+tt.strip()+'%'))
+            else:
+                query = query.filter(cls.filename.like('%'+search+'%'))
+        if option == 'completed':
+            query = query.filter(cls.status == 'completed')
+
+        query = query.order_by(desc(cls.id)) if order == 'desc' else query.order_by(cls.id)
+        return query
 #########################################################

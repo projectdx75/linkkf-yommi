@@ -24,6 +24,7 @@ from framework.logger import get_logger
 
 # 패키지
 # from .plugin import package_name, logger
+from anime_downloader.logic_ohli24 import ModelOhli24Item
 from .model import ModelSetting, ModelLinkkf, ModelLinkkfProgram
 from .logic_queue import LogicQueue
 
@@ -406,6 +407,35 @@ class LogicLinkkfYommi(object):
         return ret
 
     @staticmethod
+    def get_airing_info():
+        try:
+            url = f"{ModelSetting.get('linkkf_url')}/airing"
+            html_content = LogicLinkkfYommi.get_html(url)
+            tree = html.fromstring(html_content)
+            tmp_items = tree.xpath('//div[@class="item"]')
+            logger.info('tmp_items:::', tmp_items)
+
+            data = {'ret': 'success'}
+
+            data['episode_count'] = len(tmp_items)
+            data['episode'] = []
+
+
+            for item in tmp_items:
+                entity = {}
+                entity['link'] = item.xpath('.//a/@href')[0]
+                entity['code'] = re.search(r'[0-9]+', entity['link']).group()
+                entity['title'] = item.xpath('.//span[@class="name-film"]//text()')[0].strip()
+                logger.info('entity:::', entity['title'])
+                data['episode'].append(entity)
+
+            return data
+
+        except Exception as e:
+            logger.error('Exception:%s', e)
+            logger.error(traceback.format_exc())
+
+    @staticmethod
     def get_title_info(code):
         try:
             if LogicLinkkfYommi.current_data is not None and LogicLinkkfYommi.current_data['code'] == code and \
@@ -582,7 +612,7 @@ class LogicLinkkfYommi(object):
                 data = LogicLinkkfYommi.get_title_info(code)
                 for episode in data['episode']:
                     e_code = episode['code']
-                    if (e_code not in dl_codes):
+                    if e_code not in dl_codes:
                         logger.info('Logic Queue added :%s', e_code)
                         LogicQueue.add_queue(episode)
 
@@ -590,3 +620,9 @@ class LogicLinkkfYommi(object):
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
+
+    @staticmethod
+    def reset_db() -> bool:
+        db.session.query(ModelLinkkf).delete()
+        db.session.commit()
+        return True

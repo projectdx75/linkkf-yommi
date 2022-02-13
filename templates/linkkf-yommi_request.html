@@ -3,24 +3,63 @@
 
 <div>
   <form id='program_list'>
-  {{ macros.setting_input_text_and_buttons('code', '작품 Code', [['analysis_btn', '분석'], ['go_linkkf_btn', 'Go Linkkf']], desc='URL: https://linkkf.app/[코드]/ 형식에서 코드부분 숫자 (예> 22005 원피스)') }}
+  {{ macros.setting_input_text_and_buttons('code', '작품 Code', [['analysis_btn', '분석'], ['go_linkkf_btn', 'Go Linkkf'], ['go_modal_airing', '방영중']], desc='URL: https://linkkf.app/[코드]/ 형식에서 코드부분 숫자 (예> 22005 원피스)') }}
+{#  <botton id="go_modal_airing" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exModal">방영중</botton>#}
   </form>
+    <form id="airing_list_form">
+        <div id="airing_list"></div>
+    </form>
   <form id="program_auto_form">
   <div id='episode_list'></div>
-  <form>
+  </form>
 </div> <!--전체-->
 
 <script type="text/javascript">
-var package_name = 'linkkf-yommi';
-var linkkf_url = "{{arg['linkkf_url']}}";
-var current_data = " data "
+const package_name = 'linkkf-yommi';
+const linkkf_url = "{{arg['linkkf_url']}}";
+let current_data = " data "
+let current_airing_data = ''
+
+console.log('current_airing_data', current_airing_data);
+
+const get_airing_list = () => {
+    $.ajax({
+        url: '/' + package_name + '/ajax/airing_list',
+        type: "GET",
+        cache: false,
+        dataType: "json",
+        success: (ret) => {
+            current_airing_data = ret
+            console.log(ret)
+            if (current_airing_data !== '') {
+                make_airing_list(ret)
+            }
+        }
+    })
+
+}
+
+
 
 $(document).ready(function(){
   if ( "{{arg['current_code']}}" !== "None" ) {
     document.getElementById("code").value = "{{arg['current_code']}}";
     document.getElementById("analysis_btn").click();
+
+
   }
+
+  {#get_airing_list()#}
 });
+
+$(document).on("click", "button.code-button", function(e){
+    e.preventDefault();
+    console.log('click')
+    console.log('code to click:' + $(this).data("code"))
+    document.getElementById("code").value = $(this).data("code")
+    $('#code').val($(this).data("code"))
+    document.getElementById("analysis_btn").click();
+})
 
 $("body").on('click', '#analysis_btn', function(e){
   e.preventDefault();
@@ -49,7 +88,36 @@ $("body").on('click', '#go_linkkf_btn', function(e){
   window.open(linkkf_url, "_blank");
 });
 
+function make_airing_list(data) {
+    let str = ''
+    let tmp = ''
 
+    tmp = '<div id="exModal" class="form-inline" role="dialog" aria-hidden="true">';
+    tmp += '</div>'
+    str += m_hr_black();
+    {#str += m_row_start(0);#}
+    {##}
+    {#str += m_row_end();#}
+    {#str += m_hr_black();#}
+    str += '<div class="d-flex align-content-between flex-wrapd-flex align-content-between flex-wrap">';
+    for (i in data.episode) {
+        {#str += m_row_start();#}
+        {#tmp = '<div class="col-sm"><strong>' + data.episode[i].title+ '</strong>';#}
+
+        {#tmp += '<br />'#}
+        {#tmp += '' + data.episode[i].code + '</div>';#}
+        {#str += m_col(12, tmp)#}
+        tmp = '<div class="mx-1 mb-1"><button id="code_button" data-code="'+data.episode[i].code+'" type="button" class="btn btn-primary code-button" data-toggle="button" aria-pressed="true" autocomplete="off">'+ data.episode[i].code + '</button></div>';
+        {#if (i === 10) {#}
+        {#    tmp += '<div class="w-100"></div>'#}
+        {#}#}
+        str += tmp
+
+    }
+    str += '</div>';
+    str += m_hr_black();
+    document.getElementById("airing_list").innerHTML = str;
+}
 function make_program(data) {
   str = '';
   tmp = '<div class="form-inline">'
@@ -280,9 +348,36 @@ $("body").on('click', '#check_download_btn', function(e){
     }
   });
 
+
+
 });
+
+$('#go_modal_airing').on('shown.bs.modal', function () {
+    {#get_airing_list()#}
+  $('#exModal').trigger('focus')
+})
+
+$('#go_modal_airing').click(function(e) {
+    e.preventDefault();
+    console.log('open modal')
+    $('#exModal').bootstrapToggle()
+    if (current_airing_data === '') {
+        get_airing_list()
+    }
+
+})
+
+
+
+$('#go_modal_airing').attr('class', 'btn btn-primary')
+
+
+
 
 
 
 </script>
+    <style>
+        button.code-button { min-width: 82px!important;}
+    </style>
 {% endblock %}
