@@ -24,7 +24,7 @@ from framework.logger import get_logger
 
 # 패키지
 # from .plugin import package_name, logger
-from anime_downloader.logic_ohli24 import ModelOhli24Item
+# from anime_downloader.logic_ohli24 import ModelOhli24Item
 from .model import ModelSetting, ModelLinkkf, ModelLinkkfProgram
 from .logic_queue import LogicQueue
 
