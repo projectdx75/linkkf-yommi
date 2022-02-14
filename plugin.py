@@ -24,7 +24,7 @@ from system.logic import SystemLogic
 from .logic import Logic
 from .logic_linkkfyommi import LogicLinkkfYommi
 from .logic_queue import QueueEntity, LogicQueue
-from .model import ModelSetting
+from .model import ModelSetting, ModelLinkkf
 
 # blueprint = Blueprint(package_name,
 #                       package_name,
@@ -43,19 +43,26 @@ blueprint = Blueprint(package_name, package_name, url_prefix='/%s' % package_nam
                           os.path.dirname(__file__), 'templates'),
                       static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 
-# def plugin_load():
-#     Logic.plugin_load()
+
+def plugin_load():
+    Logic.plugin_load()
 
 
-# def plugin_unload():
-#     Logic.plugin_unload()
+def plugin_unload():
+    Logic.plugin_unload()
+
 
 # 메뉴 구성.
 menu = {
-    'main': [package_name, 'linkkf-yommi'],
-    'sub': [['setting', '설정'], ['request', '요청'], ['queue', '큐'],
+    'main': [package_name, u'linkkf-yommi'],
+    'sub': [['setting', '설정'], ['request', '요청'], ['queue', '큐'], ['list', u'목록'],
             ['log', '로그']],
     'category': 'vod',
+    # 'sub2': {
+    #     'linkkf-yommi': [
+    #             ['setting', u'설정'], ['request', u'요청'], ['queue', u'큐'], ['list', u'목록']
+    #         ],
+    # }
 }
 
 plugin_info = {
@@ -73,14 +80,14 @@ plugin_info = {
 #########################################################
 
 
-def plugin_load():
-    Logic.plugin_load()
-    #
-    # LogicQueue.queue_load()
-
-
-def plugin_unload():
-    Logic.plugin_unload()
+# def plugin_load():
+#     Logic.plugin_load()
+#     #
+#     # LogicQueue.queue_load()
+#
+#
+# def plugin_unload():
+#     Logic.plugin_unload()
 
 
 #########################################################
@@ -97,12 +104,15 @@ def detail(sub):
     if sub == 'setting':
         setting_list = db.session.query(ModelSetting).all()
         arg = Util.db_list_to_dict(setting_list)
+        arg['package_name'] = package_name
+        arg['sub'] = 'setting'
         arg['scheduler'] = str(scheduler.is_include(package_name))
         arg['is_running'] = str(scheduler.is_running(package_name))
         return render_template('%s_%s.html' % (package_name, sub), arg=arg)
     elif sub in ['request', 'queue', 'list']:
         setting_list = db.session.query(ModelSetting).all()
         arg = Util.db_list_to_dict(setting_list)
+        arg['package_name'] = package_name
         arg['current_code'] = LogicLinkkfYommi.current_data[
             'code'] if LogicLinkkfYommi.current_data is not None else None
         return render_template('%s_%s.html' % (package_name, sub), arg=arg)
@@ -156,6 +166,15 @@ def ajax(sub):
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
+    elif sub == 'airing_list':
+        try:
+            data = LogicLinkkfYommi.get_airing_info()
+            dummy_data = {"ret": "success", 'data': data}
+            return jsonify(data)
+        except Exception as e:
+            logger.error('Exception:%s', e)
+            logger.error(traceback.format_exc())
+
     elif sub == 'apply_new_title':
         try:
             new_title = request.form['new_title']
@@ -197,9 +216,10 @@ def ajax(sub):
             ret['log'] = str(e)
         return jsonify(ret)
     elif sub == 'add_queue_checked_list':
+        ret = {}
         try:
             from .logic_queue import LogicQueue
-            ret = {}
+
             code = request.form['code']
             code_list = code.split(',')
             count = 0
@@ -216,12 +236,31 @@ def ajax(sub):
             ret['ret'] = 'fail'
             ret['log'] = str(e)
         return jsonify(ret)
-
     # 큐
     elif sub == 'program_auto_command':
         try:
             from .logic_queue import LogicQueue
             ret = LogicQueue.program_auto_command(request)
+            return jsonify(ret)
+        except Exception as e:
+            logger.error('Exception:%s', e)
+            logger.error(traceback.format_exc())
+
+    elif sub == 'web_list':
+        try:
+            return jsonify(ModelLinkkf.web_list(request))
+        except Exception as e:
+            logger.error('Exception: %s', e)
+            logger.error(traceback.format_exc())
+    # reset_db
+    elif sub == 'reset_db':
+        ret = {}
+        res = False
+        try:
+            res = LogicLinkkfYommi.reset_db()
+            if res:
+                ret['ret'] = 'success'
+
             return jsonify(ret)
         except Exception as e:
             logger.error('Exception:%s', e)
