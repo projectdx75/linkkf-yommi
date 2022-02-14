@@ -556,7 +556,7 @@ class LogicLinkkfYommi(object):
     def get_filename(maintitle, season, title):
         try:
             match = re.compile(
-                r'(?P<title>.*?)\s?((?P<season>\d+)기)?\s?((?P<epi_no>\d+)화)'
+                r'(?P<title>.*?)\s?((?P<season>\d+)기)?\s?((?P<epi_no>\d+)화?)'
             ).search(title)
             if match:
                 epi_no = int(match.group('epi_no'))
