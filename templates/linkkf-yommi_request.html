@@ -21,6 +21,7 @@ const linkkf_url = "{{arg['linkkf_url']}}";
 let current_data = " data "
 let current_airing_data = ''
 let code = ''
+let div_visible = false
 
 console.log('current_airing_data', current_airing_data);
 
@@ -35,10 +36,22 @@ const get_airing_list = () => {
             console.log(ret)
             if (current_airing_data !== '') {
                 make_airing_list(ret)
+                div_visible = true
+                console.log(div_visible)
             }
         }
     })
+
+    if (div_visible) {
+        {#$('#airing_list').toggle()#}
+    }
+
+
 }
+
+
+
+console.log(div_visible)
 
 $(document).ready(function(){
   if ( "{{arg['current_code']}}" !== "None" ) {
@@ -55,7 +68,11 @@ $(document).ready(function(){
   {#$("#check_download_btn").removeClass('btn-outline-success')#}
   {#$("#check_download_btn").attr('class', 'btn-danger');#}
   code = document.getElementById("code").value
+    console.log(div_visible)
+
 });
+
+
 
 $(document).on("click", "button.code-button", function(e){
     e.preventDefault();
@@ -106,7 +123,7 @@ function make_airing_list(data) {
     {##}
     {#str += m_row_end();#}
     {#str += m_hr_black();#}
-    str += '<div class="d-flex align-content-between flex-wrapd-flex align-content-between flex-wrap">';
+    str += '<div id="inner_airing" class="d-flex align-content-between flex-wrapd-flex align-content-between flex-wrap">';
     for (i in data.episode) {
         {#str += m_row_start();#}
         {#tmp = '<div class="col-sm"><strong>' + data.episode[i].title+ '</strong>';#}
@@ -371,12 +388,11 @@ function make_airing_list(data) {
         if (current_airing_data === '') {
             get_airing_list()
         }
+        $('#inner_airing').toggle()
+        $('#airing_list').toggle()
     })
 
     $('#go_modal_airing').attr('class', 'btn btn-primary');
-
-
-
 
     {#$(function () {#}
     {#  $('[data-tooltip="true"]').tooltip()#}
@@ -487,6 +503,10 @@ function make_airing_list(data) {
 	top: 130%;
 	left: 0;
 	opacity: 1;
+}
+
+#airing_list {
+    display: none;
 }
 
     </style>
