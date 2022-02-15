@@ -69,8 +69,6 @@ class LogicLinkkfYommi(object):
         referer_url = None
         vtt_url = None
         LogicLinkkfYommi.referer = url
-        # logger.info("dx: url", url)
-        # logger.info("dx: urls2", url2)
 
         # logger.info("dx download url : %s , url2 : %s" % (url, url2))
         try:
@@ -78,7 +76,6 @@ class LogicLinkkfYommi(object):
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
 
                 data = LogicLinkkfYommi.get_html(url2)
-                # print(data)
                 # logger.info("dx: data", data)
                 regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
 
@@ -86,11 +83,12 @@ class LogicLinkkfYommi(object):
                 video_url = ''
                 ref = 'https://kfani.me'
                 for i in temp_url:
-                    # print(i)
                     if i is None:
                         continue
                     video_url = i
-                    # video_url = '{1} -headers \'Referer: "{0}"\' -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref, video_url)
+                    # video_url = '{1} -headers \'Referer: "{0}"\' -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64;
+                    # x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref,
+                    # video_url)
 
                 match = re.compile(r'<track.+src\=\"(?P<vtt_url>.*?.vtt)').search(data)
                 # logger.info("match group: %s", match.group('vtt_url'))
@@ -112,8 +110,8 @@ class LogicLinkkfYommi(object):
                 # print(data3dict)
                 video_url = data3dict[0]['file']
 
-            elif ('linkkf' in url2):
-                # linkkf 계열 처리 => URL 리스트를 받아오고, 하나 골라 방문해서 m3u8을 받아온다.
+            elif 'linkkf' in url2:
+                # linkkf 계열 처리 => URL 리스트를 받아오고, 하나 골라 방문 해서 m3u8을 받아온다.
                 referer_url = url
                 data2 = LogicLinkkfYommi.get_html(url2)
                 # print(data2)
@@ -132,7 +130,6 @@ class LogicLinkkfYommi(object):
                     print('url3 = ', url3)
                     LogicLinkkfYommi.referer = url2
                     data3 = LogicLinkkfYommi.get_html(url3)
-                    # print(data3)
                     # logger.info('data3: %s', data3)
                     # regex2 = r'"([^\"]*m3u8)"'
                     regex2 = r'"([^\"]*mp4|m3u8)"'
@@ -146,9 +143,9 @@ class LogicLinkkfYommi(object):
             elif 'kakao' in url2:
                 # kakao 계열 처리, 외부 API 이용
                 payload = {'inputUrl': url2}
-                kakaoUrl = 'http://webtool.cusis.net/wp-pages/download-kakaotv-video/video.php'
+                kakao_url = 'http://webtool.cusis.net/wp-pages/download-kakaotv-video/video.php'
                 data2 = requests.post(
-                    kakaoUrl,
+                    kakao_url,
                     json=payload,
                     headers={
                         'referer':
@@ -162,7 +159,6 @@ class LogicLinkkfYommi(object):
                 print('#v routine')
 
                 data2 = LogicLinkkfYommi.get_html(url2)
-                # print(data2)
 
                 regex = r"cat1 = [^\[]*([^\]]*)"
                 cat = re.findall(regex, data2)[0]
@@ -386,7 +382,7 @@ class LogicLinkkfYommi(object):
                 str(x.strip().replace(' ', ''))
                 for x in whitelist_program.replace('\n', ',').split(',')
             ]
-            if (code not in whitelist_programs):
+            if code not in whitelist_programs:
                 whitelist_programs.append(code)
                 whitelist_programs = filter(
                     lambda x: x != '', whitelist_programs)  # remove blank code
@@ -419,7 +415,6 @@ class LogicLinkkfYommi(object):
 
             data['episode_count'] = len(tmp_items)
             data['episode'] = []
-
 
             for item in tmp_items:
                 entity = {}
@@ -477,11 +472,9 @@ class LogicLinkkfYommi(object):
                     '//*[@id="body"]/div/div[1]/div[1]/center/img'
                 )[0].attrib['data-lazy-src']
                 data['detail'] = [{
-                    'info':
-                        tree.xpath('/html/body/div[2]/div/div[1]/div[1]')
-                        [0].text_content().strip()
+                    'info': tree.xpath('/html/body/div[2]/div/div[1]/div[1]')[0].text_content().strip()
                 }]
-            except:
+            except Exception as e:
                 data['detail'] = [{'정보없음': ''}]
                 data['poster_url'] = None
 

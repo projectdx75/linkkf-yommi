@@ -18,7 +18,7 @@
 <script type="text/javascript">
 const package_name = 'linkkf-yommi';
 const linkkf_url = "{{arg['linkkf_url']}}";
-let current_data = " data "
+let current_data = null
 let current_airing_data = ''
 let code = ''
 let div_visible = false
@@ -54,7 +54,8 @@ const get_airing_list = () => {
 console.log(div_visible)
 
 $(document).ready(function(){
-  if ( "{{arg['current_code']}}" !== "None" ) {
+    console.log ('current_code::', {{arg['current_code']}})
+  if ( "{{arg['current_code']}}" !== "" ) {
     document.getElementById("code").value = "{{arg['current_code']}}";
     document.getElementById("analysis_btn").click();
 
@@ -68,7 +69,8 @@ $(document).ready(function(){
   {#$("#check_download_btn").removeClass('btn-outline-success')#}
   {#$("#check_download_btn").attr('class', 'btn-danger');#}
   code = document.getElementById("code").value
-    console.log(div_visible)
+    {#console.log(div_visible)#}
+    console.log('code:::' ,code)
 
 });
 
@@ -80,6 +82,7 @@ $(document).on("click", "button.code-button", function(e){
     console.log('code to click:' + $(this).data("code"))
     document.getElementById("code").value = $(this).data("code")
     $('#code').val($(this).data("code"))
+    $('#airing_list').toggle()
     code = document.getElementById("code").value
     document.getElementById("analysis_btn").click();
 })
@@ -87,6 +90,11 @@ $('.code-button').tooltip()
 
 $("body").on('click', '#analysis_btn', function(e){
   e.preventDefault();
+  code = document.getElementById("code").value
+  if (document.getElementById("code").value === '') {
+      console.log('code 값을 입력해주세요.')
+      return
+  }
 
  
   $.ajax({
