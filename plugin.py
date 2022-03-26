@@ -66,7 +66,7 @@ menu = {
 }
 
 plugin_info = {
-    'version': '0.1.5.0',
+    'version': '0.1.5.1',
     'name': 'linkkf-yommi',
     'category_name': 'vod',
     'icon': '',
@@ -149,20 +149,7 @@ def ajax(sub):
             code = request.form['code']
             data = LogicLinkkfYommi.get_title_info(code)
 
-            # logger.info(type(data))
-            # logger.info(data)
-            # logger.info(data.decode('utf-8'))
-            # retData = json.dumps(data).encode("utf-8")
-            # json_string = json.dumps(data, ensure_ascii=False)
-            # creating a Response object to set the content type and the encoding
-            # retData = Response(
-            # json_string, content_type="application/json; charset=utf-8")
-            # return response
-
-            # return jsonify(ret)
-            # return retData
             return jsonify(data)
-            # return jsonify({'ret': 'success', 'data': retData})
         except Exception as e:
             logger.error('Exception:%s', e)
             logger.error(traceback.format_exc())
@@ -248,7 +235,13 @@ def ajax(sub):
 
     elif sub == 'web_list':
         try:
+            logger.info(request)
+            data = []
+            logger.info("db :::>", ModelLinkkf.web_list(request))
+            data = [{}]
+            dummy_data = {'ret': 'success', 'method': 'web_list', 'data': data}
             return jsonify(ModelLinkkf.web_list(request))
+            # return jsonify(dummy_data)
         except Exception as e:
             logger.error('Exception: %s', e)
             logger.error(traceback.format_exc())

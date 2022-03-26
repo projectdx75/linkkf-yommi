@@ -61,7 +61,9 @@ class QueueEntity:
 
     @staticmethod
     def get_entity_by_entity_id(entity_id):
+        # logger.debug('entity_list::> %s', QueueEntity.entity_list)
         for _ in QueueEntity.entity_list:
+            logger.debug('entity::>> %s', _.entity_id)
             if _.entity_id == entity_id:
                 return _
         return None
@@ -304,14 +306,18 @@ class LogicQueue(object):
             logger.debug('command :%s %s', command, entity_id)
             entity = QueueEntity.get_entity_by_entity_id(entity_id)
 
+            logger.debug('entity::> %s', entity)
+
+            # logger.info('logic_queue:: entity', entity)
+
             ret = {}
             if command == 'cancel':
-                if entity.ffmpeg_status == -1:
+                if entity.status == -1:
                     entity.cancel = True
-                    entity.ffmpeg_status_kor = "취소"
+                    entity.status_kor = "취소"
                     plugin.socketio_list_refresh()
                     ret['ret'] = 'refresh'
-                elif entity.ffmpeg_status != 5:
+                elif entity.status != 5:
                     ret['ret'] = 'notify'
                     ret['log'] = '다운로드 중인 상태가 아닙니다.'
                 else:

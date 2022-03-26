@@ -102,6 +102,7 @@ class ModelLinkkf(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     contents_json = db.Column(db.JSON)
     created_time = db.Column(db.DateTime)
+    completed_time = db.Column(db.DateTime)
 
     programcode = db.Column(db.String)
     episodecode = db.Column(db.String)
@@ -123,6 +124,9 @@ class ModelLinkkf(db.Model):
     filesize_str = db.Column(db.String)
     download_speed = db.Column(db.String)
     call = db.Column(db.String)
+    # download_video 참고
+    status = db.Column(db.String)
+    linkkf_info = db.Column(db.JSON)
 
     def __init__(self, call, info):
         self.created_time = datetime.now()
@@ -144,6 +148,9 @@ class ModelLinkkf(db.Model):
 
     def as_dict(self):
         ret = {x.name: getattr(self, x.name) for x in self.__table__.columns}
+        ret['created_time'] = self.created_time.strftime('%Y-%m-%d %H:%M:%S')
+        ret['completed_time'] = self.completed_time.strftime(
+            '%Y-%m-%d %H:%M:%S') if self.completed_time is not None else None
         return ret
 
     def set_info(self, data):
@@ -161,11 +168,14 @@ class ModelLinkkf(db.Model):
         option = req.form['option'] if 'option' in req.form else 'all'
         order = req.form['order'] if 'order' in req.form else 'desc'
         query = cls.make_query(search=search, order=order, option=option)
+        # logger.info(query)
         count = query.count()
         query = query.limit(page_size).offset((page-1)*page_size)
         lists = query.all()
+        # logger.info(lists)
         ret['list'] = [item.as_dict() for item in lists]
         ret['paging'] = Util.get_paging_info(count, page, page_size)
+        # logger.info(ret)
         return ret
 
     @classmethod

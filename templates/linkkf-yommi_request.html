@@ -18,7 +18,7 @@
 <script type="text/javascript">
 const package_name = 'linkkf-yommi';
 const linkkf_url = "{{arg['linkkf_url']}}";
-let current_data = null
+let current_data = ''
 let current_airing_data = ''
 let code = ''
 let div_visible = false
@@ -45,11 +45,7 @@ const get_airing_list = () => {
     if (div_visible) {
         {#$('#airing_list').toggle()#}
     }
-
-
 }
-
-
 
 console.log(div_visible)
 

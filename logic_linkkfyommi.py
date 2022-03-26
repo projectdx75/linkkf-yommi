@@ -407,9 +407,10 @@ class LogicLinkkfYommi(object):
         try:
             url = f"{ModelSetting.get('linkkf_url')}/airing"
             html_content = LogicLinkkfYommi.get_html(url)
+            download_path = ModelSetting.get('download_path')
             tree = html.fromstring(html_content)
             tmp_items = tree.xpath('//div[@class="item"]')
-            logger.info('tmp_items:::', tmp_items)
+            # logger.info('tmp_items:::', tmp_items)
 
             data = {'ret': 'success'}
 
@@ -421,8 +422,14 @@ class LogicLinkkfYommi(object):
                 entity['link'] = item.xpath('.//a/@href')[0]
                 entity['code'] = re.search(r'[0-9]+', entity['link']).group()
                 entity['title'] = item.xpath('.//span[@class="name-film"]//text()')[0].strip()
-                logger.info('entity:::', entity['title'])
+                # logger.info('entity:::', entity['title'])
                 data['episode'].append(entity)
+
+            json_file_path = os.path.join(download_path, 'airing_list.json')
+            logger.debug('json_file_path:: %s', json_file_path)
+
+            with open(json_file_path, 'w') as outfile:
+                json.dump(data, outfile)
 
             return data
 
@@ -449,7 +456,7 @@ class LogicLinkkfYommi(object):
             # tmp = tree.xpath('/html/body/div[2]/div/div/article/center/strong'
             #                  )[0].text_content().strip().encode('utf8')
             # tmp = tree.xpath('//*[@id="body"]/div/div[1]/article/center/strong')[0].text_content().strip()
-            logger.info('tmp::>', tree.xpath('//div[@class="hrecipe"]/article/center/strong'))
+            # logger.info('tmp::>', tree.xpath('//div[@class="hrecipe"]/article/center/strong'))
 
             tmp = tree.xpath('//div[@class="hrecipe"]/article/center/strong')[0].text_content().strip()
 
@@ -478,6 +485,13 @@ class LogicLinkkfYommi(object):
                 data['detail'] = [{'정보없음': ''}]
                 data['poster_url'] = None
 
+            data['rate'] = tree.xpath('span[@class="tag-score"]')
+            # tag_score = tree.xpath('//span[@class="taq-score"]').text_content().strip()
+            tag_score = tree.xpath('//span[@class="taq-score"]')[0].text_content()
+            logger.debug(tag_score)
+            tag_count = tree.xpath('//span[contains(@class, "taq-count")]')[0].text_content().strip()
+            data_rate = tree.xpath('//div[@class="rating"]/div/@data-rate')
+            logger.debug('data_rate::> %s', data_rate)
             # tmp = tree.xpath('//*[@id="relatedpost"]/ul/li')
             # tmp = tree.xpath('//article/a')
             # 수정된
@@ -485,7 +499,7 @@ class LogicLinkkfYommi(object):
 
             # logger.info(tmp)
             if tmp is not None:
-                data['episode_count'] = len(tmp)
+                data['episode_count'] = str(len(tmp))
             else:
                 data['episode_count'] = '0'
 
@@ -499,6 +513,7 @@ class LogicLinkkfYommi(object):
             re1 = re.compile(r'\-([^-])+\.')
 
             data['save_folder'] = data['title']
+            logger.debug(f"save_foler::> {data['save_folder']}")
 
             program = db.session.query(ModelLinkkfProgram) \
                 .filter_by(programcode=code) \
@@ -520,14 +535,33 @@ class LogicLinkkfYommi(object):
                 entity['save_folder'] = Util.change_text_for_use_filename(
                     data['save_folder'])
                 # entity['code'] = re1.search(t.attrib['href']).group('code')
-                entity['code'] = data['code'] + str(idx)
+
+                entity['title'] = t.text_content().strip()
+                logger.debug(f"title ::>{entity['title']}")
+
+                # 고유id임을 알수 없는 말도 안됨..
+                # 에피소드 코드가 고유해야 상태값 갱신이 제대로 된 값에 넣어짐
+                p = re.compile(r'([0-9]+)화?')
+                m_obj = p.match(entity['title'])
+                # logger.info(m_obj.group())
+                # entity['code'] = data['code'] + '_' +str(idx)
+
+                episode_code = None
+                # logger.debug(f"m_obj::> {m_obj}")
+                if m_obj is not None:
+                    episode_code = m_obj.group(1)
+                    entity['code'] = data['code'] + episode_code.zfill(4)
+                else:
+                    entity['code'] = data['code']
+
+                # logger.info('episode_code', episode_code)
                 entity['url'] = t.attrib['href']
                 entity['season'] = data['season']
                 data['episode'].append(entity)
                 entity['image'] = data['poster_url']
 
                 # entity['title'] = t.text_content().strip().encode('utf8')
-                entity['title'] = t.text_content().strip()
+
                 # entity['season'] = data['season']
                 entity['filename'] = LogicLinkkfYommi.get_filename(
                     data['save_folder'], data['season'], entity['title'])
@@ -568,7 +602,7 @@ class LogicLinkkfYommi(object):
                 ret = '%s.S%sE%s.720p-LK.mp4' % (maintitle, season, epi_no)
             else:
                 logger.debug('NOT MATCH')
-                ret = '%s.720p-SA.mp4' % title
+                ret = '%s.720p-SA.mp4' % maintitle
 
             return Util.change_text_for_use_filename(ret)
         except Exception as e:
@@ -598,7 +632,7 @@ class LogicLinkkfYommi(object):
             ]
 
             for code in whitelist_programs:
-                logger.info('auto download start : %s', code)
+                # logger.info('auto download start : %s', code)
                 downloaded = db.session.query(ModelLinkkf) \
                     .filter(ModelLinkkf.completed.is_(True)) \
                     .filter_by(programcode=code) \
