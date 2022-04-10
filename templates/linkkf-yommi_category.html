@@ -1,15 +1,7 @@
 {% extends "base.html" %} {% block content %}
 
 <div>
-  <!--  <div class="input-group">-->
-  <!--    <div class="form-outline">-->
-  <!--      <input type="search" id="form1" class="form-control" />-->
-  <!--      <label class="form-label" for="form1">Search</label>-->
-  <!--    </div>-->
-  <!--    <button type="button" class="btn btn-primary">-->
-  <!--      <i class="fas fa-search"></i>-->
-  <!--    </button>-->
-  <!--  </div>-->
+
   <div class="input-group mb-2">
     <input
       id="input_search"
@@ -53,12 +45,6 @@
 </div>
 <!--전체-->
 
-<!-- {#
-<script
-  type="text/javascript"
-  src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"
-></script>
-#} -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js" integrity="sha512-jNDtFf7qgU0eH/+Z42FG4fw3w7DM/9zbgNPe3wfJlCylVDTT3IgKW5r92Vy9IHa6U50vyMz5gRByIu4YIXFtaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
   const package_name = "linkkf-yommi";
@@ -71,22 +57,19 @@
   let page = 1;
   let next_page = Number;
   let current_cate = '';
-
+  let total_page = '';
 
   // console.log("current_airing_data", current_airing_data);
 
   $("#anime_category #ing").on("click", function () {
-    // {#console.log(this.id)#}
     let spinner = document.getElementById("spinner");
     spinner.style.visibility = "visible";
     get_anime_list(1, "ing");
   });
   $("#anime_category #movie").on("click", function () {
-    //   {#console.log(this.id)#}
     get_anime_screen_movie(1);
   });
   $("#anime_category #complete_anilist").on("click", function () {
-    //   {#console.log(this.id)#}
     get_complete_anilist(1);
   });
 
@@ -172,7 +155,9 @@
       dataType: "json",
       success: (ret) => {
         current_screen_movie_data = ret;
+        total_page = ret.total_page
         console.log("ret::>", ret);
+
 
         if (current_screen_movie_data !== "") {
           make_screen_movie_list(ret, page);
@@ -406,6 +391,11 @@
     console.log('cate::>', cate)
     console.log('current_cate::>', current_cate)
 
+    if (page > total_page ) {
+      console.log('전체 페이지 초과')
+      return false;
+    }
+
     fetch(url, {
       method: "POST",
       cache: "no-cache",
@@ -415,11 +405,11 @@
       body: new URLSearchParams(data),
     })
       .then((res) => {
-        console.log('res:::>', res)
+        // console.log('res:::>', res)
         return res.json()
       })
       .then((response) => {
-        console.log("Success:", JSON.stringify(response));
+        // console.log("Success:", JSON.stringify(response));
         console.log("return page:::> ", response.page);
         make_screen_movie_list(response, response.page);
         $("img.lazyload").lazyload({

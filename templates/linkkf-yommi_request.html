@@ -32,6 +32,7 @@
   let current_airing_data = ''
   let code = ''
   let div_visible = false
+  let total_page = ''
 
   const params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
@@ -47,6 +48,7 @@
           dataType: "json",
           success: (ret) => {
               current_airing_data = ret
+              total_page = ret.total_page
               console.log(ret)
               if (current_airing_data !== '') {
                   make_airing_list(ret)
