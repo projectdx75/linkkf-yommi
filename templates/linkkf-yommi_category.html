@@ -70,6 +70,7 @@
   let div_visible = false;
   let page = 1;
   let next_page = Number;
+  let current_cate = '';
 
 
   // console.log("current_airing_data", current_airing_data);
@@ -144,17 +145,20 @@
 
   const get_anime_list = (page, type) => {
     let url = "";
-    let data = { page: page };
+    let data = { page: page, "type": type };
 
     switch (type) {
       case "ing":
         url = "/" + package_name + "/ajax/anime_list";
+        current_cate = 'ing'
         break;
       case "movie":
         url = "/" + package_name + "/ajax/screen_movie_list";
+        current_cate = 'movie'
         break;
       case "complete":
         url = "/" + package_name + "/ajax/screen_movie_list";
+        current_cate = 'complete'
         break;
       default:
         break;
@@ -376,11 +380,29 @@
   const imagesContainer = document.getElementById("inner_screen_movie");
   const infiniteContainer = document.getElementById("screen_movie_list");
 
-  const loadNextAnimes = (page) => {
+  const loadNextAnimes = (cate, page) => {
     spinner.style.display = "block";
-    const data = { page: String(page) };
+    const data = { type: cate, page: String(page) };
+    let url = ''
 
-    fetch("/" + package_name + "/ajax/screen_movie_list", {
+    switch (cate) {
+      case "ing":
+        url = "/" + package_name + "/ajax/anime_list";
+        current_cate = 'ing'
+        break;
+      case "movie":
+        url = "/" + package_name + "/ajax/screen_movie_list";
+        current_cate = 'movie'
+        break;
+      case "complete":
+        url = "/" + package_name + "/ajax/screen_movie_list";
+        current_cate = 'complete'
+        break;
+      default:
+        break;
+    }
+
+    fetch(url, {
       method: "POST",
       cache: "no-cache",
       headers: {
@@ -411,9 +433,9 @@
     if (Math.round(scrollHeight - scrollTop) <= clientHeight) {
       document.getElementById("spinner").style.display = "block";
       console.log("loading");
-      console.log("now page::> ", page);
-      console.log("next_page::> ", next_page);
-      loadNextAnimes(next_page);
+      // console.log("now page::> ", page);
+      // console.log("next_page::> ", next_page);
+      loadNextAnimes(current_cate, next_page);
       $("img.lazyload").lazyload({
         threshold : 10,
         effect : "fadeIn",
