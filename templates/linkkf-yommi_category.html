@@ -342,6 +342,10 @@
     } else {
       document.getElementById("screen_movie_list").innerHTML = str;
     }
+    $("img.lazyload").lazyload({
+      threshold : 10,
+      effect : "fadeIn",
+    });
   }
 
   const spinner = document.getElementById("spinner");
