@@ -301,11 +301,15 @@
     let str = "";
     let tmp = "";
 
+    let page_elem = '';
+    if (page === undefined) {
+    } else {
+      page_elem = '<span class="badge bg-warning">' + page + '</span>';
+    }
+
     str += "<div>";
     str +=
-      '<button type="button" class="btn btn-info">Page <span class="badge bg-warning">' +
-      page +
-      "</span></button>";
+      '<button type="button" class="btn btn-info">Page '+page_elem+'</button>';
     str += "</div>";
     str += '<div id="inner_screen_movie" class="row infinite-scroll">';
     for (let i in data.episode) {
