@@ -192,7 +192,6 @@
             effect : "fadeIn",
           });
           div_visible = true;
-          // console.log(div_visible);
         }
         next_page = page + 1;
       },
@@ -218,7 +217,6 @@
             effect : "fadeIn",
           });
           div_visible = true;
-          // console.log(div_visible);
         }
         next_page = page + 1;
       },
@@ -278,19 +276,10 @@
       '<div id="exModal" class="form-inline" role="dialog" aria-hidden="true">';
     tmp += "</div>";
     str += m_hr_black();
-    //   {#str += m_row_start(0);#}
-    //   {##}
-    //   {#str += m_row_end();#}
-    //   {#str += m_hr_black();#}
     str +=
       '<div id="inner_airing" class="d-flex align-content-between flex-wrapd-flex align-content-between flex-wrap">';
     for (i in data.episode) {
-      // {#str += m_row_start();#}
-      // {#tmp = '<div class="col-sm"><strong>' + data.episode[i].title+ '</strong>';#}
 
-      // {#tmp += '<br />'#}
-      // {#tmp += '' + data.episode[i].code + '</div>';#}
-      // {#str += m_col(12, tmp)#}
       tmp =
         '<div class="mx-1 mb-1"><button id="code_button" data-code="' +
         data.episode[i].code +
@@ -300,8 +289,7 @@
         '">' +
         data.episode[i].code +
         "</span></button></div>";
-      //   {#if (i === 10) {#}
-      //   {#    tmp += '<div class="w-100"></div>'#}
+
       str += tmp;
     }
     str += "</div>";
@@ -324,10 +312,6 @@
     for (let i in data.episode) {
       tmp = '<div class="col-6 col-sm-4 col-md-3">';
       tmp += '<div class="card">';
-      // tmp +=
-      //   '<img class="card-img-top " src="' + data.episode[i].image_link + '" />';
-      // tmp +=
-      //   '<img class="card-img-top lazyload" src="//cdn.jsdelivr.net/npm/vditor/dist/images/img-loading.svg" data-original="' + data.episode[i].image_link + '" />';
       tmp +=
         '<img class="card-img-top lazyload" src="./static/img_loader_x200.svg" data-original="' + data.episode[i].image_link + '" />';
       tmp += '<div class="card-body">';
@@ -405,11 +389,9 @@
       body: new URLSearchParams(data),
     })
       .then((res) => {
-        // console.log('res:::>', res)
         return res.json()
       })
       .then((response) => {
-        // console.log("Success:", JSON.stringify(response));
         console.log("return page:::> ", response.page);
         make_screen_movie_list(response, response.page);
         $("img.lazyload").lazyload({
@@ -445,21 +427,6 @@
       timeoutId = setTimeout(func.bind(null, ...args), delay);
     };
   };
-
-  //   {#infiniteContainer.addEventListener('scroll', loadNextAnimes);#}
-
-  //   {#$(document).addEventListner("scroll", debounce(onScroll, 300));#}
-  //   {#window.addEventListener("scroll", () => {#}
-  //   {#  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;#}
-  //   {##}
-  //   {#  if (Math.round(scrollHeight - scrollTop) <= clientHeight) {#}
-  //   {#      document.getElementById('spinner').style.display = 'block'#}
-  //   {#      console.log('loading')#}
-  //   {#      console.log('now page::> ', page)#}
-  //   {#      console.log('next_page::> ', next_page)#}
-  //   {#      loadNextAnimes(next_page)#}
-  //   {#  }#}
-  //   {#});#}
 
   document.addEventListener("scroll", debounce(onScroll, 300));
 
@@ -739,25 +706,7 @@
     });
   });
 </script>
-<!--&lt;!&ndash; {#-->
-<!--<script src="https://unpkg.com/@popperjs/core@2"></script>-->
-<!--#} {#-->
-<!--<script src="https://unpkg.com/tippy.js@6"></script>-->
-<!--#} {#-->
-<!--<script>-->
-<!--  #}-->
-<!--  {#        tippy('.code-button',#}-->
-<!--  {#            { content: 'aaaa', // tooltip 내용#}-->
-<!--  {#                placement: 'top', // 상단 위치#}-->
-<!--  {#                trigger: 'hover', // :hover가 아닌 click시 노출#}-->
-<!--  {#                hideOnClick : 'toggle', // click시, toggle() 액션#}-->
-<!--  {#                animation: 'shift-away' // 아래에서 위로 올라오며 등장#}-->
-<!--  {#        })#}-->
-<!--  {##}-->
-<!--  {##}-->
-<!--  {#-->
-<!--</script> &ndash;&gt;-->
-<!--#}-->
+
 <style>
   button.code-button {
     min-width: 82px !important;
