@@ -422,7 +422,12 @@ class LogicLinkkfYommi(object):
 
             data = {"ret": "success"}
 
-            data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
+            # logger.debug(tree.xpath('//*[@id="wp_page"]//text()'))
+            if tree.xpath('//*[@id="wp_page"]//text()'):
+                data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
+            else:
+                data["total_page"] = 0
+
             data["episode_count"] = len(tmp_items)
             data["episode"] = []
 
@@ -466,7 +471,12 @@ class LogicLinkkfYommi(object):
 
             data = {"ret": "success", "query": query}
 
-            data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
+            # data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
+            if tree.xpath('//*[@id="wp_page"]//text()'):
+                data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
+            else:
+                data["total_page"] = 0
+
             data["episode_count"] = len(tmp_items)
             data["episode"] = []
 
