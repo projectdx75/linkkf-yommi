@@ -193,8 +193,9 @@ def ajax(sub):
         try:
             logger.debug(request.form)
             page = request.form["page"]
+            cate = request.form["type"]
             # data = LogicLinkkfYommi.get_screen_movie_info(page)
-            data = LogicLinkkfYommi.get_anime_list_info(page)
+            data = LogicLinkkfYommi.get_anime_list_info(cate, page)
             dummy_data = {"ret": "success", "data": data}
             return jsonify(data)
         except Exception as e:

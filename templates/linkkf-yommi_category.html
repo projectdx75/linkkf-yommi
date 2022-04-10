@@ -337,7 +337,7 @@
     str += "</div>";
     str += '<div id="inner_screen_movie" class="row infinite-scroll">';
     for (let i in data.episode) {
-      tmp = '<div class="col-sm-4">';
+      tmp = '<div class="col-6 col-sm-4 col-md-3">';
       tmp += '<div class="card">';
       // tmp +=
       //   '<img class="card-img-top " src="' + data.episode[i].image_link + '" />';
@@ -402,6 +402,10 @@
         break;
     }
 
+    console.log('fetch_url::>', url)
+    console.log('cate::>', cate)
+    console.log('current_cate::>', current_cate)
+
     fetch(url, {
       method: "POST",
       cache: "no-cache",
@@ -410,12 +414,13 @@
       },
       body: new URLSearchParams(data),
     })
-      .then((res) => res.json())
+      .then((res) => {
+        console.log('res:::>', res)
+        return res.json()
+      })
       .then((response) => {
         console.log("Success:", JSON.stringify(response));
-        // {#imagesContainer.appendChild()#}
         console.log("return page:::> ", response.page);
-        // {#page = response.page#}
         make_screen_movie_list(response, response.page);
         $("img.lazyload").lazyload({
           threshold : 10,

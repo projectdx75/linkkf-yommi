@@ -492,9 +492,10 @@ class LogicLinkkfYommi(object):
             logger.error(traceback.format_exc())
 
     @staticmethod
-    def get_anime_list_info(page):
+    def get_anime_list_info(cate, page):
         try:
             url = f"{ModelSetting.get('linkkf_url')}/airing/page/{page}"
+            logger.debug("url::>>", url)
 
             html_content = LogicLinkkfYommi.get_html(url)
             download_path = ModelSetting.get("download_path")
