@@ -156,13 +156,12 @@
       success: (ret) => {
         current_screen_movie_data = ret;
         total_page = ret.total_page
-        console.log("ret::>", ret);
-
+        // console.log("ret::>", ret);
 
         if (current_screen_movie_data !== "") {
           make_screen_movie_list(ret, page);
           div_visible = true;
-          console.log(div_visible);
+          // console.log(div_visible);
           $("img.lazyload").lazyload({
             threshold : 10,
             effect : "fadeIn",
