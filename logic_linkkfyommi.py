@@ -299,7 +299,7 @@ class LogicLinkkfYommi(object):
                     logger.error("Exception:%s", e)
                     logger.error(traceback.format_exc())
 
-            logger.info(video_url)
+            # logger.info(video_url)
 
             # return [video_url, referer_url]
             return video_url
@@ -507,7 +507,7 @@ class LogicLinkkfYommi(object):
     def get_anime_list_info(cate, page):
         try:
             url = f"{ModelSetting.get('linkkf_url')}/airing/page/{page}"
-            logger.debug("url::>>", url)
+            logger.debug(f"url::>> {url}")
 
             html_content = LogicLinkkfYommi.get_html(url)
             download_path = ModelSetting.get("download_path")
@@ -667,6 +667,7 @@ class LogicLinkkfYommi(object):
 
             # replace_str = f'({data["season"]}기)'
             # logger.info(replace_str)
+            data["_id"] = str(code)
             data["title"] = tmp.replace(data["season"] + "기", "").strip()
             data["title"] = data["title"].replace("()", "").strip()
             data["title"] = (
@@ -674,7 +675,7 @@ class LogicLinkkfYommi(object):
                 .replace("OVA", "")
                 .strip()
             )
-            logger.info("title:: ", data["title"])
+            logger.info(f"title:: {data['title']}")
             try:
                 # data['poster_url'] = tree.xpath(
                 #     '//*[@id="body"]/div/div/div[1]/center/img'
@@ -743,6 +744,7 @@ class LogicLinkkfYommi(object):
             idx = 1
             for t in tags:
                 entity = {
+                    "_id": data["code"],
                     "program_code": data["code"],
                     "program_title": data["title"],
                     "save_folder": Util.change_text_for_use_filename(
@@ -800,8 +802,8 @@ class LogicLinkkfYommi(object):
     def get_filename(maintitle, season, title):
         try:
             logger.debug("get_filename()===")
-            logger.info("title:: %s", title)
-            logger.info("maintitle:: %s", maintitle)
+            # logger.info("title:: %s", title)
+            # logger.info("maintitle:: %s", maintitle)
             match = re.compile(
                 r"(?P<title>.*?)\s?((?P<season>\d+)기)?\s?((?P<epi_no>\d+)화?)"
             ).search(title)
@@ -831,6 +833,8 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def get_info_by_code(code):
+        logger.error("get_info_by_code: %s", code)
+
         try:
             if LogicLinkkfYommi.current_data is not None:
                 for t in LogicLinkkfYommi.current_data["episode"]:
@@ -861,13 +865,17 @@ class LogicLinkkfYommi(object):
                     .all()
                 )
                 dl_codes = [dl.episodecode for dl in downloaded]
+                # logger.debug('dl_codes:: ', dl_codes)
                 logger.info("downloaded codes :%s", dl_codes)
-                data = LogicLinkkfYommi.get_title_info(code)
-                for episode in data["episode"]:
-                    e_code = episode["code"]
-                    if e_code not in dl_codes:
-                        logger.info("Logic Queue added :%s", e_code)
-                        LogicQueue.add_queue(episode)
+
+                if len(dl_codes) > 0:
+                    data = LogicLinkkfYommi.get_title_info(code)
+
+                    for episode in data["episode"]:
+                        e_code = episode["code"]
+                        if e_code not in dl_codes:
+                            logger.info("Logic Queue added :%s", e_code)
+                            LogicQueue.add_queue(episode)
 
             logger.debug("========================================")
         except Exception as e:

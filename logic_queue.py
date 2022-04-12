@@ -50,6 +50,7 @@ class QueueEntity:
         self.ffmpeg_arg = None
         self.cancel = False
         self.created_time = datetime.now().strftime("%m-%d %H:%M:%S")
+        self.status = None
         QueueEntity.static_index += 1
         QueueEntity.entity_list.append(self)
 
@@ -95,19 +96,19 @@ class LogicQueue(object):
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
 
-    @staticmethod
-    def download_thread_function():
-        while True:
-            try:
-                entity = LogicQueue.download_queue.get()
-                logger.debug(
-                    "Queue receive item:%s %s", entity.title_id, entity.episode_id
-                )
-                # LogicAni.process(entity)
-                LogicQueue.download_queue.task_done()
-            except Exception as e:
-                logger.error("Exception:%s", e)
-                logger.error(traceback.format_exc())
+    # @staticmethod
+    # def download_thread_function():
+    #     while True:
+    #         try:
+    #             entity = LogicQueue.download_queue.get()
+    #             logger.debug(
+    #                 "Queue receive item:%s %s", entity.title_id, entity.episode_id
+    #             )
+    #             # LogicAni.process(entity)
+    #             LogicQueue.download_queue.task_done()
+    #         except Exception as e:
+    #             logger.error("Exception:%s", e)
+    #             logger.error(traceback.format_exc())
 
     @staticmethod
     def download_thread_function():
@@ -128,9 +129,19 @@ class LogicQueue(object):
                 if entity.cancel:
                     continue
 
-                episode = ModelLinkkf("auto", info=entity.info)
-                db.session.add(episode)
-                db.session.commit()
+                # db에 해당 에피소드가 존재하는 확인
+                logger.debug(
+                    "download_thread_function()::entity.info >> %s", entity.info
+                )
+                db_entity = ModelLinkkf.get_by_linkkf_id(entity.info["code"])
+                if db_entity is None:
+                    episode = ModelLinkkf("auto", info=entity.info)
+                    db.session.add(episode)
+                    db.session.commit()
+                else:
+                    # episode = ModelLinkkf("auto", info=entity.info)
+                    # query = db.session.query(ModelLinkkf).filter_by(episodecode=entity.info.episodecode).with_for_update().first()
+                    pass
 
                 from .logic_linkkfyommi import LogicLinkkfYommi
 
@@ -236,6 +247,7 @@ class LogicQueue(object):
     @staticmethod
     def ffmpeg_listener(**arg):
         # logger.debug(arg)
+        # logger.debug(arg["plugin_id"])
         import ffmpeg
 
         refresh_type = None
@@ -277,9 +289,11 @@ class LogicQueue(object):
                 episode.completed = True
                 episode.end_time = datetime.now()
                 episode.download_time = (episode.end_time - episode.start_time).seconds
+                episode.completed_time = episode.end_time
                 episode.filesize = arg["data"]["filesize"]
                 episode.filesize_str = arg["data"]["filesize_str"]
                 episode.download_speed = arg["data"]["download_speed"]
+                episode.status = "completed"
                 logger.debug("Status.COMPLETED received..")
             elif arg["status"] == ffmpeg.Status.TIME_OVER:
                 episode.etc_abort = 2
@@ -311,13 +325,47 @@ class LogicQueue(object):
         arg["status"] = str(arg["status"])
         plugin.socketio_callback("status", arg)
 
+    # @staticmethod
+    # def add_queue(info):
+    #     try:
+    #         entity = QueueEntity.create(info)
+    #         if entity is not None:
+    #             LogicQueue.download_queue.put(entity)
+    #             return True
+    #     except Exception as e:
+    #         logger.error("Exception:%s", e)
+    #         logger.error(traceback.format_exc())
+    #     return False
     @staticmethod
     def add_queue(info):
         try:
-            entity = QueueEntity.create(info)
-            if entity is not None:
+
+            # Todo:
+            # if is_exist(info):
+            #     return 'queue_exist'
+            logger.debug("add_queue()::info >>", info)
+            # logger.debug("info::", info["_id"])
+
+            # episode[] code (episode_code)
+            db_entity = ModelLinkkf.get_by_linkkf_id(info["code"])
+            logger.debug("add_queue:: db_entity >> ", db_entity)
+
+            if db_entity is None:
+                entity = QueueEntity.create(info)
+
+                logger.debug("add_queue()::entity >> ", entity)
                 LogicQueue.download_queue.put(entity)
-                return True
+                return "enqueue_db_append"
+            elif db_entity.status != "completed":
+                entity = QueueEntity.create(info)
+                # return "Debugging"
+                LogicQueue.download_queue.put(entity)
+
+                logger.debug("add_queue()::enqueue_db_exist")
+                return "enqueue_db_exist"
+            else:
+                return "db_completed"
+
         except Exception as e:
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())

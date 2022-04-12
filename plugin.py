@@ -172,10 +172,13 @@ def ajax(sub):
     # 요청
     elif sub == "analysis":
         try:
+
             code = request.form["code"]
             data = LogicLinkkfYommi.get_title_info(code)
+            # current_data = data
 
-            return jsonify(data)
+            # return jsonify(data)
+            return jsonify({"ret": "success", "data": data})
         except Exception as e:
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
@@ -191,7 +194,7 @@ def ajax(sub):
             logger.error(traceback.format_exc())
     elif sub == "anime_list":
         try:
-            logger.debug(request.form)
+            # logger.debug(request.form)
             page = request.form["page"]
             cate = request.form["type"]
             # data = LogicLinkkfYommi.get_screen_movie_info(page)
@@ -256,13 +259,29 @@ def ajax(sub):
     elif sub == "add_queue":
         try:
             ret = {}
+            # info = json.loads(request.form["data"])
+            # logger.info("test::", info)
+            # logger.info("_id", info["_id"])
+            # return False
+
             code = request.form["code"]
+            # 해당 code로 db조회후 info 변수에 담는다
             info = LogicLinkkfYommi.get_info_by_code(code)
+            # info = LogicLinkkfYommi.get_info_by_code(info)
+            # logger.debug(info)
+            # return False
+
+            logger.debug(f"info::> {info}")
+
+            # ret["ret"] = "debugging"
+
             if info is not None:
                 from .logic_queue import LogicQueue
 
                 tmp = LogicQueue.add_queue(info)
-                ret["ret"] = "success" if tmp else "fail"
+                logger.debug("add_queue : tmp >> %s", tmp)
+                # ret["ret"] = "success" if tmp else "fail"
+                ret["ret"] = tmp
             else:
                 ret["ret"] = "no_data"
         except Exception as e:
@@ -315,6 +334,8 @@ def ajax(sub):
         except Exception as e:
             logger.error("Exception: %s", e)
             logger.error(traceback.format_exc())
+    elif sub == "db_remove":
+        return jsonify(ModelLinkkf.delete_by_id(request.form["id"]))
     # reset_db
     elif sub == "reset_db":
         ret = {}
