@@ -42,16 +42,22 @@ const package_name = "{{arg['package_name']}}";
 const sub = ""
 let current_data = null;
 
-const get_list = () => {
+const get_list = (page, move_top=true) => {
+    let formData = get_formdata('#form_search')
+    // console.log(formData)
+    formData += '&page=' + page;
     $.ajax({
         url: '/' + package_name + '/ajax/web_list',
         type: "POST",
         cache: false,
+        data: formData,
         dataType: 'json',
         success: (data) => {
           current_data = data;
           if (data) {
-              make_list(data.list)
+            if (move_top)
+              window.scrollTo(0,0);
+            make_list(data.list)
               // {#console.log(data)#}
               // {#console.log(ret.data)#}
           } else {
@@ -108,7 +114,7 @@ $("body").on('click', '#remove_btn', function(e) {
 
 $(document).ready(function(){
   // {#global_sub_request_search('1');#}
-    get_list()
+    get_list(1)
 });
 
 $("body").on('click', '#page', function(e){
@@ -124,6 +130,13 @@ $("body").on('click', '#json_btn', function(e){
       m_modal(current_data.list[i])
     }
   }
+});
+
+$("body").on('click', '#self_search_btn', function(e){
+  e.preventDefault();
+  let search_word = $(this).data('title');
+  document.getElementById("search_word").value = search_word;
+  sub_request_search('1')
 });
 
 $("body").on('click', '#request_btn', function(e){
@@ -152,7 +165,7 @@ function make_list(data) {
       tmp = data[i].contents_json.save_folder + '<br />' + data[i].contents_json.filename + '<br /><br />';
       tmp2 = m_button('json_btn', 'JSON', [{'key': 'id', 'value': data[i].id}]);
       tmp2 += m_button('request_btn', '작품 검색', [{'key': 'content_code', 'value': data[i].contents_json.program_code}]);
-      tmp2 += m_button('self_search_btn', '목록 검색', [{'key': 'title', 'value': data[i].title}]);
+      tmp2 += m_button('self_search_btn', '목록 검색', [{'key': 'title', 'value': data[i].contents_json.program_title}]);
       tmp2 += m_button('remove_btn', '삭제', [{'key': 'id', 'value': data[i].id}]);
       tmp += m_button_group(tmp2)
       str += m_col(7, tmp)

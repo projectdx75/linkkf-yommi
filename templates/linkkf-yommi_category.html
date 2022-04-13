@@ -162,10 +162,10 @@
           make_screen_movie_list(ret, page);
           div_visible = true;
           // console.log(div_visible);
-          $("img.lazyload").lazyload({
-            threshold : 10,
-            effect : "fadeIn",
-          });
+          // $("img.lazyload").lazyload({
+          //   threshold : 400,
+          //   effect : "fadeIn",
+          // });
         }
         next_page = page + 1;
       },
@@ -295,6 +295,10 @@
     str += m_hr_black();
 
     document.getElementById("airing_list").innerHTML = str;
+    $("img.lazyload").lazyload({
+      threshold : 200,
+      effect : "fadeIn",
+    });
   }
 
   function make_screen_movie_list(data, page) {
@@ -707,10 +711,10 @@
       }
     });
     get_anime_list(1, "ing");
-    $("img.lazyload").lazyload({
-      threshold : 10,
-      effect : "fadeIn",
-    });
+    // $("img.lazyload").lazyload({
+    //   threshold : 200,
+    //   effect : "fadeIn",
+    // });
   });
 </script>
 
