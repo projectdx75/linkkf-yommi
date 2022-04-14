@@ -126,8 +126,10 @@ class LogicQueue(object):
                     # logger.debug(LogicQueue.current_ffmpeg_count)
                     time.sleep(5)
                 entity = LogicQueue.download_queue.get()
-                if entity.cancel:
-                    continue
+
+                # Todo: 고찰
+                # if entity.cancel:
+                #     continue
 
                 # db에 해당 에피소드가 존재하는 확인
                 # logger.debug(
