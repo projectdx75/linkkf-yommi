@@ -188,15 +188,15 @@
           current_data = data;
           console.log('current_data:: ', data)
           str = '';
-          tmp = '<div class="form-inline">'
+          tmp = '<div class="form-inline w-100">'
           tmp += m_button('check_download_btn', '선택 다운로드 추가', []);
           tmp += m_button('all_check_on_btn', '전체 선택', []);
           tmp += m_button('all_check_off_btn', '전체 해제', []);
-          tmp += '&nbsp;&nbsp;&nbsp;&nbsp;<input id="new_title" name="new_title" class="form-control form-control-sm" value="' + data.title + '">'
+          tmp += '&nbsp;&nbsp;&nbsp;<input id="new_title" name="new_title" class="form-control form-control-sm" value="' + data.title + '">'
           tmp += '</div>'
           tmp += '<div class="form-inline">'
           tmp += m_button('apply_new_title_btn', '저장폴더명 변경', []);
-          tmp += '&nbsp;&nbsp;&nbsp;&nbsp;<input id="new_season" name="new_season" class="form-control form-control-sm" value="' + data.season + '">'
+          tmp += '&nbsp;&nbsp;&nbsp;<input id="new_season" name="new_season" class="form-control form-control-sm" value="' + data.season + '">'
           tmp += m_button('apply_new_season_btn', '시즌 변경 (숫자만 가능)', []);
           tmp += m_button('search_tvdb_btn', 'TVDB', []);
           tmp += m_button('add_whitelist', '스케쥴링 추가', []);
@@ -579,6 +579,19 @@
   @media (min-width: 992px) {
     .container {
       max-width: 96%;
+    }
+  }
+  @media (min-width: 768px) {
+    .container {
+      max-width: 94%;
+    }
+  }
+  @media (min-width: 576px) {
+    .container {
+      max-width: 96%;
+    }
+    .form-inline .form-control {
+      width: 98%
     }
   }
 </style>
