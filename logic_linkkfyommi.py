@@ -807,6 +807,13 @@ class LogicLinkkfYommi(object):
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
             data["log"] = str(e)
+            data["ret"] = "error"
+            return data
+        except IndexError as e:
+            logger.error("Exception:%s", e)
+            logger.error(traceback.format_exc())
+            data["log"] = str(e)
+            data["ret"] = "error"
             return data
 
     @staticmethod

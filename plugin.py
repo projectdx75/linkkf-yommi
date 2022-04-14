@@ -175,13 +175,21 @@ def ajax(sub):
 
             code = request.form["code"]
             data = LogicLinkkfYommi.get_title_info(code)
+            # logger.debug("data::> %s", data)
             # current_data = data
 
             # return jsonify(data)
-            return jsonify({"ret": "success", "data": data})
+            if data["ret"] == "error":
+                return jsonify(data)
+            else:
+                return jsonify({"ret": "success", "data": data})
         except Exception as e:
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
+            # except IndexError as e:
+            #     logger.error("Exception:%s", e)
+            #     logger.error(traceback.format_exc())
+            return jsonify({"ret": "error", "log": e})
     elif sub == "search":
         try:
             query = request.form["query"]
@@ -207,7 +215,8 @@ def ajax(sub):
     elif sub == "airing_list":
         try:
             data = LogicLinkkfYommi.get_airing_info()
-            dummy_data = {"ret": "success", "data": data}
+            # dummy_data = {"ret": "success", "data": data}
+            logger.debug(f"airing_list:: {data}")
             return jsonify(data)
         except Exception as e:
             logger.error("Exception:%s", e)
