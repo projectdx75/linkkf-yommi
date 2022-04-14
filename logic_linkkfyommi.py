@@ -774,6 +774,17 @@ class LogicLinkkfYommi(object):
                 # logger.info('episode_code', episode_code)
                 entity["url"] = t.attrib["href"]
                 entity["season"] = data["season"]
+
+                # 저장경로 저장
+                tmp_save_path = ModelSetting.get("download_path")
+                if ModelSetting.get("auto_make_folder") == "True":
+                    program_path = os.path.join(tmp_save_path, entity["save_folder"])
+                    entity["save_path"] = program_path
+                    if ModelSetting.get("linkkf_auto_make_season_folder"):
+                        entity["save_path"] = os.path.join(
+                            entity["save_path"], "Season %s" % int(entity["season"])
+                        )
+
                 data["episode"].append(entity)
                 entity["image"] = data["poster_url"]
 

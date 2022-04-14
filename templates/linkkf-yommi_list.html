@@ -162,7 +162,7 @@ function make_list(data) {
       if (data[i].completed_time != null)
         tmp += data[i].completed_time + '(완료)';
       str += m_col(3, tmp)
-      tmp = data[i].contents_json.save_folder + '<br />' + data[i].contents_json.filename + '<br /><br />';
+      tmp = data[i].contents_json.save_path + '<br />' + data[i].contents_json.filename + '<br /><br />';
       tmp2 = m_button('json_btn', 'JSON', [{'key': 'id', 'value': data[i].id}]);
       tmp2 += m_button('request_btn', '작품 검색', [{'key': 'content_code', 'value': data[i].contents_json.program_code}]);
       tmp2 += m_button('self_search_btn', '목록 검색', [{'key': 'title', 'value': data[i].contents_json.program_title}]);
