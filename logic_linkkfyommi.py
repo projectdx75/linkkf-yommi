@@ -658,7 +658,7 @@ class LogicLinkkfYommi(object):
             )
 
             # print(tmp)
-            logger.info(tmp)
+            # logger.info(tmp)
             match = re.compile(r"(?P<season>\d+)기").search(tmp)
             if match:
                 data["season"] = match.group("season")
@@ -675,7 +675,7 @@ class LogicLinkkfYommi(object):
                 .replace("OVA", "")
                 .strip()
             )
-            logger.info(f"title:: {data['title']}")
+            # logger.info(f"title:: {data['title']}")
             try:
                 # data['poster_url'] = tree.xpath(
                 #     '//*[@id="body"]/div/div/div[1]/center/img'
@@ -884,7 +884,7 @@ class LogicLinkkfYommi(object):
                     .with_for_update()
                     .all()
                 )
-                logger.debug(f"downloaded:: {downloaded}")
+                # logger.debug(f"downloaded:: {downloaded}")
                 dl_codes = [dl.episodecode for dl in downloaded]
                 # logger.debug('dl_codes:: ', dl_codes)
                 logger.info("downloaded codes :%s", dl_codes)
