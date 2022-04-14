@@ -131,10 +131,14 @@ class LogicQueue(object):
                 # if entity.cancel:
                 #     continue
 
-                # db에 해당 에피소드가 존재하는 확인
                 # logger.debug(
-                #     "download_thread_function()::entity.info >> %s", entity.info
+                #     "download_thread_function()::entity.info['code'] >> %s", entity
                 # )
+
+                if entity is None:
+                    continue
+
+                # db에 해당 에피소드가 존재하는 확인
                 db_entity = ModelLinkkf.get_by_linkkf_id(entity.info["code"])
                 if db_entity is None:
                     episode = ModelLinkkf("auto", info=entity.info)

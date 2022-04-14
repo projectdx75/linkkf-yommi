@@ -53,7 +53,7 @@ function on_status(data) {
   let tmp = document.getElementById("progress_"+data.plugin_id)
   if (tmp != null) {
     document.getElementById("progress_"+data.plugin_id).style.width = data.data.percent+ '%';
-    document.getElementById("progress_"+data.plugin_id+"_label").innerHTML = data.status + "(" + data.data.percent + "%)" + ' ' + ((data.data != null)?data.data.current_speed:'');
+    document.getElementById("progress_"+data.plugin_id+"_label").innerHTML = data.status + "(" + data.data.percent + "%)" + '  x' + ((data.data != null)?data.data.current_speed:'');
   }
 }
 

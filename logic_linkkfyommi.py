@@ -727,7 +727,7 @@ class LogicLinkkfYommi(object):
             re1 = re.compile(r"\-([^-])+\.")
 
             data["save_folder"] = data["title"]
-            logger.debug(f"save_folder::> {data['save_folder']}")
+            # logger.debug(f"save_folder::> {data['save_folder']}")
 
             program = (
                 db.session.query(ModelLinkkfProgram).filter_by(programcode=code).first()
@@ -754,7 +754,7 @@ class LogicLinkkfYommi(object):
                 }
                 # entity['code'] = re1.search(t.attrib['href']).group('code')
 
-                logger.debug(f"title ::>{entity['title']}")
+                # logger.debug(f"title ::>{entity['title']}")
 
                 # 고유id임을 알수 없는 말도 안됨..
                 # 에피소드 코드가 고유해야 상태값 갱신이 제대로 된 값에 넣어짐
@@ -791,7 +791,7 @@ class LogicLinkkfYommi(object):
                 # entity['title'] = t.text_content().strip().encode('utf8')
 
                 # entity['season'] = data['season']
-                logger.debug(f"save_folder::2> {data['save_folder']}")
+                # logger.debug(f"save_folder::2> {data['save_folder']}")
                 entity["filename"] = LogicLinkkfYommi.get_filename(
                     data["save_folder"], data["season"], entity["title"]
                 )
@@ -819,7 +819,7 @@ class LogicLinkkfYommi(object):
     @staticmethod
     def get_filename(maintitle, season, title):
         try:
-            logger.debug("get_filename()===")
+            # logger.debug("get_filename()===")
             # logger.info("title:: %s", title)
             # logger.info("maintitle:: %s", maintitle)
             match = re.compile(
