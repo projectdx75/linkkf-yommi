@@ -873,8 +873,10 @@ class LogicLinkkfYommi(object):
                 for x in whitelist_program.replace("\n", ",").split(",")
             ]
 
+            logger.debug(f"whitelist_programs: {whitelist_programs}")
+
             for code in whitelist_programs:
-                # logger.info('auto download start : %s', code)
+                logger.info("auto download start : %s", code)
                 downloaded = (
                     db.session.query(ModelLinkkf)
                     .filter(ModelLinkkf.completed.is_(True))
@@ -882,18 +884,19 @@ class LogicLinkkfYommi(object):
                     .with_for_update()
                     .all()
                 )
+                logger.debug(f"downloaded:: {downloaded}")
                 dl_codes = [dl.episodecode for dl in downloaded]
                 # logger.debug('dl_codes:: ', dl_codes)
                 logger.info("downloaded codes :%s", dl_codes)
 
-                if len(dl_codes) > 0:
-                    data = LogicLinkkfYommi.get_title_info(code)
+                # if len(dl_codes) > 0:
+                data = LogicLinkkfYommi.get_title_info(code)
 
-                    for episode in data["episode"]:
-                        e_code = episode["code"]
-                        if e_code not in dl_codes:
-                            logger.info("Logic Queue added :%s", e_code)
-                            LogicQueue.add_queue(episode)
+                for episode in data["episode"]:
+                    e_code = episode["code"]
+                    if e_code not in dl_codes:
+                        logger.info("Logic Queue added :%s", e_code)
+                        LogicQueue.add_queue(episode)
 
             logger.debug("========================================")
         except Exception as e:

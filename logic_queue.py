@@ -130,9 +130,9 @@ class LogicQueue(object):
                     continue
 
                 # db에 해당 에피소드가 존재하는 확인
-                logger.debug(
-                    "download_thread_function()::entity.info >> %s", entity.info
-                )
+                # logger.debug(
+                #     "download_thread_function()::entity.info >> %s", entity.info
+                # )
                 db_entity = ModelLinkkf.get_by_linkkf_id(entity.info["code"])
                 if db_entity is None:
                     episode = ModelLinkkf("auto", info=entity.info)
@@ -343,17 +343,17 @@ class LogicQueue(object):
             # Todo:
             # if is_exist(info):
             #     return 'queue_exist'
-            logger.debug("add_queue()::info >>", info)
+            # logger.debug("add_queue()::info >> %s", info)
             # logger.debug("info::", info["_id"])
 
             # episode[] code (episode_code)
             db_entity = ModelLinkkf.get_by_linkkf_id(info["code"])
-            logger.debug("add_queue:: db_entity >> ", db_entity)
+            logger.debug("add_queue:: db_entity >> %s", db_entity)
 
             if db_entity is None:
                 entity = QueueEntity.create(info)
 
-                logger.debug("add_queue()::entity >> ", entity)
+                logger.debug("add_queue()::entity >> %s", entity)
                 LogicQueue.download_queue.put(entity)
                 return "enqueue_db_append"
             elif db_entity.status != "completed":
