@@ -84,7 +84,7 @@ menu = {
 }
 
 plugin_info = {
-    "version": "0.2.0.5",
+    "version": "0.3.0.0",
     "name": "linkkf-yommi",
     "category_name": "vod",
     "icon": "",
