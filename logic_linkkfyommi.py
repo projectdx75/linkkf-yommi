@@ -17,7 +17,8 @@ import json
 
 # third-party
 import requests
-from lxml import html
+from lxml import html, etree
+from bs4 import BeautifulSoup
 
 # sjva 공용
 from framework import db, scheduler, path_data
@@ -59,6 +60,8 @@ class LogicLinkkfYommi(object):
             # logger.info("page", page)
 
             return page.content.decode("utf8", errors="replace")
+            # return page.text
+            # return page.content
         except Exception as e:
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
@@ -462,7 +465,7 @@ class LogicLinkkfYommi(object):
             # query = query.encode("utf-8")
             _query = urllib.parse.quote(query)
             url = f"{ModelSetting.get('linkkf_url')}/?s={_query}"
-            logger.debug("search url::> ", url)
+            logger.debug("search url::> %s", url)
             html_content = LogicLinkkfYommi.get_html(url)
             download_path = ModelSetting.get("download_path")
             tree = html.fromstring(html_content)
@@ -640,8 +643,16 @@ class LogicLinkkfYommi(object):
             url = "%s/%s" % (ModelSetting.get("linkkf_url"), code)
             # logger.info(url)
             html_content = LogicLinkkfYommi.get_html(url)
+            sys.setrecursionlimit(10**7)
             # logger.info(html_content)
             tree = html.fromstring(html_content)
+            # tree = etree.fromstring(
+            #     html_content, parser=etree.XMLParser(huge_tree=True)
+            # )
+            # tree1 = BeautifulSoup(html_content, "lxml")
+
+            soup = BeautifulSoup(html_content, "html.parser")
+            # tree = etree.HTML(str(soup))
             # logger.info(tree)
 
             data = {"code": code, "ret": False}
@@ -650,6 +661,11 @@ class LogicLinkkfYommi(object):
             #                  )[0].text_content().strip().encode('utf8')
             # tmp = tree.xpath('//*[@id="body"]/div/div[1]/article/center/strong')[0].text_content().strip()
             # logger.info('tmp::>', tree.xpath('//div[@class="hrecipe"]/article/center/strong'))
+            # tmp1 = tree.xpath("//div[contains(@id, 'related')]/ul/a")
+            # tmp = tree1.find_element(By.Xpath, "//ul/a")
+            tmp = soup.select("ul > a")
+
+            logger.debug(f"tmp1 size:=> {str(len(tmp))}")
 
             tmp = (
                 tree.xpath('//div[@class="hrecipe"]/article/center/strong')[0]
@@ -709,8 +725,10 @@ class LogicLinkkfYommi(object):
             # tmp = tree.xpath('//*[@id="relatedpost"]/ul/li')
             # tmp = tree.xpath('//article/a')
             # 수정된
-            tmp = tree.xpath("//ul/a")
+            # tmp = tree.xpath("//ul/a")
+            tmp = soup.select("ul > a")
 
+            logger.debug(f"tmp size:=> {str(len(tmp))}")
             # logger.info(tmp)
             if tmp is not None:
                 data["episode_count"] = str(len(tmp))
@@ -720,7 +738,8 @@ class LogicLinkkfYommi(object):
             data["episode"] = []
             # tags = tree.xpath(
             #     '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
-            tags = tree.xpath("//ul/a")
+            # tags = tree.xpath("//ul/a")
+            tags = soup.select("ul > a")
 
             # logger.info("tags", tags)
             # re1 = re.compile(r'\/(?P<code>\d+)')
@@ -750,7 +769,8 @@ class LogicLinkkfYommi(object):
                     "save_folder": Util.change_text_for_use_filename(
                         data["save_folder"]
                     ),
-                    "title": t.text_content().strip(),
+                    "title": t.text.strip(),
+                    # "title": t.text_content().strip(),
                 }
                 # entity['code'] = re1.search(t.attrib['href']).group('code')
 
@@ -772,7 +792,8 @@ class LogicLinkkfYommi(object):
                     entity["code"] = data["code"]
 
                 # logger.info('episode_code', episode_code)
-                entity["url"] = t.attrib["href"]
+                # entity["url"] = t.attrib["href"]
+                entity["url"] = t["href"]
                 entity["season"] = data["season"]
 
                 # 저장경로 저장
