@@ -70,7 +70,7 @@ menu = {
     "sub": [
         ["setting", "설정"],
         ["request", "요청"],
-        ["category", "분류"],
+        ["category", "검색"],
         ["queue", "큐"],
         ["list", "목록"],
         ["log", "로그"],
