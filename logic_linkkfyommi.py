@@ -667,11 +667,14 @@ class LogicLinkkfYommi(object):
 
             logger.debug(f"tmp1 size:=> {str(len(tmp))}")
 
-            tmp = (
-                tree.xpath('//div[@class="hrecipe"]/article/center/strong')[0]
-                .text_content()
-                .strip()
-            )
+            try:
+                tmp = (
+                    tree.xpath('//div[@class="hrecipe"]/article/center/strong')[0]
+                    .text_content()
+                    .strip()
+                )
+            except IndexError:
+                tmp = tree.xpath("//article/center/strong")[0].text_content().strip()
 
             # print(tmp)
             # logger.info(tmp)

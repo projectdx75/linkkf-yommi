@@ -193,7 +193,7 @@ def ajax(sub):
     elif sub == "search":
         try:
             query = request.form["query"]
-            logger.debug("query::>>", query)
+            logger.debug("query::>> %s", query)
             data = LogicLinkkfYommi.get_search_result(str(query))
 
             return jsonify(data)
