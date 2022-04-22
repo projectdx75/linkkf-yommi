@@ -11,9 +11,21 @@ import re
 import random
 import urllib
 
+# import pip
+
 # import urlparse
 from urllib.parse import urlparse
 import json
+
+packages = ["beautifulsoup4"]
+for package in packages:
+    try:
+        import package
+
+    except ImportError:
+        # main(["install", package])
+        os.system(f"pip install {package}")
+
 
 # third-party
 import requests
