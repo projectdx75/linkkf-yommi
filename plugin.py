@@ -260,7 +260,17 @@ def ajax(sub):
             logger.error(traceback.format_exc())
     elif sub == "add_whitelist":
         try:
-            ret = LogicLinkkfYommi.add_whitelist()
+            # params = request.get_data()
+            # logger.debug(f"params: {params}")
+            # data_code = request.args.get("data_code")
+            params = request.get_json()
+            logger.debug(params)
+            if params is not None:
+                code = params["data_code"]
+                logger.debug(f"params: {code}")
+                ret = LogicLinkkfYommi.add_whitelist(code)
+            else:
+                ret = LogicLinkkfYommi.add_whitelist()
             return jsonify(ret)
         except Exception as e:
             logger.error("Exception:%s", e)

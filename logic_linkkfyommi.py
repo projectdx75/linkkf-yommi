@@ -391,10 +391,17 @@ class LogicLinkkfYommi(object):
         return ret
 
     @staticmethod
-    def add_whitelist():
+    def add_whitelist(*args):
         ret = {}
+
+        logger.debug(f"args: {args}")
         try:
-            code = str(LogicLinkkfYommi.current_data["code"])
+
+            if len(args) == 0:
+                code = str(LogicLinkkfYommi.current_data["code"])
+            else:
+                code = str(args[0])
+
             whitelist_program = ModelSetting.get("whitelist_program")
             whitelist_programs = [
                 str(x.strip().replace(" ", ""))
@@ -414,7 +421,12 @@ class LogicLinkkfYommi(object):
                 )
                 entity.value = whitelist_program
                 db.session.commit()
-                return LogicLinkkfYommi.current_data
+                ret["ret"] = True
+                ret["code"] = code
+                if len(args) == 0:
+                    return LogicLinkkfYommi.current_data
+                else:
+                    return ret
             else:
                 ret["ret"] = False
                 ret["log"] = "이미 추가되어 있습니다."

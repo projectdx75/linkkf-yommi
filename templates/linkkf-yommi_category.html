@@ -335,7 +335,7 @@
       tmp += '<img class="card-img-top lazy" src="./static/img_loader_x200.svg" data-lazy-src="' + data.episode[i].image_link + '" />';
       tmp += '<div class="card-body">';
       tmp += '<h5 class="card-title">' + data.episode[i].title + "</h5>";
-      tmp += '<p class="card-text">' + data.episode[i].code + "</p>";
+      tmp += '<button id="add_whitelist" name="add_whitelist" class="btn btn-sm btn-success" data-code="'+ data.episode[i].code +'"><p class="card-text">' + data.episode[i].code + " 자동 추가</p></button>";
       tmp +=
         '<a href="./request?code=' +
         data.episode[i].code +
@@ -559,10 +559,14 @@
 
   $("body").on("click", "#add_whitelist", function (e) {
     e.preventDefault();
+    let data_code = $(this).attr('data-code')
+    console.log(data_code)
     $.ajax({
       url: "/" + package_name + "/ajax/add_whitelist",
       type: "POST",
       cache: false,
+      data: JSON.stringify({"data_code": data_code}),
+      contentType: 'application/json;charset=UTF-8',
       dataType: "json",
       success: function (ret) {
         if (ret.ret) {
