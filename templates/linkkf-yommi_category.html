@@ -64,12 +64,15 @@
   $("#anime_category #ing").on("click", function () {
     let spinner = document.getElementById("spinner");
     spinner.style.visibility = "visible";
+    current_cate = "ing"
     get_anime_list(1, "ing");
   });
   $("#anime_category #movie").on("click", function () {
+    current_cate = 'movie'
     get_anime_screen_movie(1);
   });
   $("#anime_category #complete_anilist").on("click", function () {
+    current_cate = "complete"
     get_complete_anilist(1);
   });
 
@@ -182,6 +185,7 @@
       dataType: "json",
       success: (ret) => {
         current_screen_movie_data = ret;
+        total_page = ret.total_page
         console.log("ret::>", ret);
 
         if (current_screen_movie_data !== "") {
@@ -207,7 +211,9 @@
       dataType: "json",
       success: (ret) => {
         current_screen_movie_data = ret;
-        console.log("ret::>", ret);
+        console.log("get_complete_anilist():ret >", ret);
+        total_page = ret.total_page
+
 
         if (current_screen_movie_data !== "") {
           make_screen_movie_list(ret, page);
@@ -375,7 +381,7 @@
         current_cate = 'movie'
         break;
       case "complete":
-        url = "/" + package_name + "/ajax/screen_movie_list";
+        url = "/" + package_name + "/ajax/anime_list";
         current_cate = 'complete'
         break;
       default:
@@ -421,6 +427,7 @@
     if (Math.round(scrollHeight - scrollTop) <= clientHeight) {
       document.getElementById("spinner").style.display = "block";
       console.log("loading");
+      console.log(current_cate)
       // console.log("now page::> ", page);
       // console.log("next_page::> ", next_page);
       loadNextAnimes(current_cate, next_page);

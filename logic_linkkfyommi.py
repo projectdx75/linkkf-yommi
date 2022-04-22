@@ -521,8 +521,11 @@ class LogicLinkkfYommi(object):
     @staticmethod
     def get_anime_list_info(cate, page):
         try:
-            url = f"{ModelSetting.get('linkkf_url')}/airing/page/{page}"
-            logger.debug(f"url::>> {url}")
+            if cate == "ing":
+                url = f"{ModelSetting.get('linkkf_url')}/airing/page/{page}"
+            elif cate == "complete":
+                url = f"{ModelSetting.get('linkkf_url')}/anime-list/page/{page}"
+            logger.debug(f"get_anime_list_info():url >> {url}")
 
             html_content = LogicLinkkfYommi.get_html(url)
             download_path = ModelSetting.get("download_path")
@@ -617,6 +620,11 @@ class LogicLinkkfYommi(object):
 
             data["episode_count"] = len(tmp_items)
             data["episode"] = []
+
+            if tree.xpath('//*[@id="wp_page"]//text()'):
+                data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
+            else:
+                data["total_page"] = 0
 
             for item in tmp_items:
                 entity = {}
