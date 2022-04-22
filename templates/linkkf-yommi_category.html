@@ -86,7 +86,7 @@
   $("body").on("click", "#btn_search", function (e) {
     e.preventDefault();
     let query = $("#input_search").val();
-    console.log(query);
+    // console.log(query);
 
     if ($("#input_search").val() === "") {
       console.log("search keyword nothing");
@@ -120,11 +120,11 @@
       dataType: "json",
       success: (ret) => {
         current_airing_data = ret;
-        console.log("ret::>", ret);
+        // console.log("ret::>", ret);
         if (current_airing_data !== "") {
           make_airing_list(ret);
           div_visible = true;
-          console.log(div_visible);
+          // console.log(div_visible);
         }
       },
     });
@@ -191,7 +191,7 @@
       success: (ret) => {
         current_screen_movie_data = ret;
         total_page = ret.total_page
-        console.log("ret::>", ret);
+        // console.log("ret::>", ret);
 
         if (current_screen_movie_data !== "") {
           make_screen_movie_list(ret, page);
@@ -233,12 +233,12 @@
     });
   };
 
-  console.log(div_visible);
+  // console.log(div_visible);
 
   $(document).on("click", "button.code-button", function (e) {
     e.preventDefault();
-    console.log("click");
-    console.log("code to click:" + $(this).data("code"));
+    // console.log("click");
+    // console.log("code to click:" + $(this).data("code"));
     document.getElementById("code").value = $(this).data("code");
     $("#code").val($(this).data("code"));
     $("#airing_list").toggle();
@@ -417,7 +417,7 @@
         return res.json()
       })
       .then((response) => {
-        console.log("return page:::> ", response.page);
+        // console.log("return page:::> ", response.page);
         make_screen_movie_list(response, response.page);
         $("img.lazyload").lazyload({
           threshold : 100,
@@ -438,7 +438,7 @@
       document.getElementById("spinner").style.display = "block";
       // setTimeout()
       console.log("loading");
-      console.log(current_cate)
+      // console.log(current_cate)
       // console.log("now page::> ", page);
       // console.log("next_page::> ", next_page);
       setTimeout(loadNextAnimes(current_cate, next_page), 1500);
@@ -593,7 +593,7 @@
           $.notify("<strong>적용하였습니다.</strong><br>", {
             type: "success",
           });
-          console.log(ret);
+          // console.log(ret);
           make_program(ret);
         } else {
           $.notify("<strong>적용 실패</strong><br>" + ret.log, {
