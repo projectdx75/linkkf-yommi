@@ -153,9 +153,11 @@ class LogicQueue(object):
 
                 # entity.url = LogicLinkkfYommi.get_video_url(
                 #     entity.info['code'])
+                # logger.debug(f"entity.info[url] = {entity.info['url']}")
                 entity.url = LogicLinkkfYommi.get_video_url(entity.info["url"])
 
                 # logger.info('entity.info: %s', entity.info['url'])
+                # logger.debug(f"entity.url: {entity.url}")
                 # logger.info('url1: %s', entity.url[0])
                 # print(entity)
                 # logger.info('entity: %s', entity.__dict__)
@@ -237,7 +239,13 @@ class LogicQueue(object):
                 # logger.info('ourls:::>', ourls)
                 base_url = f"{ourls.scheme}://{ourls.netloc}"
                 # logger.info('base_url:::>', base_url)
+
+                # Todo: 임시 커밋 로직 해결하면 다시 처리
+                if "linkkf.app" in base_url:
+                    base_url = f"{ourls.scheme}://kfani.me"
+
                 vtt_url = base_url + entity.url[2]
+                logger.debug(f"srt:url => {vtt_url}")
                 srt_filepath = os.path.join(
                     save_path, entity.info["filename"].replace(".mp4", ".ko.srt")
                 )
@@ -355,12 +363,12 @@ class LogicQueue(object):
 
             # episode[] code (episode_code)
             db_entity = ModelLinkkf.get_by_linkkf_id(info["code"])
-            logger.debug("add_queue:: db_entity >> %s", db_entity)
+            # logger.debug("add_queue:: db_entity >> %s", db_entity)
 
             if db_entity is None:
                 entity = QueueEntity.create(info)
 
-                logger.debug("add_queue()::entity >> %s", entity)
+                # logger.debug("add_queue()::entity >> %s", entity)
                 LogicQueue.download_queue.put(entity)
                 return "enqueue_db_append"
             elif db_entity.status != "completed":

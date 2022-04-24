@@ -83,13 +83,15 @@ class LogicLinkkfYommi(object):
         video_url = None
         referer_url = None
         vtt_url = None
-        LogicLinkkfYommi.referer = url
-
+        LogicLinkkfYommi.referer = url2
         # logger.info("dx download url : %s , url2 : %s" % (url, url2))
+        # logger.debug(LogicLinkkfYommi.referer)
+
         try:
             if "kfani" in url2:
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
-
+                logger.debug("kfani routine")
+                # logger.debug(f"url2: {url2}")
                 data = LogicLinkkfYommi.get_html(url2)
                 # logger.info("dx: data", data)
                 regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
@@ -109,6 +111,7 @@ class LogicLinkkfYommi(object):
                 # logger.info("match group: %s", match.group('vtt_url'))
                 vtt_url = match.group("vtt_url")
                 # logger.info("vtt_url: %s", vtt_url)
+                logger.debug(LogicLinkkfYommi.referer)
                 referer_url = LogicLinkkfYommi.referer
 
             elif "kftv" in url2:
@@ -126,8 +129,9 @@ class LogicLinkkfYommi(object):
                 video_url = data3dict[0]["file"]
 
             elif "linkkf" in url2:
+                logger.deubg("linkkf routine")
                 # linkkf 계열 처리 => URL 리스트를 받아오고, 하나 골라 방문 해서 m3u8을 받아온다.
-                referer_url = url
+                referer_url = url2
                 data2 = LogicLinkkfYommi.get_html(url2)
                 # print(data2)
                 regex = r"cat1 = [^\[]*([^\]]*)"
@@ -198,7 +202,7 @@ class LogicLinkkfYommi(object):
                     logger.error("새로운 유형의 url 발생! %s %s %s" % (url, url2, url3))
 
             elif "#M2" in url2:
-                LogicLinkkfYommi.referer = url
+                LogicLinkkfYommi.referer = url2
                 data2 = LogicLinkkfYommi.get_html(url2)
                 # print(data2)
 
@@ -222,7 +226,7 @@ class LogicLinkkfYommi(object):
                 else:
                     logger.error("새로운 유형의 url 발생! %s %s %s" % (url, url2, url3))
             elif "😀#i" in url2:
-                LogicLinkkfYommi.referer = url
+                LogicLinkkfYommi.referer = url2
                 data2 = LogicLinkkfYommi.get_html(url2)
                 # logger.info(data2)
 
@@ -273,13 +277,16 @@ class LogicLinkkfYommi(object):
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
 
+        # logger.debug(f"referer_url: {referer_url}")
+        # logger.debug(f"LogicLinkkfYommi.referer: {LogicLinkkfYommi.referer}")
+
         return [video_url, referer_url, vtt_url]
 
     @staticmethod
-    def get_video_url(episode_id):
+    def get_video_url(episode_url):
         try:
             # url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
-            url = episode_id
+            url = episode_url
             # logger.info("url: %s" % url)
             data = LogicLinkkfYommi.get_html(url)
             # logger.info(data)
@@ -288,11 +295,6 @@ class LogicLinkkfYommi(object):
                 tag.attrib["value"]
                 for tag in tree.xpath('//*[@id="body"]/div/span/center/select/option')
             ]
-            # url2s = filter(lambda url:
-            #         ('kfani' in url) |
-            #         ('linkkf' in url) |
-            #         ('kftv' in url), url2s)
-            # url2 = random.choice(url2s)
 
             # logger.info('dx: url', url)
             # logger.info('dx: urls2', url2s)
@@ -302,8 +304,10 @@ class LogicLinkkfYommi(object):
 
             for url2 in url2s:
                 try:
+
                     if video_url is not None:
                         continue
+                    logger.debug(f"url: {url}, url2: {url2}")
                     ret = LogicLinkkfYommi.get_video_url_from_url(url, url2)
                     # print(f'ret::::> {ret}')
 
@@ -697,7 +701,7 @@ class LogicLinkkfYommi(object):
             # tmp = tree1.find_element(By.Xpath, "//ul/a")
             tmp = soup.select("ul > a")
 
-            logger.debug(f"tmp1 size:=> {str(len(tmp))}")
+            # logger.debug(f"tmp1 size:=> {str(len(tmp))}")
 
             try:
                 tmp = (
@@ -749,21 +753,21 @@ class LogicLinkkfYommi(object):
             data["rate"] = tree.xpath('span[@class="tag-score"]')
             # tag_score = tree.xpath('//span[@class="taq-score"]').text_content().strip()
             tag_score = tree.xpath('//span[@class="taq-score"]')[0].text_content()
-            logger.debug(tag_score)
+            # logger.debug(tag_score)
             tag_count = (
                 tree.xpath('//span[contains(@class, "taq-count")]')[0]
                 .text_content()
                 .strip()
             )
             data_rate = tree.xpath('//div[@class="rating"]/div/@data-rate')
-            logger.debug("data_rate::> %s", data_rate)
+            # logger.debug("data_rate::> %s", data_rate)
             # tmp = tree.xpath('//*[@id="relatedpost"]/ul/li')
             # tmp = tree.xpath('//article/a')
             # 수정된
             # tmp = tree.xpath("//ul/a")
             tmp = soup.select("ul > a")
 
-            logger.debug(f"tmp size:=> {str(len(tmp))}")
+            # logger.debug(f"tmp size:=> {str(len(tmp))}")
             # logger.info(tmp)
             if tmp is not None:
                 data["episode_count"] = str(len(tmp))
