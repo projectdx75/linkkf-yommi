@@ -63,11 +63,15 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def get_html(url):
+
         try:
             if LogicLinkkfYommi.session is None:
                 LogicLinkkfYommi.session = requests.Session()
             LogicLinkkfYommi.headers["referer"] = LogicLinkkfYommi.referer
             LogicLinkkfYommi.referer = url
+            # logger.debug(
+            #     f"get_html()::LogicLinkkfYommi.referer = {LogicLinkkfYommi.referer}"
+            # )
             page = LogicLinkkfYommi.session.get(url, headers=LogicLinkkfYommi.headers)
             # logger.info("page", page)
 
@@ -91,6 +95,7 @@ class LogicLinkkfYommi(object):
             if "kfani" in url2:
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
                 logger.debug("kfani routine")
+                LogicLinkkfYommi.referer = url2
                 # logger.debug(f"url2: {url2}")
                 data = LogicLinkkfYommi.get_html(url2)
                 # logger.info("dx: data", data)
@@ -111,8 +116,8 @@ class LogicLinkkfYommi(object):
                 # logger.info("match group: %s", match.group('vtt_url'))
                 vtt_url = match.group("vtt_url")
                 # logger.info("vtt_url: %s", vtt_url)
-                logger.debug(LogicLinkkfYommi.referer)
-                referer_url = LogicLinkkfYommi.referer
+                # logger.debug(f"LogicLinkkfYommi.referer: {LogicLinkkfYommi.referer}")
+                referer_url = url2
 
             elif "kftv" in url2:
                 # kftv 계열 처리 => url의 id로 https://yt.kftv.live/getLinkStreamMd5/df6960891d226e24b117b850b44a2290 페이지
@@ -309,7 +314,7 @@ class LogicLinkkfYommi(object):
                         continue
                     logger.debug(f"url: {url}, url2: {url2}")
                     ret = LogicLinkkfYommi.get_video_url_from_url(url, url2)
-                    # print(f'ret::::> {ret}')
+                    print(f"ret::::> {ret}")
 
                     if ret is not None:
                         video_url = ret

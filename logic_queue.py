@@ -157,7 +157,7 @@ class LogicQueue(object):
                 entity.url = LogicLinkkfYommi.get_video_url(entity.info["url"])
 
                 # logger.info('entity.info: %s', entity.info['url'])
-                # logger.debug(f"entity.url: {entity.url}")
+                logger.debug(f"entity.url: {entity.url}")
                 # logger.info('url1: %s', entity.url[0])
                 # print(entity)
                 # logger.info('entity: %s', entity.__dict__)
@@ -241,8 +241,8 @@ class LogicQueue(object):
                 # logger.info('base_url:::>', base_url)
 
                 # Todo: 임시 커밋 로직 해결하면 다시 처리
-                if "linkkf.app" in base_url:
-                    base_url = f"{ourls.scheme}://kfani.me"
+                # if "linkkf.app" in base_url:
+                #     base_url = f"{ourls.scheme}://kfani.me"
 
                 vtt_url = base_url + entity.url[2]
                 logger.debug(f"srt:url => {vtt_url}")

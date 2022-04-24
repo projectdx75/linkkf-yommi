@@ -343,9 +343,9 @@ def ajax(sub):
 
     elif sub == "web_list":
         try:
-            logger.info(request)
-            data = []
-            logger.info("db :::>", ModelLinkkf.web_list(request))
+            # # logger.info(request)
+            # data = []
+            # logger.info("db :::>", ModelLinkkf.web_list(request))
             data = [{}]
             dummy_data = {"ret": "success", "method": "web_list", "data": data}
             return jsonify(ModelLinkkf.web_list(request))
