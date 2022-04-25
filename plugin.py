@@ -28,6 +28,7 @@ from framework import app, db, scheduler, socketio, path_app_root
 from framework.util import Util, AlchemyEncoder
 from system.logic import SystemLogic
 
+
 # 패키지
 
 from .logic import Logic

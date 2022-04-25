@@ -164,7 +164,7 @@
       success: (ret) => {
         current_screen_movie_data = ret;
         total_page = ret.total_page
-        // console.log("ret::>", ret);
+        console.log("ret::>", ret);
 
         if (current_screen_movie_data !== "") {
           make_screen_movie_list(ret, page);
@@ -330,12 +330,17 @@
     for (let i in data.episode) {
       tmp = '<div class="col-6 col-sm-4 col-md-3">';
       tmp += '<div class="card">';
+      // tmp += '<div class="card-header">';
+
       // tmp +=
       //   '<img class="card-img-top lazyload" src="./static/img_loader_x200.svg" data-original="' + data.episode[i].image_link + '" />';
       tmp += '<img class="card-img-top lazy" src="./static/img_loader_x200.svg" data-lazy-src="' + data.episode[i].image_link + '" />';
+      if (current_cate == 'ing') {
+        tmp += '<span class="badge badge-danger badge-on-image">' + data.episode[i].chapter + '</span>'
+      }
       tmp += '<div class="card-body">';
       tmp += '<h5 class="card-title">' + data.episode[i].title + "</h5>";
-      tmp += '<button id="add_whitelist" name="add_whitelist" class="btn btn-sm btn-success" data-code="'+ data.episode[i].code +'"><p class="card-text">' + data.episode[i].code + " 자동 추가</p></button>";
+      tmp += '<button id="add_whitelist" name="add_whitelist" class="btn btn-sm btn-success mb-1" data-code="'+ data.episode[i].code +'"><p class="card-text">' + data.episode[i].code + " 자동 추가</p></button>";
       tmp +=
         '<a href="./request?code=' +
         data.episode[i].code +
@@ -344,6 +349,7 @@
         "</a>";
       tmp += "</div>";
       tmp += "</div>";
+      // tmp += "</div>"
       tmp += "</div>";
       str += tmp;
     }
@@ -925,6 +931,14 @@
     transform: scale(1.0);
     -webkit-transform: scale(1.0);
   }
+}
+
+.badge-on-image {
+    position: absolute;
+    top: 2px;
+    /*bottom: 2px; !* position where you want it *!*/
+    right: 2px;
+    padding: 5px 12px;
 }
 </style>
 <!--<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.7.0/dist/lazyload.min.js"></script>-->

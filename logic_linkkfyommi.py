@@ -32,6 +32,9 @@ import requests
 from lxml import html, etree
 from bs4 import BeautifulSoup
 
+# import snoop
+# from snoop import spy
+
 # sjva 공용
 from framework import db, scheduler, path_data
 from framework.job import Job
@@ -477,6 +480,7 @@ class LogicLinkkfYommi(object):
                 entity["image_link"] = item.xpath(
                     './/img[@class="photo"]/@data-lazy-src'
                 )[0]
+                entity["chapter"] = item.xpath(".//a/button/span//text()")[0]
                 # logger.info('entity:::', entity['title'])
                 data["episode"].append(entity)
 
@@ -570,6 +574,7 @@ class LogicLinkkfYommi(object):
                 entity["image_link"] = item.xpath(
                     './/img[@class="photo"]/@data-lazy-src'
                 )[0]
+                entity["chapter"] = item.xpath(".//a/button/span//text()")[0]
                 # logger.info('entity:::', entity['title'])
                 data["episode"].append(entity)
 
