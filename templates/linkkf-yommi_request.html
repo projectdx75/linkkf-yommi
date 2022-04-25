@@ -38,7 +38,7 @@
     get: (searchParams, prop) => searchParams.get(prop),
   });
 
-  console.log('current_airing_data', current_airing_data);
+  // console.log('current_airing_data', current_airing_data);
 
   const get_airing_list = () => {
       $.ajax({
@@ -50,11 +50,11 @@
             if (ret.ret == 'success' && ret.episode != null) {
               current_airing_data = ret
               total_page = ret.total_page
-              console.log(ret)
+              // console.log(ret)
               if (current_airing_data !== '') {
                 make_airing_list(ret)
                 div_visible = true
-                console.log(div_visible)
+                // console.log(div_visible)
               }
             } else {
               $.notify('<strong>분석 실패</strong><br>' + ret.log, {type: 'warning'});
@@ -67,10 +67,10 @@
       }
   }
 
-  console.log(div_visible)
+  // console.log(div_visible)
 
   $(document).ready(function(){
-      console.log ('current_code::', {{arg['current_code']}})
+      // console.log ('current_code::', {{arg['current_code']}})
       // {#console.log(params)#}
       // {#code = params.code#}
       // {#console.log('code:::> ', code)#}
@@ -84,7 +84,7 @@
 
       }
 
-      console.log('params.code:::> ', params.code)
+      // console.log('params.code:::> ', params.code)
 
       if (params.code === '') {
 
@@ -94,15 +94,15 @@
       }
 
       <!-- {#console.log(div_visible)#} -->
-      console.log('code:::' ,code)
+      // console.log('code:::' ,code)
 
   });
 
 
   $(document).on("click", "button.code-button", function(e){
       e.preventDefault();
-      console.log('click')
-      console.log('code to click:' + $(this).data("code"))
+      // console.log('click')
+      // console.log('code to click:' + $(this).data("code"))
       document.getElementById("code").value = $(this).data("code")
       $('#code').val($(this).data("code"))
       $('#airing_list').toggle()
@@ -115,7 +115,7 @@
     e.preventDefault();
     code = document.getElementById("code").value
 
-    console.log('#analysis_btn >>> code::', code)
+    // console.log('#analysis_btn >>> code::', code)
     if (document.getElementById("code").value === '') {
         console.log('code 값을 입력해주세요.')
         $.notify('<strong>code 값을 입력해주세요.</strong><br>')
@@ -129,7 +129,7 @@
       data: {code:code},
       dataType: "json",
       success: function (ret) {
-        console.log('ret:ret %s', ret.ret)
+        // console.log('ret:ret %s', ret.ret)
         // if (ret.ret) {
         //   make_program(ret)
         // } else {
@@ -186,7 +186,7 @@
 
       function make_program(data) {
           current_data = data;
-          console.log('current_data:: ', data)
+          // console.log('current_data:: ', data)
           str = '';
           tmp = '<div class="form-inline w-100">'
           tmp += m_button('check_download_btn', '선택 다운로드 추가', []);
@@ -308,7 +308,7 @@
                       $.notify('<strong>적용하였습니다.</strong><br>', {
                           type: 'success'
                       });
-                      console.log(ret)
+                      // console.log(ret)
                       make_program(ret)
                   } else {
                       $.notify('<strong>적용 실패</strong><br>' + ret.log, {
@@ -354,9 +354,9 @@
           e.preventDefault();
           // code = $(this).data('code');
           code = current_data.episode[$(this).data('idx')].code
-          console.log('code:: ', code)
-          data = current_data.episode[$(this).data('idx')]
-          console.log('data:: ', data)
+          // console.log('code:: ', code)
+          let data = current_data.episode[$(this).data('idx')]
+          // console.log('data:: ', data)
           $.ajax({
               url: '/' + package_name + '/ajax/add_queue',
               type: "POST",
@@ -364,7 +364,7 @@
               data: {code: code, data: JSON.stringify(data)},
               dataType: "json",
               success: function (data) {
-                console.log('#add_queue_btn::data >>', data)
+                // console.log('#add_queue_btn::data >>', data)
                   if (data.ret === 'enqueue_db_append') {
                     $.notify('<strong>다운로드 작업을 추가 하였습니다.</strong>', {
                       type: 'success'
@@ -442,7 +442,7 @@
 
       $('#go_modal_airing').click(function (e) {
           e.preventDefault();
-          console.log('open modal')
+          // console.log('open modal')
           $('#exModal').bootstrapToggle()
           if (current_airing_data === '') {
               get_airing_list()

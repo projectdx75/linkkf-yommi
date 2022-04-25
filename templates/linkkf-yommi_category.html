@@ -334,7 +334,8 @@
 
       // tmp +=
       //   '<img class="card-img-top lazyload" src="./static/img_loader_x200.svg" data-original="' + data.episode[i].image_link + '" />';
-      tmp += '<img class="card-img-top lazy" src="./static/img_loader_x200.svg" data-lazy-src="' + data.episode[i].image_link + '" />';
+      tmp += '<img class="card-img-top lazy" src="./static/img_loader_x200.svg" data-lazy-src="' + data.episode[i].image_link + '" style="cursor: pointer" onclick="location.href=\'./request?code=' +
+        data.episode[i].code + '\'"/>';
       if (current_cate == 'ing') {
         tmp += '<span class="badge badge-danger badge-on-image">' + data.episode[i].chapter + '</span>'
       }
