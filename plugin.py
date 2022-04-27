@@ -85,7 +85,7 @@ menu = {
 }
 
 plugin_info = {
-    "version": "0.3.0.0",
+    "version": "0.3.1.0",
     "name": "linkkf-yommi",
     "category_name": "vod",
     "icon": "",
@@ -121,6 +121,10 @@ def home():
 @blueprint.route("/<sub>")
 @login_required
 def detail(sub):
+    # arg = {
+    #     "package_name": package_name,
+    #     "template_name": "%s_%s" % (package_name, sub),
+    # }
     if sub == "setting":
         setting_list = db.session.query(ModelSetting).all()
         arg = Util.db_list_to_dict(setting_list)
@@ -128,6 +132,7 @@ def detail(sub):
         arg["sub"] = "setting"
         arg["scheduler"] = str(scheduler.is_include(package_name))
         arg["is_running"] = str(scheduler.is_running(package_name))
+        arg["template_name"] = "%s_%s" % (package_name, sub)
         return render_template("%s_%s.html" % (package_name, sub), arg=arg)
     elif sub in ["request", "queue", "list"]:
         setting_list = db.session.query(ModelSetting).all()
@@ -138,11 +143,15 @@ def detail(sub):
             if LogicLinkkfYommi.current_data is not None
             else ""
         )
+        arg["template_name"] = "%s_%s" % (package_name, sub)
         return render_template("%s_%s.html" % (package_name, sub), arg=arg)
     elif sub == "category":
+
         setting_list = db.session.query(ModelSetting).all()
         arg = Util.db_list_to_dict(setting_list)
         arg["package_name"] = package_name
+        arg["template_name"] = "%s_%s" % (package_name, sub)
+        # logger.debug(f"arg:: {arg}")
         return render_template("%s_%s.html" % (package_name, sub), arg=arg)
     elif sub == "log":
         return render_template("log.html", package=package_name)
