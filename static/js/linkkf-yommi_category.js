@@ -54,6 +54,8 @@ $("body").on("click", "#btn_search", function (e) {
 });
 
 const get_airing_list = () => {
+  let spinner = document.getElementById("spinner");
+  spinner.style.display = "block";
   $.ajax({
     url: "/" + package_name + "/ajax/airing_list",
     type: "GET",
@@ -65,6 +67,7 @@ const get_airing_list = () => {
       if (current_airing_data !== "") {
         make_airing_list(ret);
         div_visible = true;
+        spinner.style.display = "none";
         // console.log(div_visible);
       }
     },
@@ -689,6 +692,8 @@ $(document).ready(function () {
       $("#btn_search").trigger("click");
     }
   });
+  let spinner = document.getElementById("spinner");
+  spinner.style.display = "block";
   get_anime_list(1, "ing");
   // $("img.lazyload").lazyload({
   //   threshold : 200,

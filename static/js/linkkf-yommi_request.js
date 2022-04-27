@@ -72,14 +72,6 @@ $("body").on("click", "#analysis_btn", function (e) {
     data: { code: code },
     dataType: "json",
     success: function (ret) {
-      // console.log('ret:ret %s', ret.ret)
-      // if (ret.ret) {
-      //   make_program(ret)
-      // } else {
-      //   $.notify('<strong>분석 실패</strong><br>' + ret.log, {
-      //     type: 'warning'
-      //   });
-      // }
       if (ret.ret == "success" && ret.data != null) {
         make_program(ret.data);
       } else {
