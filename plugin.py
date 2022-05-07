@@ -340,6 +340,35 @@ def ajax(sub):
             ret["ret"] = "fail"
             ret["log"] = str(e)
         return jsonify(ret)
+    elif sub == "down_subtitle_list":
+        ret = {}
+        try:
+            from .logic_queue import LogicQueue
+
+            code = request.form["code"]
+            code_list = code.split(",")
+            dummy_list = LogicLinkkfYommi.chunks(code_list, 5)
+            # logger.debug(next(dummy_list))
+            count = 0
+            logger.debug(f"code_list:: {code_list}")
+            # logger.debug(f"code_list:: {next(dummy_list)}")
+            # for c in code_list:
+            for c in next(dummy_list):
+                info = LogicLinkkfYommi.get_info_by_code(c)
+                if info is not None:
+                    # tmp = LogicQueue.add_queue(info)
+                    tmp = LogicLinkkfYommi.download_subtitle(info)
+                    count += 1
+            ret["ret"] = "success"
+            ret["log"] = str(count)
+        except Exception as e:
+            logger.error("Exception:%s", e)
+            logger.error(traceback.format_exc())
+            ret["ret"] = "fail"
+            ret["log"] = str(e)
+        return jsonify(ret)
+    # 자막만 다운로드
+
     # 큐
     elif sub == "program_auto_command":
         try:

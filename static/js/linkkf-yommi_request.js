@@ -4,6 +4,7 @@ let code = "";
 let div_visible = false;
 let total_page = "";
 
+
 const params = new Proxy(new URLSearchParams(window.location.search), {
   get: (searchParams, prop) => searchParams.get(prop),
 });
@@ -136,6 +137,7 @@ function make_program(data) {
   tmp += m_button("check_download_btn", "선택 다운로드 추가", []);
   tmp += m_button("all_check_on_btn", "전체 선택", []);
   tmp += m_button("all_check_off_btn", "전체 해제", []);
+  // tmp += m_button("down_subtitle_btn", "자막만 전체 받기", [])
   tmp +=
     '&nbsp;&nbsp;&nbsp;<input id="new_title" name="new_title" class="form-control form-control-sm" value="' +
     data.title +
@@ -150,6 +152,7 @@ function make_program(data) {
   tmp += m_button("apply_new_season_btn", "시즌 변경 (숫자만 가능)", []);
   tmp += m_button("search_tvdb_btn", "TVDB", []);
   tmp += m_button("add_whitelist", "스케쥴링 추가", []);
+
   tmp += "</div>";
   tmp = m_button_group(tmp);
   str += tmp;
@@ -247,6 +250,46 @@ $("body").on("click", "#add_whitelist", function (e) {
       }
     },
   });
+});
+
+
+$("body").on('click', '#down_subtitle_btn', function(e) {
+  e.preventDefault();
+  console.log('자막 전체 받기')
+
+  const all = $('input[id^="checkbox_"]');
+  let str = "";
+  for (let i in all) {
+    if (all[i].checked) {
+      code = all[i].id.split("_")[1];
+      str += code + ",";
+    }
+  }
+  if (str === "") {
+    $.notify("<strong>선택하세요.</strong>", {
+      type: "warning",
+    });
+    return;
+  }
+  $.ajax({
+    url: "/" + package_name + "/ajax/down_subtitle_list",
+    type: "POST",
+    cache: false,
+    data: { code: str },
+    dataType: "json",
+    success: function (data) {
+      if (data.ret == "success") {
+        $.notify("<strong>" + data.log + "개를 추가하였습니다.</strong>", {
+          type: "success",
+        });
+      } else {
+        $.notify("<strong>" + data.log + "</strong>", {
+          type: "warning",
+        });
+      }
+    },
+  });
+
 });
 
 $("body").on("click", "#apply_new_title_btn", function (e) {

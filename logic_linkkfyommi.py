@@ -26,7 +26,6 @@ for package in packages:
         # main(["install", package])
         os.system(f"pip install {package}")
 
-
 # third-party
 import requests
 from lxml import html, etree
@@ -918,6 +917,69 @@ class LogicLinkkfYommi(object):
         except Exception as e:
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
+
+    @staticmethod
+    def download_subtitle(info):
+        logger.debug(info)
+        ani_url = LogicLinkkfYommi.get_video_url(info["url"])
+        logger.debug(f"ani_url: {ani_url}")
+
+        referer = None
+
+        # vtt file to srt file
+        from framework.common.util import write_file, convert_vtt_to_srt
+        from urllib import parse
+
+        if ani_url[1] is not None:
+            referer = ani_url[1]
+
+        logger.debug(f"referer:: {referer}")
+
+        headers = {
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/71.0.3554.0 Safari/537.36Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36",
+            "Referer": f"{referer}",
+        }
+        # logger.debug(headers)
+
+        save_path = ModelSetting.get("download_path")
+        if ModelSetting.get("auto_make_folder") == "True":
+            program_path = os.path.join(save_path, info["save_folder"])
+            save_path = program_path
+            if ModelSetting.get("linkkf_auto_make_season_folder"):
+                save_path = os.path.join(save_path, "Season %s" % int(info["season"]))
+
+        ourls = parse.urlparse(ani_url[1])
+        # print(ourls)
+        # logger.info('ourls:::>', ourls)
+        base_url = f"{ourls.scheme}://{ourls.netloc}"
+        # logger.info('base_url:::>', base_url)
+
+        # Todo: 임시 커밋 로직 해결하면 다시 처리
+        # if "linkkf.app" in base_url:
+        #     base_url = f"{ourls.scheme}://kfani.me"
+
+        vtt_url = base_url + ani_url[2]
+        # logger.debug(f"srt:url => {vtt_url}")
+        srt_filepath = os.path.join(
+            save_path, info["filename"].replace(".mp4", ".ko.srt")
+        )
+        # logger.info('srt_filepath::: %s', srt_filepath)
+        if ani_url[2] is not None and not os.path.exists(srt_filepath):
+            res = requests.get(vtt_url, headers=headers)
+            vtt_data = res.text
+            vtt_status = res.status_code
+            if vtt_status == 200:
+                srt_data = convert_vtt_to_srt(vtt_data)
+                write_file(srt_data, srt_filepath)
+            else:
+                logger.debug("자막파일 받을수 없슴")
+
+    @staticmethod
+    def chunks(l, n):
+        n = max(1, n)
+        return (l[i : i + n] for i in range(0, len(l), n))
 
     @staticmethod
     def get_info_by_code(code):

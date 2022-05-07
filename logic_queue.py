@@ -251,9 +251,17 @@ class LogicQueue(object):
                 )
                 # logger.info('srt_filepath::: %s', srt_filepath)
                 if entity.url[2] is not None and not os.path.exists(srt_filepath):
-                    vtt_data = requests.get(vtt_url, headers=headers).text
-                    srt_data = convert_vtt_to_srt(vtt_data)
-                    write_file(srt_data, srt_filepath)
+                    # vtt_data = requests.get(vtt_url, headers=headers).text
+                    # srt_data = convert_vtt_to_srt(vtt_data)
+                    # write_file(srt_data, srt_filepath)
+                    res = requests.get(vtt_url, headers=headers)
+                    vtt_data = res.text
+                    vtt_status = res.status_code
+                    if vtt_status == 200:
+                        srt_data = convert_vtt_to_srt(vtt_data)
+                        write_file(srt_data, srt_filepath)
+                    else:
+                        logger.debug("자막파일 받을수 없슴")
 
             except Exception as e:
                 logger.error("Exception:%s", e)
