@@ -76,6 +76,7 @@ class ModelLinkkfProgram(db.Model):
     season = db.Column(db.Integer)
 
     def __init__(self, data):
+
         self.created_time = datetime.now()
         self.programcode = data["code"]
         self.save_folder = data["title"]
@@ -171,6 +172,9 @@ class ModelLinkkf(db.Model):
 
     @classmethod
     def web_list(cls, req):
+        # logger.debug(req)
+        # logger.debug(req.args.get("search_word"))
+        # logger.debug(req.form["search_word"])
         ret = {}
         page = int(req.form["page"]) if "page" in req.form else 1
         page_size = 30
@@ -178,6 +182,7 @@ class ModelLinkkf(db.Model):
         search = req.form["search_word"] if "search_word" in req.form else ""
         option = req.form["option"] if "option" in req.form else "all"
         order = req.form["order"] if "order" in req.form else "desc"
+        # logger.debug('search = %s', search)
         query = cls.make_query(search=search, order=order, option=option)
         # logger.info(query)
         count = query.count()

@@ -306,6 +306,7 @@ class LogicQueue(object):
                 episode.download_time = (episode.end_time - episode.start_time).seconds
                 episode.completed_time = episode.end_time
                 episode.filesize = arg["data"]["filesize"]
+                episode.filename = arg["data"]["filename"]
                 episode.filesize_str = arg["data"]["filesize_str"]
                 episode.download_speed = arg["data"]["download_speed"]
                 episode.status = "completed"

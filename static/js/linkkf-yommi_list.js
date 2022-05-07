@@ -31,6 +31,7 @@ function sub_request_search(page, move_top = true) {
   let formData = get_formdata("#form_search");
   // console.log(formData)
   formData += "&page=" + page;
+  console.log(formData)
   $.ajax({
     url: "/" + package_name + "/ajax/web_list",
     type: "POST",
@@ -45,6 +46,56 @@ function sub_request_search(page, move_top = true) {
     },
   });
 }
+
+function make_page_html(data) {
+  str = ' \
+    <div class="d-inline-block"></div> \
+      <div class="row mb-3"> \
+        <div class="col-sm-12"> \
+          <div class="btn-toolbar" style="justify-content: center;" role="toolbar" aria-label="Toolbar with button groups" > \
+            <div class="btn-group btn-group-sm mr-2" role="group" aria-label="First group">'
+  if (data.prev_page) {
+    str += '<button id="page" data-page="' + (data.start_page-1) + '" type="button" class="btn btn-secondary">&laquo;</button>'
+  }
+
+  for (var i = data.start_page ; i <= data.last_page ; i++) {
+    str += '<button id="page" data-page="' + i +'" type="button" class="btn btn-secondary" ';
+    if (i == data.current_page) {
+      str += 'disabled';
+    }
+    str += '>'+i+'</button>';
+  }
+  if (data.next_page) {
+    str += '<button id="page" data-page="' + (data.last_page+1) + '" type="button" class="btn btn-secondary">&raquo;</button>'
+  }
+
+  str += '</div> \
+    </div> \
+    </div> \
+    </div> \
+  '
+  document.getElementById("page1").innerHTML = str;
+  document.getElementById("page2").innerHTML = str;
+}
+
+// function global_sub_request_search(page, move_top=true) {
+//   var formData = get_formdata('#form_search')
+//   formData += '&page=' + page;
+//   $.ajax({
+//     url: '/' + package_name + '/ajax/' + sub + '/web_list',
+//     type: "POST",
+//     cache: false,
+//     data: formData,
+//     dataType: "json",
+//     success: function (data) {
+//       current_data = data;
+//       if (move_top)
+//         window.scrollTo(0,0);
+//       make_list(data.list)
+//       make_page_html(data.paging)
+//     }
+//   });
+// }
 
 $("body").on("click", "#remove_btn", function (e) {
   e.preventDefault();
@@ -74,6 +125,11 @@ $("body").on("click", "#remove_btn", function (e) {
 $(document).ready(function () {
   // {#global_sub_request_search('1');#}
   get_list(1);
+});
+
+$("#search").click(function(e) {
+  e.preventDefault();
+  sub_request_search('1');
 });
 
 $("body").on("click", "#page", function (e) {
@@ -115,7 +171,7 @@ function make_list(data) {
   if (data.length > 0) {
     let str = "";
     for (let i in data) {
-      console.log(data[i]);
+      // console.log(data[i]);
       str += m_row_start();
       str += m_col(1, data[i].id);
       tmp = data[i].status == "completed" ? "완료" : "미완료";
