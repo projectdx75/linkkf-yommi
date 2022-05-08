@@ -678,11 +678,11 @@ class LogicLinkkfYommi(object):
                 # logger.info('entity:::', entity['title'])
                 data["episode"].append(entity)
 
-            json_file_path = os.path.join(download_path, "airing_list.json")
-            logger.debug("json_file_path:: %s", json_file_path)
-
-            with open(json_file_path, "w") as outfile:
-                json.dump(data, outfile)
+            # json_file_path = os.path.join(download_path, "airing_list.json")
+            # logger.debug("json_file_path:: %s", json_file_path)
+            #
+            # with open(json_file_path, "w") as outfile:
+            #     json.dump(data, outfile)
 
             return data
 
@@ -701,7 +701,7 @@ class LogicLinkkfYommi(object):
                 return LogicLinkkfYommi.current_data
             url = "%s/%s" % (ModelSetting.get("linkkf_url"), code)
             # logger.info(url)
-            html_content = LogicLinkkfYommi.get_html(url)
+            html_content = LogicLinkkfYommi.get_html(url, cached=True)
             sys.setrecursionlimit(10**7)
             # logger.info(html_content)
             tree = html.fromstring(html_content)
