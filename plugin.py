@@ -28,7 +28,6 @@ from framework import app, db, scheduler, socketio, path_app_root
 from framework.util import Util, AlchemyEncoder
 from system.logic import SystemLogic
 
-
 # 패키지
 
 from .logic import Logic
@@ -347,13 +346,13 @@ def ajax(sub):
 
             code = request.form["code"]
             code_list = code.split(",")
-            dummy_list = LogicLinkkfYommi.chunks(code_list, 5)
+            # dummy_list = LogicLinkkfYommi.chunks(code_list, 5)
             # logger.debug(next(dummy_list))
             count = 0
-            logger.debug(f"code_list:: {code_list}")
+            # logger.debug(f"code_list:: {code_list}")
             # logger.debug(f"code_list:: {next(dummy_list)}")
-            # for c in code_list:
-            for c in next(dummy_list):
+            for c in code_list:
+                # for c in next(dummy_list):
                 info = LogicLinkkfYommi.get_info_by_code(c)
                 if info is not None:
                     # tmp = LogicQueue.add_queue(info)

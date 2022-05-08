@@ -137,7 +137,7 @@ function make_program(data) {
   tmp += m_button("check_download_btn", "선택 다운로드 추가", []);
   tmp += m_button("all_check_on_btn", "전체 선택", []);
   tmp += m_button("all_check_off_btn", "전체 해제", []);
-  // tmp += m_button("down_subtitle_btn", "자막만 전체 받기", [])
+  tmp += m_button("down_subtitle_btn", "자막만 전체 받기", [])
   tmp +=
     '&nbsp;&nbsp;&nbsp;<input id="new_title" name="new_title" class="form-control form-control-sm" value="' +
     data.title +

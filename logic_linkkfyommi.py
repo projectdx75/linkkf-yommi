@@ -17,7 +17,7 @@ import urllib
 from urllib.parse import urlparse
 import json
 
-packages = ["beautifulsoup4"]
+packages = ["beautifulsoup4", "requests-cache"]
 for package in packages:
     try:
         import package
@@ -28,6 +28,10 @@ for package in packages:
 
 # third-party
 import requests
+
+# import requests_cache
+# from requests_cache import CachedSession
+from requests_cache import CachedSession
 from lxml import html, etree
 from bs4 import BeautifulSoup
 
@@ -50,6 +54,8 @@ from .logic_queue import LogicQueue
 package_name = __name__.split(".")[0]
 logger = get_logger(package_name)
 
+# requests_cache.install_cache("linkkf_cache", backend="sqlite", expire_after=300)
+
 
 class LogicLinkkfYommi(object):
     headers = {
@@ -64,11 +70,19 @@ class LogicLinkkfYommi(object):
     current_data = None
 
     @staticmethod
-    def get_html(url):
+    def get_html(url, cached=False):
 
         try:
+
             if LogicLinkkfYommi.session is None:
-                LogicLinkkfYommi.session = requests.Session()
+                if cached:
+                    logger.debug("cached===========")
+                    LogicLinkkfYommi.session = CachedSession(
+                        'linkkf_cache, backend="sqlite', expire_after=300
+                    )
+                else:
+                    LogicLinkkfYommi.session = requests.Session()
+
             LogicLinkkfYommi.headers["referer"] = LogicLinkkfYommi.referer
             LogicLinkkfYommi.referer = url
             # logger.debug(
@@ -551,7 +565,7 @@ class LogicLinkkfYommi(object):
                 url = f"{ModelSetting.get('linkkf_url')}/anime-list/page/{page}"
             logger.debug(f"get_anime_list_info():url >> {url}")
 
-            html_content = LogicLinkkfYommi.get_html(url)
+            html_content = LogicLinkkfYommi.get_html(url, cached=True)
             download_path = ModelSetting.get("download_path")
             tree = html.fromstring(html_content)
             tmp_items = tree.xpath('//div[@class="item"]')
@@ -594,7 +608,7 @@ class LogicLinkkfYommi(object):
         try:
             url = f"{ModelSetting.get('linkkf_url')}/ani/page/{page}"
 
-            html_content = LogicLinkkfYommi.get_html(url)
+            html_content = LogicLinkkfYommi.get_html(url, cached=True)
             download_path = ModelSetting.get("download_path")
             tree = html.fromstring(html_content)
             tmp_items = tree.xpath('//div[@class="item"]')
@@ -920,9 +934,9 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def download_subtitle(info):
-        logger.debug(info)
+        # logger.debug(info)
         ani_url = LogicLinkkfYommi.get_video_url(info["url"])
-        logger.debug(f"ani_url: {ani_url}")
+        # logger.debug(f"ani_url: {ani_url}")
 
         referer = None
 
