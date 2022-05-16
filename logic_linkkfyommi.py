@@ -53,6 +53,7 @@ from .logic_queue import LogicQueue
 #########################################################
 package_name = __name__.split(".")[0]
 logger = get_logger(package_name)
+cache_path = os.path.dirname(__file__)
 
 # requests_cache.install_cache("linkkf_cache", backend="sqlite", expire_after=300)
 
@@ -78,8 +79,9 @@ class LogicLinkkfYommi(object):
                 if cached:
                     logger.debug("cached===========")
                     LogicLinkkfYommi.session = CachedSession(
-                        "linkkf_cache", backend="sqlite", expire_after=300
+                        f"{cache_path}/linkkf_cache", backend="sqlite", expire_after=300
                     )
+                    print(f"cache_path:: {LogicLinkkfYommi.session.cache.db_path}")
                 else:
                     LogicLinkkfYommi.session = requests.Session()
 
