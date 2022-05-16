@@ -78,7 +78,7 @@ class LogicLinkkfYommi(object):
                 if cached:
                     logger.debug("cached===========")
                     LogicLinkkfYommi.session = CachedSession(
-                        'linkkf_cache, backend="sqlite', expire_after=300
+                        'linkkf_cache', backend='sqlite', expire_after=300
                     )
                 else:
                     LogicLinkkfYommi.session = requests.Session()
