@@ -560,17 +560,47 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def get_anime_list_info(cate, page):
+        logger.debug(f"get_anime_list_info():: ===============")
+        items_xpath = ""
+        title_xpath = ""
+        url = ""
+
+        # Todo:
+        #   Query the received result value with db and compare the difference
+        #
+        # query = (
+        #     db.session.query(ModelLinkkf)
+        #     .order_by(ModelLinkkf.created_time)
+        #     .slice(0, 5)
+        #     .all()
+        # )
+        # logger.debug(query)
+        # logger.debug(len(query))
+        # latest_download_data = db.session.commit(query)
+        # logger.debug(latest_download_data)
         try:
             if cate == "ing":
                 url = f"{ModelSetting.get('linkkf_url')}/airing/page/{page}"
+                items_xpath = '//div[@class="item"]'
+                title_xpath = './/span[@class="name-film"]//text()'
             elif cate == "complete":
                 url = f"{ModelSetting.get('linkkf_url')}/anime-list/page/{page}"
+                items_xpath = '//div[@class="item"]'
+                title_xpath = './/span[@class="name-film"]//text()'
+
+            elif cate == "top_view":
+                url = f"{ModelSetting.get('linkkf_url')}/topview/page/{page}"
+                items_xpath = "//div[@id='body']/article[not(@class)]"
+                title_xpath = ".//strong//text()"
+
             logger.debug(f"get_anime_list_info():url >> {url}")
 
             html_content = LogicLinkkfYommi.get_html(url, cached=True)
             download_path = ModelSetting.get("download_path")
             tree = html.fromstring(html_content)
-            tmp_items = tree.xpath('//div[@class="item"]')
+
+            # if (cate == 'top_view'):
+            tmp_items = tree.xpath(items_xpath)
             # logger.info('tmp_items:::', tmp_items)
 
             data = {"ret": "success", "page": page}
@@ -582,10 +612,9 @@ class LogicLinkkfYommi(object):
             for item in tmp_items:
                 entity = {}
                 entity["link"] = item.xpath(".//a/@href")[0]
+                logger.debug(f"link()::entity['link'] => {entity['link']}")
                 entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
-                entity["title"] = item.xpath('.//span[@class="name-film"]//text()')[
-                    0
-                ].strip()
+                entity["title"] = item.xpath(title_xpath)[0].strip()
                 entity["image_link"] = item.xpath(
                     './/img[@class="photo"]/@data-lazy-src'
                 )[0]
@@ -999,7 +1028,7 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def get_info_by_code(code):
-        logger.error("get_info_by_code: %s", code)
+        logger.debug("get_info_by_code: %s", code)
 
         try:
             if LogicLinkkfYommi.current_data is not None:
@@ -1035,7 +1064,7 @@ class LogicLinkkfYommi(object):
                 # logger.debug(f"downloaded:: {downloaded}")
                 dl_codes = [dl.episodecode for dl in downloaded]
                 # logger.debug('dl_codes:: ', dl_codes)
-                logger.info("downloaded codes :%s", dl_codes)
+                # logger.info("downloaded codes :%s", dl_codes)
 
                 # if len(dl_codes) > 0:
                 data = LogicLinkkfYommi.get_title_info(code)

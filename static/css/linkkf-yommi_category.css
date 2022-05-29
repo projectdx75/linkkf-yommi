@@ -199,3 +199,23 @@ button.code-button {
   right: 2px;
   padding: 5px 12px;
 }
+
+#inner_screen_movie > div {
+  margin-bottom: 5px;
+}
+
+.card-body {
+  padding: 0!important;
+}
+
+.card-title {
+  padding: 1rem!important;
+}
+
+button#add_whitelist {
+  float: right;
+}
+
+button.btn-favorite {
+  background-color: #e0ff42;
+}

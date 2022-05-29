@@ -34,6 +34,8 @@ from .model import ModelSetting, ModelLinkkf
 package_name = __name__.split(".")[0]
 logger = get_logger(package_name)
 
+# sys.stdout.write(QueueEntity.get_entity_by_entity_id([]))
+
 
 class QueueEntity:
     static_index = 1
@@ -64,12 +66,17 @@ class QueueEntity:
 
     @staticmethod
     def get_entity_by_entity_id(entity_id):
-        # logger.debug('entity_list::> %s', QueueEntity.entity_list)
+        ret_data = []
+        # logger.debug(type(QueueEntity.entity_list))
         for _ in QueueEntity.entity_list:
-            # logger.debug('entity::>> %s', _.entity_id)
+            logger.debug(type(_))
             if _.entity_id == entity_id:
-                return _
-        return None
+                ret_data.append(_)
+
+        # for _ in QueueEntity.entity_list:
+        #     if _.entity_id == entity_id:
+        #         return _
+        # return None
 
 
 class LogicQueue(object):
@@ -344,6 +351,7 @@ class LogicQueue(object):
         entity.ffmpeg_status = int(arg["status"])
         entity.ffmpeg_status_kor = str(arg["status"])
         entity.ffmpeg_percent = arg["data"]["percent"]
+        entity.status = int(arg["status"])
         from . import plugin
 
         arg["status"] = str(arg["status"])
@@ -403,24 +411,23 @@ class LogicQueue(object):
             command = req.form["command"]
             entity_id = int(req.form["entity_id"])
             logger.debug("command :%s %s", command, entity_id)
-            entity = QueueEntity.get_entity_by_entity_id(entity_id)
-
-            logger.debug("entity::> %s", entity)
+            entities = QueueEntity.get_entity_by_entity_id(entity_id)
+            logger.debug("entity::> %s", entities)
 
             # logger.info('logic_queue:: entity', entity)
 
             ret = {}
             if command == "cancel":
-                if entity.status == -1:
-                    entity.cancel = True
-                    entity.status_kor = "취소"
+                if entities.status == -1:
+                    entities.cancel = True
+                    entities.status_kor = "취소"
                     plugin.socketio_list_refresh()
                     ret["ret"] = "refresh"
-                elif entity.status != 5:
+                elif entities.status != 5:
                     ret["ret"] = "notify"
                     ret["log"] = "다운로드 중인 상태가 아닙니다."
                 else:
-                    idx = entity.ffmpeg_arg["data"]["idx"]
+                    idx = entities.ffmpeg_arg["data"]["idx"]
                     import ffmpeg
 
                     ffmpeg.Ffmpeg.stop_by_idx(idx)
