@@ -53,6 +53,7 @@ class Logic(object):
                 if db.session.query(ModelSetting).filter_by(key=key).count() == 0:
                     db.session.add(ModelSetting(key, value))
             db.session.commit()
+            Logic.db_migration()
         except Exception as e:
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
@@ -63,6 +64,7 @@ class Logic(object):
             logger.debug("%s plugin_load", package_name)
             # DB 초기화
             Logic.db_init()
+            # Logic.db_migration()
 
             if ModelSetting.get("auto_start") == "True":
                 Logic.scheduler_start()
@@ -85,6 +87,12 @@ class Logic(object):
         except Exception as e:
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
+
+    @staticmethod
+    def db_migration():
+        logger.debug("db_migration::=======================")
+
+        pass
 
     @staticmethod
     def scheduler_start():

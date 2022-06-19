@@ -207,6 +207,12 @@ button.code-button {
 .card-body {
   padding: 0!important;
 }
+.new-anime {
+  border-color: darksalmon;
+  border-width: 4px;
+  border-style: dashed;
+
+}
 
 .card-title {
   padding: 1rem!important;

@@ -69,7 +69,7 @@ class QueueEntity:
         ret_data = []
         # logger.debug(type(QueueEntity.entity_list))
         for _ in QueueEntity.entity_list:
-            logger.debug(type(_))
+            # logger.debug(type(_))
             if _.entity_id == entity_id:
                 ret_data.append(_)
 

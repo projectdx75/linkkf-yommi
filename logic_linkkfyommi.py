@@ -55,6 +55,7 @@ package_name = __name__.split(".")[0]
 logger = get_logger(package_name)
 cache_path = os.path.dirname(__file__)
 
+
 # requests_cache.install_cache("linkkf_cache", backend="sqlite", expire_after=300)
 
 
@@ -502,6 +503,10 @@ class LogicLinkkfYommi(object):
             json_file_path = os.path.join(download_path, "airing_list.json")
             logger.debug("json_file_path:: %s", json_file_path)
 
+            if os.path.is_file(json_file_path):
+                logger.debug("airing_list.json file deleted.")
+                os.remove(json_file_path)
+
             with open(json_file_path, "w") as outfile:
                 json.dump(data, outfile)
 
@@ -596,14 +601,21 @@ class LogicLinkkfYommi(object):
             logger.debug(f"get_anime_list_info():url >> {url}")
 
             html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            data = {"ret": "success", "page": page}
             download_path = ModelSetting.get("download_path")
+            json_file_path = os.path.join(download_path, "airing_list.json")
+            if os.path.exists(json_file_path):
+                with open(json_file_path, "r") as json_f:
+                    file_data = json.load(json_f)
+                    data["latest_anime_code"] = file_data["episode"][0]["code"]
+
+                    data["latest_anime_code"] = "352787"
+
             tree = html.fromstring(html_content)
 
             # if (cate == 'top_view'):
             tmp_items = tree.xpath(items_xpath)
             # logger.info('tmp_items:::', tmp_items)
-
-            data = {"ret": "success", "page": page}
 
             data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
             data["episode_count"] = len(tmp_items)
@@ -624,6 +636,10 @@ class LogicLinkkfYommi(object):
 
             json_file_path = os.path.join(download_path, "airing_list.json")
             logger.debug("json_file_path:: %s", json_file_path)
+
+            if os.path.exists(json_file_path):
+                logger.debug("airing_list.json file deleted.")
+                os.remove(json_file_path)
 
             with open(json_file_path, "w") as outfile:
                 json.dump(data, outfile)

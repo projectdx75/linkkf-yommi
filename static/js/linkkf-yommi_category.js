@@ -285,6 +285,8 @@ function make_airing_list(data) {
 function make_screen_movie_list(data, page) {
     let str = "";
     let tmp = "";
+    let new_anime = true;
+    let new_style = ''
 
     let page_elem = "";
     if (page === undefined) {
@@ -300,8 +302,18 @@ function make_screen_movie_list(data, page) {
     str += "</div>";
     str += '<div id="inner_screen_movie" class="row infinite-scroll">';
     for (let i in data.episode) {
+        if ( data.episode[i].code == data.latest_anime_code) {
+            new_anime = false
+        }
+
+        if (new_anime) {
+            new_style = 'new-anime';
+        } else {
+            new_style = '';
+        }
+
         tmp = '<div class="col-6 col-sm-4 col-md-3">';
-        tmp += '<div class="card">';
+        tmp += '<div class="card '+ new_style +'">';
         // tmp += '<div class="card-header">';
 
         // tmp +=
@@ -318,6 +330,7 @@ function make_screen_movie_list(data, page) {
                 data.episode[i].chapter +
                 "</span>";
         }
+        // tmp += '<div class="card-body '+ new_anime ? 'new-anime' : '' +'">';
         tmp += '<div class="card-body">';
         tmp += '<h5 class="card-title">' + data.episode[i].title + "</h5>";
         tmp +=
