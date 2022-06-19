@@ -609,7 +609,7 @@ class LogicLinkkfYommi(object):
                     file_data = json.load(json_f)
                     data["latest_anime_code"] = file_data["episode"][0]["code"]
 
-                    data["latest_anime_code"] = "352787"
+                    # data["latest_anime_code"] = "352787"
 
             tree = html.fromstring(html_content)
 
