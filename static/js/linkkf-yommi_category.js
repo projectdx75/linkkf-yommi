@@ -287,6 +287,7 @@ function make_screen_movie_list(data, page) {
     let tmp = "";
     let new_anime = true;
     let new_style = ''
+    console.log('page: ', page)
 
     let page_elem = "";
     if (page === undefined) {
@@ -294,7 +295,7 @@ function make_screen_movie_list(data, page) {
         page_elem = '<span class="badge bg-warning">' + page + "</span>";
     }
 
-    str += "<div>";
+    str += "<div id='page_caption' style='border-bottom: aqua 1px solid; margin-bottom: 5px'>";
     str +=
         '<button type="button" class="btn btn-info">Page ' +
         page_elem +
@@ -302,11 +303,11 @@ function make_screen_movie_list(data, page) {
     str += "</div>";
     str += '<div id="inner_screen_movie" class="row infinite-scroll">';
     for (let i in data.episode) {
-        if ( data.episode[i].code == data.latest_anime_code) {
+        if ( data.episode[i].code === data.latest_anime_code) {
             new_anime = false
         }
 
-        if (new_anime) {
+        if (new_anime && page === '1') {
             new_style = 'new-anime';
         } else {
             new_style = '';
@@ -324,7 +325,7 @@ function make_screen_movie_list(data, page) {
             '" style="cursor: pointer" onclick="location.href=\'./request?code=' +
             data.episode[i].code +
             "'\"/>";
-        if (current_cate == "ing") {
+        if (current_cate === "ing") {
             tmp +=
                 '<span class="badge badge-danger badge-on-image">' +
                 data.episode[i].chapter +

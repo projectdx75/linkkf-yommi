@@ -293,7 +293,7 @@ class LogicLinkkfYommi(object):
                 match = re.compile(r"src\=\"(?P<video_url>http.*?\.mp4)").search(data2)
                 video_url = match.group("video_url")
 
-                match = re.compile(r"src\=\"(?P<vtt_url>http.*?.vtt").search(data2)
+                match = re.compile(r"src\=\"(?P<vtt_url>http.*?.vtt)").search(data2)
                 logger.info("match group: %s", match.group("video_url"))
                 vtt_url = match.group("vtt_url")
 
