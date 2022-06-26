@@ -78,11 +78,15 @@ class LogicLinkkfYommi(object):
 
             if LogicLinkkfYommi.session is None:
                 if cached:
-                    logger.debug("cached===========")
+                    logger.debug("cached===========++++++++++++")
+
                     LogicLinkkfYommi.session = CachedSession(
-                        f"{cache_path}/linkkf_cache", backend="sqlite", expire_after=300
+                        os.path.join(cache_path, "linkkf_cache"),
+                        backend="sqlite",
+                        expire_after=300,
                     )
-                    print(f"cache_path:: {LogicLinkkfYommi.session.cache.db_path}")
+                    # print(f"{cache_path}")
+                    # print(f"cache_path:: {LogicLinkkfYommi.session.cache}")
                 else:
                     LogicLinkkfYommi.session = requests.Session()
 
@@ -92,7 +96,7 @@ class LogicLinkkfYommi(object):
             #     f"get_html()::LogicLinkkfYommi.referer = {LogicLinkkfYommi.referer}"
             # )
             page = LogicLinkkfYommi.session.get(url, headers=LogicLinkkfYommi.headers)
-            # logger.info("page", page)
+            # logger.info(f"page: {page}")
 
             return page.content.decode("utf8", errors="replace")
             # return page.text
@@ -624,13 +628,17 @@ class LogicLinkkfYommi(object):
             for item in tmp_items:
                 entity = {}
                 entity["link"] = item.xpath(".//a/@href")[0]
-                logger.debug(f"link()::entity['link'] => {entity['link']}")
+                # logger.debug(f"link()::entity['link'] => {entity['link']}")
                 entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
                 entity["title"] = item.xpath(title_xpath)[0].strip()
                 entity["image_link"] = item.xpath(
                     './/img[@class="photo"]/@data-lazy-src'
                 )[0]
-                entity["chapter"] = item.xpath(".//a/button/span//text()")[0]
+                entity["chapter"] = (
+                    item.xpath(".//a/button/span//text()")[0]
+                    if len(item.xpath(".//a/button/span//text()")) > 0
+                    else ""
+                )
                 # logger.info('entity:::', entity['title'])
                 data["episode"].append(entity)
 
