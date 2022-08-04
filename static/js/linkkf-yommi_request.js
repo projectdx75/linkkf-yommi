@@ -103,7 +103,7 @@ function make_airing_list(data) {
   // {#str += m_hr_black();#}
   str +=
     '<div id="inner_airing" class="d-flex align-content-between flex-wrapd-flex align-content-between flex-wrap">';
-  for (i in data.episode) {
+  for (let i in data.episode) {
     // {#str += m_row_start();#}
     // {#tmp = '<div class="col-sm"><strong>' + data.episode[i].title+ '</strong>';#}
     //
@@ -204,6 +204,7 @@ function make_program(data) {
     tmp += m_button("add_queue_btn", "다운로드 추가", [
       { key: "idx", value: i },
     ]);
+   // tmp += '<button id="play_video" name="play_video" class="btn btn-sm btn-outline-primary" data-idx="'+i+'">바로보기</button>';
     tmp += "</div>";
     str += m_col(12, tmp);
     str += m_row_end();

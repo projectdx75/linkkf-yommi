@@ -17,7 +17,7 @@ import urllib
 from urllib.parse import urlparse
 import json
 
-packages = ["beautifulsoup4", "requests-cache"]
+packages = ["beautifulsoup4", "requests-cache", "cloudscraper"]
 for package in packages:
     try:
         import package
@@ -32,6 +32,7 @@ import requests
 # import requests_cache
 # from requests_cache import CachedSession
 from requests_cache import CachedSession
+import cloudscraper
 from lxml import html, etree
 from bs4 import BeautifulSoup
 
@@ -64,6 +65,7 @@ class LogicLinkkfYommi(object):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98"
         "Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+        "cache-control": "no-cache",
         "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
     }
 
@@ -106,6 +108,17 @@ class LogicLinkkfYommi(object):
             logger.error(traceback.format_exc())
 
     @staticmethod
+    def get_html_cloudflare(url, cached=False):
+        scraper = cloudscraper.create_scraper(
+            disableCloudflareV1=True,
+            captcha={"provider": "return_response"},
+            delay=10,
+            browser="chrome",
+        )
+        LogicLinkkfYommi.headers["referer"] = LogicLinkkfYommi.referer
+        return scraper.get(url, headers=LogicLinkkfYommi.headers).text
+
+    @staticmethod
     def get_video_url_from_url(url, url2):
         video_url = None
         referer_url = None
@@ -115,7 +128,34 @@ class LogicLinkkfYommi(object):
         # logger.debug(LogicLinkkfYommi.referer)
 
         try:
-            if "kfani" in url2:
+            if "ani1" in url2:
+                # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
+                logger.debug("kfani routine")
+                LogicLinkkfYommi.referer = url2
+                # logger.debug(f"url2: {url2}")
+                data = LogicLinkkfYommi.get_html(url2)
+                # logger.info("dx: data", data)
+                regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
+
+                temp_url = re.findall(regex2, data)[0]
+                video_url = ""
+                ref = "https://ani1.app"
+                for i in temp_url:
+                    if i is None:
+                        continue
+                    video_url = i
+                    # video_url = '{1} -headers \'Referer: "{0}"\' -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64;
+                    # x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref,
+                    # video_url)
+
+                match = re.compile(r"<track.+src\=\"(?P<vtt_url>.*?.vtt)").search(data)
+                # logger.info("match group: %s", match.group('vtt_url'))
+                vtt_url = match.group("vtt_url")
+                # logger.info("vtt_url: %s", vtt_url)
+                # logger.debug(f"LogicLinkkfYommi.referer: {LogicLinkkfYommi.referer}")
+                referer_url = url2
+
+            elif "kfani" in url2:
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
                 logger.debug("kfani routine")
                 LogicLinkkfYommi.referer = url2
@@ -570,6 +610,8 @@ class LogicLinkkfYommi(object):
     @staticmethod
     def get_anime_list_info(cate, page):
         logger.debug(f"get_anime_list_info():: ===============")
+        logger.debug(f"cate:: {cate}")
+        logger.debug(f"page:: {page}")
         items_xpath = ""
         title_xpath = ""
         url = ""
@@ -605,15 +647,19 @@ class LogicLinkkfYommi(object):
             logger.debug(f"get_anime_list_info():url >> {url}")
 
             html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
+            logger.debug(html_content)
             data = {"ret": "success", "page": page}
-            download_path = ModelSetting.get("download_path")
-            json_file_path = os.path.join(download_path, "airing_list.json")
-            if os.path.exists(json_file_path):
-                with open(json_file_path, "r") as json_f:
-                    file_data = json.load(json_f)
-                    data["latest_anime_code"] = file_data["episode"][0]["code"]
 
-                    # data["latest_anime_code"] = "352787"
+            # download_path = ModelSetting.get("download_path")
+
+            # json_file_path = os.path.join(download_path, "airing_list.json")
+            # if os.path.exists(json_file_path):
+            #     with open(json_file_path, "r") as json_f:
+            #         file_data = json.load(json_f)
+            #         data["latest_anime_code"] = file_data["episode"][0]["code"]
+
+            # data["latest_anime_code"] = "352787"
 
             tree = html.fromstring(html_content)
 
@@ -621,7 +667,11 @@ class LogicLinkkfYommi(object):
             tmp_items = tree.xpath(items_xpath)
             # logger.info('tmp_items:::', tmp_items)
 
-            data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
+            # data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
+            if tree.xpath('//div[@id="wp_page"]//text()'):
+                data["total_page"] = tree.xpath('//div[@id="wp_page"]//text()')[-1]
+            else:
+                data["total_page"] = 0
             data["episode_count"] = len(tmp_items)
             data["episode"] = []
 
@@ -642,15 +692,19 @@ class LogicLinkkfYommi(object):
                 # logger.info('entity:::', entity['title'])
                 data["episode"].append(entity)
 
-            json_file_path = os.path.join(download_path, "airing_list.json")
-            logger.debug("json_file_path:: %s", json_file_path)
-
-            if os.path.exists(json_file_path):
-                logger.debug("airing_list.json file deleted.")
-                os.remove(json_file_path)
-
-            with open(json_file_path, "w") as outfile:
-                json.dump(data, outfile)
+            # json_file_path = os.path.join(download_path, "airing_list.json")
+            # logger.debug("json_file_path:: %s", json_file_path)
+            # json_file_dir = os.path.dirname(json_file_path)
+            #
+            # if os.path.exists(json_file_path):
+            #     logger.debug("airing_list.json file deleted.")
+            #     os.remove(json_file_path)
+            #
+            # if not os.path.exists(json_file_dir):
+            #     os.makedirs(json_file_dir)
+            #
+            # with open(json_file_path, "w") as outfile:
+            #     json.dump(data, outfile)
 
             return data
 
@@ -716,7 +770,7 @@ class LogicLinkkfYommi(object):
             data["episode"] = []
 
             if tree.xpath('//*[@id="wp_page"]//text()'):
-                data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
+                data["total_page"] = tree.xpath('//div[@id="wp_page"]//text()')[-1]
             else:
                 data["total_page"] = 0
 
