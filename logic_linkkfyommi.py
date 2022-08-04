@@ -136,9 +136,7 @@ class LogicLinkkfYommi(object):
                 ani1_html = LogicLinkkfYommi.get_html(url2)
 
                 tree = html.fromstring(ani1_html)
-                option_url = tree.xpath(
-                    "//select[@id='server_list']/option[text()='f24']/@value"
-                )
+                option_url = tree.xpath("//select[@id='server-list']/option[1]/@value")
 
                 logger.debug(f"option_url:: {option_url}")
 
