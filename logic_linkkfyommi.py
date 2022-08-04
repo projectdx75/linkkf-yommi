@@ -1090,7 +1090,10 @@ class LogicLinkkfYommi(object):
         # if "linkkf.app" in base_url:
         #     base_url = f"{ourls.scheme}://kfani.me"
 
-        vtt_url = base_url + ani_url[2]
+        # vtt_url = base_url + ani_url[2]
+        # https://kfani.me/s/354776m5.vtt
+        vtt_url = "https://kfani.me" + ani_url[2]
+
         # logger.debug(f"srt:url => {vtt_url}")
         srt_filepath = os.path.join(
             save_path, info["filename"].replace(".mp4", ".ko.srt")
