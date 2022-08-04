@@ -130,10 +130,19 @@ class LogicLinkkfYommi(object):
         try:
             if "ani1" in url2:
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
-                logger.debug("kfani routine")
+                logger.debug("ani1 routine")
                 LogicLinkkfYommi.referer = url2
                 # logger.debug(f"url2: {url2}")
-                data = LogicLinkkfYommi.get_html(url2)
+                ani1_html = LogicLinkkfYommi.get_html(url2)
+
+                tree = html.fromstring(ani1_html)
+                option_url = tree.xpath(
+                    "//select[@id='server_list'/option[text()='f24']/@value"
+                )
+
+                logger.debug(f"option_url:: {option_url}")
+
+                data = LogicLinkkfYommi.get_html(option_url)
                 # logger.info("dx: data", data)
                 regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
 
