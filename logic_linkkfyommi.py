@@ -1064,6 +1064,7 @@ class LogicLinkkfYommi(object):
             referer = ani_url[1]
 
         logger.debug(f"referer:: {referer}")
+        referer = "https://kfani.me"
 
         headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
