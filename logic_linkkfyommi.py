@@ -648,7 +648,7 @@ class LogicLinkkfYommi(object):
 
             html_content = LogicLinkkfYommi.get_html(url, cached=True)
             # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
-            logger.debug(html_content)
+            # logger.debug(html_content)
             data = {"ret": "success", "page": page}
 
             # download_path = ModelSetting.get("download_path")
