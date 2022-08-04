@@ -140,7 +140,7 @@ class LogicLinkkfYommi(object):
 
                 logger.debug(f"option_url:: {option_url}")
 
-                data = LogicLinkkfYommi.get_html(option_url)
+                data = LogicLinkkfYommi.get_html(option_url[0])
                 # logger.info("dx: data", data)
                 regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
 
