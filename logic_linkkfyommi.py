@@ -675,8 +675,8 @@ class LogicLinkkfYommi(object):
 
             logger.debug(f"get_anime_list_info():url >> {url}")
 
-            # html_content = LogicLinkkfYommi.get_html(url, cached=True)
-            html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
+            html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
             # logger.debug(html_content)
             data = {"ret": "success", "page": page}
 
