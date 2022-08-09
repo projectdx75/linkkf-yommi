@@ -33,6 +33,8 @@ import requests
 # from requests_cache import CachedSession
 from requests_cache import CachedSession
 import cloudscraper
+
+# import cfscrape
 from lxml import html, etree
 from bs4 import BeautifulSoup
 
@@ -109,14 +111,25 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def get_html_cloudflare(url, cached=False):
+        # scraper = cloudscraper.create_scraper(
+        #     # disableCloudflareV1=True,
+        #     # captcha={"provider": "return_response"},
+        #     delay=10,
+        #     browser="chrome",
+        # )
+        # scraper = cfscrape.create_scraper(
+        #     browser={"browser": "chrome", "platform": "android", "desktop": False}
+        # )
+
         scraper = cloudscraper.create_scraper(
-            disableCloudflareV1=True,
-            captcha={"provider": "return_response"},
-            delay=10,
-            browser="chrome",
+            browser={"browser": "firefox", "platform": "windows", "mobile": False}
         )
+
         LogicLinkkfYommi.headers["referer"] = LogicLinkkfYommi.referer
-        return scraper.get(url, headers=LogicLinkkfYommi.headers).text
+
+        # print(scraper.get(url, headers=LogicLinkkfYommi.headers).content)
+        # print(scraper.get(url).content)
+        return scraper.get(url).content
 
     @staticmethod
     def get_video_url_from_url(url, url2):
@@ -145,6 +158,7 @@ class LogicLinkkfYommi(object):
                 regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
 
                 temp_url = re.findall(regex2, data)[0]
+                print(f"temp_url:: {temp_url}")
                 video_url = ""
                 ref = "https://ani1.app"
                 for i in temp_url:
@@ -363,7 +377,8 @@ class LogicLinkkfYommi(object):
             # url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
             url = episode_url
             # logger.info("url: %s" % url)
-            data = LogicLinkkfYommi.get_html(url)
+            # data = LogicLinkkfYommi.get_html(url)
+            data = LogicLinkkfYommi.get_html_cloudflare(url)
             # logger.info(data)
             tree = html.fromstring(data)
             url2s = [
@@ -639,13 +654,20 @@ class LogicLinkkfYommi(object):
         try:
             if cate == "ing":
                 url = f"{ModelSetting.get('linkkf_url')}/airing/page/{page}"
-                items_xpath = '//div[@class="item"]'
-                title_xpath = './/span[@class="name-film"]//text()'
+                items_xpath = '//div[@class="myui-vodlist__box"]'
+                title_xpath = './/a[@class="text-fff"]//text()'
+            elif cate == "movie":
+                url = f"{ModelSetting.get('linkkf_url')}/ani/page/{page}"
+                # items_xpath = '//div[@class="item"]'
+                # title_xpath = './/span[@class="name-film"]//text()'
+                items_xpath = '//div[@class="myui-vodlist__box"]'
+                title_xpath = './/a[@class="text-fff"]//text()'
             elif cate == "complete":
                 url = f"{ModelSetting.get('linkkf_url')}/anime-list/page/{page}"
-                items_xpath = '//div[@class="item"]'
-                title_xpath = './/span[@class="name-film"]//text()'
-
+                # items_xpath = '//div[@class="item"]'
+                # title_xpath = './/span[@class="name-film"]//text()'
+                items_xpath = '//div[@class="myui-vodlist__box"]'
+                title_xpath = './/a[@class="text-fff"]//text()'
             elif cate == "top_view":
                 url = f"{ModelSetting.get('linkkf_url')}/topview/page/{page}"
                 items_xpath = "//div[@id='body']/article[not(@class)]"
@@ -653,8 +675,8 @@ class LogicLinkkfYommi(object):
 
             logger.debug(f"get_anime_list_info():url >> {url}")
 
-            html_content = LogicLinkkfYommi.get_html(url, cached=True)
-            # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
+            # html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
             # logger.debug(html_content)
             data = {"ret": "success", "page": page}
 
@@ -672,7 +694,7 @@ class LogicLinkkfYommi(object):
 
             # if (cate == 'top_view'):
             tmp_items = tree.xpath(items_xpath)
-            # logger.info('tmp_items:::', tmp_items)
+            # logger.info(f"tmp_items::: {tmp_items}")
 
             # data["total_page"] = tree.xpath('//*[@id="wp_page"]//text()')[-1]
             if tree.xpath('//div[@id="wp_page"]//text()'):
@@ -688,12 +710,10 @@ class LogicLinkkfYommi(object):
                 # logger.debug(f"link()::entity['link'] => {entity['link']}")
                 entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
                 entity["title"] = item.xpath(title_xpath)[0].strip()
-                entity["image_link"] = item.xpath(
-                    './/img[@class="photo"]/@data-lazy-src'
-                )[0]
+                entity["image_link"] = item.xpath("./a/@data-original")[0]
                 entity["chapter"] = (
-                    item.xpath(".//a/button/span//text()")[0]
-                    if len(item.xpath(".//a/button/span//text()")) > 0
+                    item.xpath("./a/span//text()")[0]
+                    if len(item.xpath("./a/span//text()")) > 0
                     else ""
                 )
                 # logger.info('entity:::', entity['title'])
@@ -724,10 +744,13 @@ class LogicLinkkfYommi(object):
         try:
             url = f"{ModelSetting.get('linkkf_url')}/ani/page/{page}"
 
-            html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            # html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
             download_path = ModelSetting.get("download_path")
             tree = html.fromstring(html_content)
-            tmp_items = tree.xpath('//div[@class="item"]')
+            # tmp_items = tree.xpath('//div[@class="item"]')
+            tmp_items = tree.xpath('//div[@class="myui-vodlist__box"]')
+            title_xpath = './/a[@class="text-fff"]//text()'
             # logger.info('tmp_items:::', tmp_items)
 
             data = {"ret": "success", "page": page}
@@ -738,13 +761,15 @@ class LogicLinkkfYommi(object):
             for item in tmp_items:
                 entity = {}
                 entity["link"] = item.xpath(".//a/@href")[0]
+                # logger.debug(f"link()::entity['link'] => {entity['link']}")
                 entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
-                entity["title"] = item.xpath('.//span[@class="name-film"]//text()')[
-                    0
-                ].strip()
-                entity["image_link"] = item.xpath(
-                    './/img[@class="photo"]/@data-lazy-src'
-                )[0]
+                entity["title"] = item.xpath(title_xpath)[0].strip()
+                entity["image_link"] = item.xpath("./a/@data-original")[0]
+                entity["chapter"] = (
+                    item.xpath("./a/span//text()")[0]
+                    if len(item.xpath("./a/span//text()")) > 0
+                    else ""
+                )
                 # logger.info('entity:::', entity['title'])
                 data["episode"].append(entity)
 
@@ -765,15 +790,18 @@ class LogicLinkkfYommi(object):
         try:
             url = f"{ModelSetting.get('linkkf_url')}/anime-list/page/{page}"
 
-            html_content = LogicLinkkfYommi.get_html(url)
+            html_content = LogicLinkkfYommi.get_html_cloudflare(url)
             download_path = ModelSetting.get("download_path")
             tree = html.fromstring(html_content)
-            tmp_items = tree.xpath('//div[@class="item"]')
+            # tmp_items = tree.xpath('//div[@class="item"]')
+            tmp_items = tree.xpath('//div[@class="myui-vodlist__box"]')
+            title_xpath = './/a[@class="text-fff"]//text()'
             # logger.info('tmp_items:::', tmp_items)
 
             data = {"ret": "success", "page": page}
 
             data["episode_count"] = len(tmp_items)
+            logger.debug(f'episode_count:: {data["episode_count"]}')
             data["episode"] = []
 
             if tree.xpath('//*[@id="wp_page"]//text()'):
@@ -784,13 +812,23 @@ class LogicLinkkfYommi(object):
             for item in tmp_items:
                 entity = {}
                 entity["link"] = item.xpath(".//a/@href")[0]
+                # logger.debug(f"link()::entity['link'] => {entity['link']}")
                 entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
-                entity["title"] = item.xpath('.//span[@class="name-film"]//text()')[
-                    0
-                ].strip()
-                entity["image_link"] = item.xpath(
-                    './/img[@class="photo"]/@data-lazy-src'
-                )[0]
+                entity["title"] = item.xpath(title_xpath)[0].strip()
+                entity["image_link"] = item.xpath("./a/@data-original")[0]
+                entity["chapter"] = (
+                    item.xpath("./a/span//text()")[0]
+                    if len(item.xpath("./a/span//text()")) > 0
+                    else ""
+                )
+                # entity["link"] = item.xpath(".//a/@href")[0]
+                # entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
+                # entity["title"] = item.xpath('.//span[@class="name-film"]//text()')[
+                #     0
+                # ].strip()
+                # entity["image_link"] = item.xpath(
+                #     './/img[@class="photo"]/@data-lazy-src'
+                # )[0]
                 # logger.info('entity:::', entity['title'])
                 data["episode"].append(entity)
 
@@ -817,7 +855,10 @@ class LogicLinkkfYommi(object):
                 return LogicLinkkfYommi.current_data
             url = "%s/%s" % (ModelSetting.get("linkkf_url"), code)
             # logger.info(url)
-            html_content = LogicLinkkfYommi.get_html(url, cached=True)
+
+            # html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=True)
+
             sys.setrecursionlimit(10**7)
             # logger.info(html_content)
             tree = html.fromstring(html_content)
@@ -875,9 +916,12 @@ class LogicLinkkfYommi(object):
                 #     '//*[@id="body"]/div/div/div[1]/center/img'
                 # )[0].attrib['data-src']
 
+                # data["poster_url"] = tree.xpath(
+                #     '//*[@id="body"]/div/div[1]/div[1]/center/img'
+                # )[0].attrib["data-lazy-src"]
                 data["poster_url"] = tree.xpath(
-                    '//*[@id="body"]/div/div[1]/div[1]/center/img'
-                )[0].attrib["data-lazy-src"]
+                    '//div[@class="myui-content__thumb"]/a/@data-original'
+                )
                 data["detail"] = [
                     {
                         "info": tree.xpath("/html/body/div[2]/div/div[1]/div[1]")[0]
