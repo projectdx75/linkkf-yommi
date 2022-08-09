@@ -377,8 +377,8 @@ class LogicLinkkfYommi(object):
             # url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
             url = episode_url
             # logger.info("url: %s" % url)
-            # data = LogicLinkkfYommi.get_html(url)
-            data = LogicLinkkfYommi.get_html_cloudflare(url)
+            data = LogicLinkkfYommi.get_html(url)
+            # data = LogicLinkkfYommi.get_html_cloudflare(url)
             # logger.info(data)
             tree = html.fromstring(data)
             url2s = [
@@ -744,8 +744,8 @@ class LogicLinkkfYommi(object):
         try:
             url = f"{ModelSetting.get('linkkf_url')}/ani/page/{page}"
 
-            # html_content = LogicLinkkfYommi.get_html(url, cached=True)
-            html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
+            html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
             download_path = ModelSetting.get("download_path")
             tree = html.fromstring(html_content)
             # tmp_items = tree.xpath('//div[@class="item"]')
@@ -790,7 +790,8 @@ class LogicLinkkfYommi(object):
         try:
             url = f"{ModelSetting.get('linkkf_url')}/anime-list/page/{page}"
 
-            html_content = LogicLinkkfYommi.get_html_cloudflare(url)
+            html_content = LogicLinkkfYommi.get_html(url)
+            # html_content = LogicLinkkfYommi.get_html_cloudflare(url)
             download_path = ModelSetting.get("download_path")
             tree = html.fromstring(html_content)
             # tmp_items = tree.xpath('//div[@class="item"]')
@@ -856,8 +857,8 @@ class LogicLinkkfYommi(object):
             url = "%s/%s" % (ModelSetting.get("linkkf_url"), code)
             # logger.info(url)
 
-            # html_content = LogicLinkkfYommi.get_html(url, cached=True)
-            html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=True)
+            html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=True)
 
             sys.setrecursionlimit(10**7)
             # logger.info(html_content)
