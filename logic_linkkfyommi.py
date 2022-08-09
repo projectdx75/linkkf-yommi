@@ -592,7 +592,10 @@ class LogicLinkkfYommi(object):
             html_content = LogicLinkkfYommi.get_html(url)
             download_path = ModelSetting.get("download_path")
             tree = html.fromstring(html_content)
-            tmp_items = tree.xpath('//div[@class="item"]')
+            tmp_items = tree.xpath('//div[@class="myui-vodlist__box"]')
+            title_xpath = './/a[@class="text-fff"]//text()'
+
+            # tmp_items = tree.xpath('//div[@class="item"]')
             # logger.info('tmp_items:::', tmp_items)
 
             data = {"ret": "success", "query": query}
@@ -608,12 +611,23 @@ class LogicLinkkfYommi(object):
 
             for item in tmp_items:
                 entity = {}
+                # entity["link"] = item.xpath(".//a/@href")[0]
+                # entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
+                # entity["title"] = item.xpath('.//span[@class="name-film"]//text()')[
+                #     0
+                # ].strip()
+                # entity["image_link"] = item.xpath('.//img[@class="photo"]/@src')[0]
+
                 entity["link"] = item.xpath(".//a/@href")[0]
+                # logger.debug(f"link()::entity['link'] => {entity['link']}")
                 entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
-                entity["title"] = item.xpath('.//span[@class="name-film"]//text()')[
-                    0
-                ].strip()
-                entity["image_link"] = item.xpath('.//img[@class="photo"]/@src')[0]
+                entity["title"] = item.xpath(title_xpath)[0].strip()
+                entity["image_link"] = item.xpath("./a/@data-original")[0]
+                entity["chapter"] = (
+                    item.xpath("./a/span//text()")[0]
+                    if len(item.xpath("./a/span//text()")) > 0
+                    else ""
+                )
                 # logger.info('entity:::', entity['title'])
                 data["episode"].append(entity)
 
