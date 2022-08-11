@@ -82,6 +82,8 @@ class LogicLinkkfYommi(object):
 
         try:
             print("cloudflare protection bypass ==================")
+            return LogicLinkkfYommi.get_html_cloudflare(url)
+
             if (
                 socket.gethostbyname(socket.gethostname()) == "192.168.0.32"
                 or socket.gethostbyname(socket.gethostname()) == "127.0.0.1"
