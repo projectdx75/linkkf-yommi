@@ -160,10 +160,10 @@ class LogicQueue(object):
 
                 # entity.url = LogicLinkkfYommi.get_video_url(
                 #     entity.info['code'])
-                # logger.debug(f"entity.info[url] = {entity.info['url']}")
+                logger.debug(f"entity.info[url] = {entity.info['url']}")
                 entity.url = LogicLinkkfYommi.get_video_url(entity.info["url"])
 
-                # logger.info('entity.info: %s', entity.info['url'])
+                logger.info("entity.info: %s", entity.info["url"])
                 logger.debug(f"entity.url: {entity.url}")
                 # logger.info('url1: %s', entity.url[0])
                 # print(entity)
@@ -171,7 +171,7 @@ class LogicQueue(object):
 
                 # logger.info('entity.url:::> %s', entity.url)
                 if entity.url[0] is None:
-                    self.ffmpeg_status_kor = "URL실패"
+                    LogicQueue.ffmpeg_status_kor = "URL실패"
                     plugin.socketio_list_refresh()
                     continue
 
@@ -190,7 +190,7 @@ class LogicQueue(object):
                 try:
                     if not os.path.exists(save_path):
                         os.makedirs(save_path)
-                except:
+                except Exception as e:
                     logger.debug("program path make fail!!")
 
                 # 파일 존재여부 체크
