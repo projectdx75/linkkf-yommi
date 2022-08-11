@@ -81,21 +81,22 @@ class LogicLinkkfYommi(object):
     def get_html(url, cached=False):
 
         try:
-            print("cloudflare protection bypass ==================")
-            return LogicLinkkfYommi.get_html_cloudflare(url)
-
-            if (
-                socket.gethostbyname(socket.gethostname()) == "192.168.0.32"
-                or socket.gethostbyname(socket.gethostname()) == "127.0.0.1"
-            ):
-                print("dev================")
-                # print("test")
-                # import undetected_chromedriver as uc
-                #
-                # driver = uc.Chrome(use_subprocess=True)
-                # driver.get(url)
-
-                return LogicLinkkfYommi.get_html_cloudflare(url)
+            # print("cloudflare protection bypass ==================")
+            # # return LogicLinkkfYommi.get_html_cloudflare(url)
+            # return LogicLinkkfYommi.get_html_playwright(url)
+            #
+            # if (
+            #     socket.gethostbyname(socket.gethostname()) == "192.168.0.32"
+            #     or socket.gethostbyname(socket.gethostname()) == "127.0.0.1"
+            # ):
+            #     print("dev================")
+            #     # print("test")
+            #     # import undetected_chromedriver as uc
+            #     #
+            #     # driver = uc.Chrome(use_subprocess=True)
+            #     # driver.get(url)
+            #
+            #     return LogicLinkkfYommi.get_html_cloudflare(url)
 
             if LogicLinkkfYommi.session is None:
                 if cached:
@@ -128,6 +129,40 @@ class LogicLinkkfYommi(object):
         except Exception as e:
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
+
+    @staticmethod
+    def get_html_playwright(url):
+        from playwright.sync_api import sync_playwright
+        import time
+
+        start = time.time()
+        ua = (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/69.0.3497.100 Safari/537.36"
+        )
+        # from playwright_stealth import stealth_sync
+
+        with sync_playwright() as p:
+            browser = p.webkit.launch(headless=True)
+            context = browser.new_context(
+                user_agent=ua,
+            )
+            LogicLinkkfYommi.referer = "https://linkkf.app"
+
+            LogicLinkkfYommi.headers["referer"] = LogicLinkkfYommi.referer
+
+            context.set_extra_http_headers(LogicLinkkfYommi.headers)
+
+            page = context.new_page()
+            # stealth_sync(page)
+            page.goto(url, wait_until="domcontentloaded")
+
+            print(page.content())
+
+            print(f"run at {time.time() - start} sec")
+
+            return page.content()
 
     @staticmethod
     def get_html_cloudflare(url, cached=False):

@@ -193,9 +193,13 @@ class LogicQueue(object):
                 except Exception as e:
                     logger.debug("program path make fail!!")
 
+                if referer is None:
+                    referer = "https://kfani.me/"
+
                 # 파일 존재여부 체크
                 if entity.url[1] is not None:
                     referer = entity.url[1]
+
                     headers = {
                         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
                         # 'Accept':
@@ -214,12 +218,15 @@ class LogicQueue(object):
                     continue
 
                 headers = {
-                    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/71.0.3554.0 Safari/537.36Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36",
+                    # "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                    # "Chrome/71.0.3554.0 Safari/537.36Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    # "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36",
+                    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
                     "Referer": f"{referer}",
                 }
                 # logger.debug(f"referer: {referer}")
+
+                logger.debug(f"headers::: {headers}")
 
                 f = ffmpeg.Ffmpeg(
                     entity.url[0],
