@@ -156,15 +156,15 @@ class LogicLinkkfYommi(object):
         # LogicLinkkfYommi.session = requests.Session()
 
         sess = cloudscraper.create_scraper(
-            debug=True, sess=LogicLinkkfYommi.session, delay=20
+            debug=True, sess=LogicLinkkfYommi.session, delay=10
         )
 
         # print(scraper.get(url, headers=LogicLinkkfYommi.headers).content)
         # print(scraper.get(url).content)
         # return scraper.get(url, headers=LogicLinkkfYommi.headers).content
-        return sess.get(url, headers=LogicLinkkfYommi.headers).content.decode(
-            "utf8", errors="replace"
-        )
+        return sess.get(
+            url, headers=LogicLinkkfYommi.headers, timeout=10
+        ).content.decode("utf8", errors="replace")
 
     @staticmethod
     def get_video_url_from_url(url, url2):
