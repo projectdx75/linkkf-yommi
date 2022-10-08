@@ -1149,7 +1149,11 @@ class LogicLinkkfYommi(object):
 
                 # logger.info('episode_code', episode_code)
                 # entity["url"] = t.attrib["href"]
-                entity["url"] = t["href"]
+                aa = t['href']
+                if '/player' in aa :
+                    entity["url"] = 'https://linkkf.app' + t["href"]
+                else:
+                    entity["url"] = t["href"]
                 entity["season"] = data["season"]
 
                 # 저장경로 저장
