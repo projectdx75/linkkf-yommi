@@ -455,11 +455,10 @@ class LogicLinkkfYommi(object):
             # logger.info(data)
             tree = html.fromstring(data)
             xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
-
             logger.debug(f"dev:: {len(tree.xpath(xpath_select_query))}")
 
             if len(tree.xpath(xpath_select_query)) > 0:
-                pass
+                xpath_select_query = '//select[@id="server-list"]/option'
             else:
                 print("here")
                 xpath_select_query = '//select[@class="switcher"]/option'
