@@ -996,7 +996,11 @@ class LogicLinkkfYommi(object):
             # logger.info('tmp::>', tree.xpath('//div[@class="hrecipe"]/article/center/strong'))
             # tmp1 = tree.xpath("//div[contains(@id, 'related')]/ul/a")
             # tmp = tree1.find_element(By.Xpath, "//ul/a")
-            tmp = soup.select("ul > a")
+            tmp2 = soup.select("ul > a")
+            if len(tmp2) == 0:
+                tmp = soup.select("u > a")
+            else:
+                tmp = soup.select("ul > a")
 
             # logger.debug(f"tmp1 size:=> {str(len(tmp))}")
 
@@ -1070,7 +1074,11 @@ class LogicLinkkfYommi(object):
             # tmp = tree.xpath('//article/a')
             # 수정된
             # tmp = tree.xpath("//ul/a")
-            tmp = soup.select("ul > a")
+            tmp2 = soup.select("ul > a")
+            if len(tmp) == 0:
+                tmp = soup.select("u > a")
+            else:
+                tmp = soup.select("ul > a")
 
             # logger.debug(f"tmp size:=> {str(len(tmp))}")
             # logger.info(tmp)
@@ -1083,7 +1091,11 @@ class LogicLinkkfYommi(object):
             # tags = tree.xpath(
             #     '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
             # tags = tree.xpath("//ul/a")
-            tags = soup.select("ul > a")
+            tags2 = soup.select("ul > a")
+            if len(tags2) == 0:
+                tags = soup.select("u > a")
+            else:
+                tags = soup.select("ul > a")
 
             # logger.info("tags", tags)
             # re1 = re.compile(r'\/(?P<code>\d+)')
