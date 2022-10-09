@@ -1179,8 +1179,8 @@ class LogicLinkkfYommi(object):
             logger.info(url)
 
             # html_content = LogicLinkkfYommi.get_html(url, cached=True)
-            html_content = LogicLinkkfYommi.get_html_playwright(url)
-            # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=True)
+            # html_content = LogicLinkkfYommi.get_html_playwright(url)
+            html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=True)
 
             logger.debug(html_content)
 
