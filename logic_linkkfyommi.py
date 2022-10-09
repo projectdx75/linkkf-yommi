@@ -16,7 +16,7 @@ import urllib
 from urllib.parse import urlparse
 import json
 
-packages = ["beautifulsoup4", "requests-cache", "cloudscraper", "playwright"]
+packages = ["beautifulsoup4", "requests-cache", "cloudscraper", "selenium-wire"]
 for package in packages:
     try:
         import package
@@ -90,7 +90,9 @@ class LogicLinkkfYommi(object):
         try:
             print("cloudflare protection bypass ==================")
             # return LogicLinkkfYommi.get_html_cloudflare(url)
-            return LogicLinkkfYommi.get_html_playwright(url)
+            # return LogicLinkkfYommi.get_html_playwright(url)
+            return LogicLinkkfYommi.get_html_selenium(url)
+            # return LogicLinkkfYommi.get_html_requests(url, False)
             #
             # if (
             #     socket.gethostbyname(socket.gethostname()) == "192.168.0.32"
@@ -104,33 +106,6 @@ class LogicLinkkfYommi(object):
             #     # driver.get(url)
             #
             #     return LogicLinkkfYommi.get_html_cloudflare(url)
-
-            if LogicLinkkfYommi.session is None:
-                if cached:
-                    logger.debug("cached===========++++++++++++")
-
-                    LogicLinkkfYommi.session = CachedSession(
-                        os.path.join(cache_path, "linkkf_cache"),
-                        backend="sqlite",
-                        expire_after=300,
-                        cache_control=True,
-                    )
-                    # print(f"{cache_path}")
-                    # print(f"cache_path:: {LogicLinkkfYommi.session.cache}")
-                else:
-                    LogicLinkkfYommi.session = requests.Session()
-
-            LogicLinkkfYommi.referer = "https://linkkf.app"
-
-            LogicLinkkfYommi.headers["referer"] = LogicLinkkfYommi.referer
-
-            # logger.debug(
-            #     f"get_html()::LogicLinkkfYommi.referer = {LogicLinkkfYommi.referer}"
-            # )
-            page = LogicLinkkfYommi.session.get(url, headers=LogicLinkkfYommi.headers)
-            # logger.info(f"page: {page}")
-
-            return page.content.decode("utf8", errors="replace")
             # return page.text
             # return page.content
         except Exception as e:
@@ -142,6 +117,117 @@ class LogicLinkkfYommi(object):
             # os.system(f"pip3 install playwright")
             # os.system(f"playwright install")
             pass
+
+    @staticmethod
+    def get_html_requests(url, cached=False):
+        if LogicLinkkfYommi.session is None:
+            if cached:
+                logger.debug("cached===========++++++++++++")
+
+                LogicLinkkfYommi.session = CachedSession(
+                    os.path.join(cache_path, "linkkf_cache"),
+                    backend="sqlite",
+                    expire_after=300,
+                    cache_control=True,
+                )
+                # print(f"{cache_path}")
+                # print(f"cache_path:: {LogicLinkkfYommi.session.cache}")
+            else:
+                LogicLinkkfYommi.session = requests.Session()
+
+        LogicLinkkfYommi.referer = "https://linkkf.app"
+
+        LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
+
+        # logger.debug(
+        #     f"get_html()::LogicLinkkfYommi.referer = {LogicLinkkfYommi.referer}"
+        # )
+        page = LogicLinkkfYommi.session.get(url, headers=LogicLinkkfYommi.headers)
+        # logger.info(f"page: {page}")
+
+        return page.content.decode("utf8", errors="replace")
+
+    @staticmethod
+    def get_html_selenium(url, referer=None):
+        from selenium.webdriver.common.by import By
+
+        from selenium import webdriver
+        from selenium_stealth import stealth
+        from webdriver_manager.chrome import ChromeDriverManager
+
+        from seleniumwire import webdriver
+        import time
+        import platform
+        import os
+
+        os_platform = platform.system()
+
+        options = webdriver.ChromeOptions()
+        # 크롬드라이버 헤더 옵션추가 (리눅스에서 실행시 필수)
+        options.add_argument("start-maximized")
+        options.add_argument("--headless")
+        options.add_argument("--no-sandbox")
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option("useAutomationExtension", False)
+
+        if os_platform == "Darwin":
+            # 크롬드라이버 경로
+            driver_bin_path = os.path.join(
+                os.path.dirname(__file__), "bin", f"{os_platform}"
+            )
+            driver_path = f"{driver_bin_path}/chromedriver"
+            driver = webdriver.Chrome(
+                executable_path=driver_path, chrome_options=options
+            )
+            # driver = webdriver.Chrome(
+            #     ChromeDriverManager().install(), chrome_options=options
+            # )
+        else:
+            # driver_bin_path = os.path.join(
+            #     os.path.dirname(__file__), "bin", f"{os_platform}"
+            # )
+            # driver_path = f"{driver_bin_path}/chromedriver"
+            # driver = webdriver.Chrome(executable_path=driver_path, chrome_options=options)
+            driver = webdriver.Chrome(
+                ChromeDriverManager().install(), chrome_options=options
+            )
+
+        LogicLinkkfYommi.headers["Referer"] = "https://linkkf.app/"
+
+        driver.header_overrides = LogicLinkkfYommi.headers
+        # stealth(
+        #     driver,
+        #     languages=["en-US", "en"],
+        #     vendor="Google Inc.",
+        #     platform="Win32",
+        #     webgl_vendor="Intel Inc.",
+        #     renderer="Intel Iris OpenGL Engine",
+        #     fix_hairline=True,
+        # )
+        driver.get(url)
+
+        # driver.refresh()
+        print(f"current_url:: {driver.current_url}")
+        # logger.debug(f"current_cookie:: {driver.get_cookies()}")
+        # cookies_list = driver.get_cookies()
+        #
+        # cookies_dict = {}
+        # for cookie in cookies_list:
+        #     cookies_dict[cookie["name"]] = cookie["value"]
+        #
+        # print(cookies_dict)
+
+        # LogicAniLife.cookies = cookies_list
+        # # LogicAniLife.headers["Cookie"] = driver.get_cookies()
+        # LogicAniLife.episode_url = driver.current_url
+
+        # time.sleep(1)
+        elem = driver.find_element(By.XPATH, "//*")
+        source_code = elem.get_attribute("outerHTML")
+
+        time.sleep(5.0)
+
+        return source_code.encode("utf-8")
 
     @staticmethod
     def get_html_playwright(url):
@@ -205,7 +291,7 @@ class LogicLinkkfYommi(object):
         #     debug=True,
         # )
 
-        LogicLinkkfYommi.headers["referer"] = LogicLinkkfYommi.referer
+        LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
 
         # logger.debug(f"headers:: {LogicLinkkfYommi.headers}")
 
@@ -894,8 +980,8 @@ class LogicLinkkfYommi(object):
             if LogicLinkkfYommi.referer is None:
                 LogicLinkkfYommi.referer = "https://linkkf.app"
 
-            html_content = LogicLinkkfYommi.get_html(url, cached=True)
-            # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
+            # html_content = LogicLinkkfYommi.get_html(url, cached=False)
+            html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
             # logger.debug(html_content)
             data = {"ret": "success", "page": page}
 
