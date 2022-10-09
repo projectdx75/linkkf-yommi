@@ -28,7 +28,7 @@ for package in packages:
     except ImportError:
         # main(["install", package])
         if package == "playwright":
-            os.system(f"pip3 install {package}")
+            os.system(f"pip3 install --ignore-installed {package}")
             os.system(f"playwright install")
         else:
             os.system(f"pip3 install {package}")
