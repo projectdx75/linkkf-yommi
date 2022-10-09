@@ -446,7 +446,7 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def get_video_url(episode_url):
-        urls2 = []
+        url2s = []
         try:
             # url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
             url = episode_url
