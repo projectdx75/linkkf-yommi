@@ -446,6 +446,7 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def get_video_url(episode_url):
+        urls2 = []
         try:
             # url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
             url = episode_url
@@ -460,7 +461,9 @@ class LogicLinkkfYommi(object):
             if len(tree.xpath(xpath_select_query)) > 0:
                 print('ok')
                 xpath_select_query = '//select[@class="switcher"]/option'
-                url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
+                for tag in tree.xpath(xpath_select_query):
+                    url2s2 = tag.attrib["value"]
+                    url2s.append(url2s2)
             else:
                 print("here")
                 #<script type="text/javascript">var player_data={"url":"366119m1","from":"sub",path:"https://linkkf.app/wp-content/themes/kfbeta16","ads":{"pre":null,"pause":null}}</script>
@@ -472,7 +475,12 @@ class LogicLinkkfYommi(object):
                 response = LogicLinkkfYommi.get_html(ttt)
                 tree = html.fromstring(response)
                 xpath_select_query = '//select[@id="server-list"]/option'
-                url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
+                for tag in tree.xpath(xpath_select_query):
+                    url2s2 = tag.attrib["value"]
+                    if 'k40chan' in url2s2:
+                        pass
+                    else:
+                        url2s.append(url2s2)
 
             logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
 
