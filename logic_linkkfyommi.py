@@ -21,6 +21,10 @@ for package in packages:
     try:
         import package
 
+    except ModuleNotFoundError:
+        if package == "playwright":
+            os.system(f"pip install {package}")
+            os.system(f"playwright install")
     except ImportError:
         # main(["install", package])
         if package == "playwright":
