@@ -32,7 +32,7 @@ from .model import ModelSetting, ModelLinkkf
 
 # from plugin import LogicModuleBase, FfmpegQueueEntity, FfmpegQueue, default_route_socketio
 
-from .tool import WVTool
+# from .tool import WVTool
 
 #########################################################
 package_name = __name__.split(".")[0]
