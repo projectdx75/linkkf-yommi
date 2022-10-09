@@ -373,6 +373,8 @@ def ajax(sub):
         try:
             from .logic_queue import LogicQueue
 
+            logger.debug(f"request:: {request}")
+
             ret = LogicQueue.program_auto_command(request)
             return jsonify(ret)
         except Exception as e:

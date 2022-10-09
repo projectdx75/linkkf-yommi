@@ -4,13 +4,10 @@
 import os
 import sys
 import traceback
-import logging
-import threading
 import time
 import re
 import random
 import urllib
-import socket
 
 
 # import pip
@@ -19,14 +16,18 @@ import socket
 from urllib.parse import urlparse
 import json
 
-packages = ["beautifulsoup4", "requests-cache", "cloudscraper"]
+packages = ["beautifulsoup4", "requests-cache", "cloudscraper", "playwright"]
 for package in packages:
     try:
         import package
 
     except ImportError:
         # main(["install", package])
-        os.system(f"pip install {package}")
+        if package == "playwright":
+            os.system(f"pip install {package}")
+            os.system(f"playwright install")
+        else:
+            os.system(f"pip install {package}")
 
 # third-party
 import requests
@@ -37,15 +38,14 @@ from requests_cache import CachedSession
 import cloudscraper
 
 # import cfscrape
-from lxml import html, etree
+from lxml import html
 from bs4 import BeautifulSoup
 
 # import snoop
 # from snoop import spy
 
 # sjva 공용
-from framework import db, scheduler, path_data
-from framework.job import Job
+from framework import db
 from framework.util import Util
 from framework.logger import get_logger
 
@@ -70,7 +70,8 @@ class LogicLinkkfYommi(object):
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
         "cache-control": "no-cache",
         "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6",
-        "Cookie": "_ga=GA1.1.686272908.1657029650; SL_G_WPT_TO=ko; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1; _ga_818056PXLM=GS1.1.1660193665.18.1.1660198068.0",
+        "Referer": "https://kfani.me"
+        # "Cookie": "_ga=GA1.1.686272908.1657029650; SL_G_WPT_TO=ko; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1; _ga_818056PXLM=GS1.1.1660193665.18.1.1660198068.0",
     }
 
     session = None
@@ -81,9 +82,9 @@ class LogicLinkkfYommi(object):
     def get_html(url, cached=False):
 
         try:
-            # print("cloudflare protection bypass ==================")
-            # # return LogicLinkkfYommi.get_html_cloudflare(url)
-            # return LogicLinkkfYommi.get_html_playwright(url)
+            print("cloudflare protection bypass ==================")
+            # return LogicLinkkfYommi.get_html_cloudflare(url)
+            return LogicLinkkfYommi.get_html_playwright(url)
             #
             # if (
             #     socket.gethostbyname(socket.gethostname()) == "192.168.0.32"
@@ -144,21 +145,26 @@ class LogicLinkkfYommi(object):
         # from playwright_stealth import stealth_sync
 
         with sync_playwright() as p:
-            browser = p.webkit.launch(headless=True)
+            browser = p.chromium.launch(headless=True)
             context = browser.new_context(
                 user_agent=ua,
             )
             LogicLinkkfYommi.referer = "https://linkkf.app"
 
-            LogicLinkkfYommi.headers["referer"] = LogicLinkkfYommi.referer
+            LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
+
+            logger.debug(f"headers::: {LogicLinkkfYommi.headers}")
 
             context.set_extra_http_headers(LogicLinkkfYommi.headers)
 
             page = context.new_page()
+
+            page.set_extra_http_headers(LogicLinkkfYommi.headers)
             # stealth_sync(page)
             page.goto(url, wait_until="domcontentloaded")
 
-            print(page.content())
+            # print(page.request.headers)
+            # print(page.content())
 
             print(f"run at {time.time() - start} sec")
 
@@ -191,12 +197,13 @@ class LogicLinkkfYommi(object):
         # LogicLinkkfYommi.session = requests.Session()
 
         sess = cloudscraper.create_scraper(
-            debug=True, sess=LogicLinkkfYommi.session, delay=10
+            debug=False, sess=LogicLinkkfYommi.session, delay=10
         )
 
         # print(scraper.get(url, headers=LogicLinkkfYommi.headers).content)
         # print(scraper.get(url).content)
         # return scraper.get(url, headers=LogicLinkkfYommi.headers).content
+        print(LogicLinkkfYommi.headers)
         return sess.get(
             url, headers=LogicLinkkfYommi.headers, timeout=10
         ).content.decode("utf8", errors="replace")
@@ -223,10 +230,13 @@ class LogicLinkkfYommi(object):
                 tree = html.fromstring(ani1_html)
                 option_url = tree.xpath("//select[@id='server-list']/option[1]/@value")
 
+                # print(":option_url")
                 logger.debug(f"option_url:: {option_url}")
+                # print(":")
 
                 data = LogicLinkkfYommi.get_html(option_url[0])
-                logger.info("dx: data %s", data)
+                # print(type(data))
+                # logger.info("dx: data %s", data)
                 regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
 
                 temp_url = re.findall(regex2, data)[0]
@@ -241,12 +251,29 @@ class LogicLinkkfYommi(object):
                     # x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref,
                     # video_url)
 
-                match = re.compile(r"<track.+src\=\"(?P<vtt_url>.*?.vtt)").search(data)
+                # print("")
+                # print(video_url)
+                # print("")
+                # LogicLinkkfYommi.get_video_url_from_url(video_url, "https://kfani.me/")
+                # print(data)
+                data_tree = html.fromstring(data)
+                # print(data_tree.xpath("//video/source/@src"))
+                vtt_elem = data_tree.xpath("//track/@src")[0]
+                # vtt_elem = data_tree.xpath("//*[contains(@src, '.vtt']")[0]
+
+                print(vtt_elem)
+                # logger.debug(f"data::::::::::: {data}")
+                print(":::")
+
+                match = re.compile(
+                    r"<track.+src=\"(?P<vtt_url>.*?.vtt)\"", re.MULTILINE
+                ).search(data)
                 # logger.info("match group: %s", match.group('vtt_url'))
+                # print(f"match:: {match}")
                 vtt_url = match.group("vtt_url")
-                # logger.info("vtt_url: %s", vtt_url)
-                # logger.debug(f"LogicLinkkfYommi.referer: {LogicLinkkfYommi.referer}")
-                # referer_url = url2
+                # # logger.info("vtt_url: %s", vtt_url)
+                # # logger.debug(f"LogicLinkkfYommi.referer: {LogicLinkkfYommi.referer}")
+                # # referer_url = url2
                 referer_url = "https://kfani.me/"
 
             elif "kfani" in url2:
@@ -269,10 +296,12 @@ class LogicLinkkfYommi(object):
                     # x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref,
                     # video_url)
 
-                match = re.compile(r"<track.+src\=\"(?P<vtt_url>.*?.vtt)").search(data)
+                match = re.compile(
+                    r"<track.+src=\"(?P<vtt_url>.*?.vtt)", re.MULTILINE
+                ).search(data)
                 # logger.info("match group: %s", match.group('vtt_url'))
                 vtt_url = match.group("vtt_url")
-                # logger.info("vtt_url: %s", vtt_url)
+                logger.info("vtt_url: %s", vtt_url)
                 # logger.debug(f"LogicLinkkfYommi.referer: {LogicLinkkfYommi.referer}")
                 referer_url = url2
 
@@ -447,13 +476,66 @@ class LogicLinkkfYommi(object):
     @staticmethod
     def get_video_url(episode_url):
         try:
-            # url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
-            url = episode_url
-            logger.info("url: %s" % url)
+            # regex = r"^(http|https):\/\/"
+            #
+            # # test_str = "https://linkkf.app/player/v350205-sub-1/"
+            #
+            # matches = re.compile(regex, episode_url)
+            #
+            # print(matches)
+
+            if episode_url.startswith("http"):
+                url = episode_url
+            else:
+                url = f"https://linkkf.app{episode_url}"
+
+            logger.info("get_video_url(): url: %s" % url)
             data = LogicLinkkfYommi.get_html(url)
+            print(data)
             # data = LogicLinkkfYommi.get_html_cloudflare(url)
             # logger.info(data)
             tree = html.fromstring(data)
+
+            tree = html.fromstring(data)
+
+            pattern = re.compile("var player_data=(.*)")
+
+            js_scripts = tree.xpath("//script")
+            # logger.info(len(js_scripts))
+            # logger.info(js_scripts[10].text_content().strip())
+
+            iframe_info = None
+            index = 0
+
+            for js_script in js_scripts:
+
+                # print(f"{index}.. {js_script.text_content()}")
+                if pattern.match(js_script.text_content()):
+                    print("match::::")
+                    match_data = pattern.match(js_script.text_content())
+                    print(match_data.groups())
+                    print(type(match_data.groups()[0]))
+                    iframe_info = json.loads(
+                        match_data.groups()[0].replace("path:", '"path":')
+                    )
+                    print(iframe_info)
+
+                index += 1
+
+            ##################################################
+            #
+            # iframe url:: https://s2.ani1c12.top/player/index.php?data='+player_data.url+'
+
+            iframe_url = (
+                f'https://s2.ani1c12.top/player/index.php?data={iframe_info["url"]}'
+            )
+            html_data = LogicLinkkfYommi.get_html(iframe_url)
+
+            # logger.info(html_data)
+
+            tree = html.fromstring(html_data)
+
+            # xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
             xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
 
             logger.debug(f"dev:: {len(tree.xpath(xpath_select_query))}")
@@ -463,6 +545,7 @@ class LogicLinkkfYommi(object):
             else:
                 print("here")
                 xpath_select_query = '//select[@class="switcher"]/option'
+                xpath_select_query = "//select/option"
 
             logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
 
@@ -783,8 +866,10 @@ class LogicLinkkfYommi(object):
                 title_xpath = './/a[@class="text-fff"]//text()'
             elif cate == "top_view":
                 url = f"{ModelSetting.get('linkkf_url')}/topview/page/{page}"
-                items_xpath = "//div[@id='body']/article[not(@class)]"
-                title_xpath = ".//strong//text()"
+                # items_xpath = "//div[@id='body']/article[not(@class)]"
+                # title_xpath = ".//strong//text()"
+                items_xpath = '//div[@class="myui-vodlist__box"]'
+                title_xpath = './/a[@class="text-fff"]//text()'
 
             logger.debug(f"get_anime_list_info():url >> {url}")
 
@@ -821,11 +906,14 @@ class LogicLinkkfYommi(object):
             data["episode"] = []
 
             for item in tmp_items:
-                entity = {}
+                entity = dict()
                 entity["link"] = item.xpath(".//a/@href")[0]
                 # logger.debug(f"link()::entity['link'] => {entity['link']}")
                 entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
                 entity["title"] = item.xpath(title_xpath)[0].strip()
+                # print(":++")
+                # print(entity["title"])
+                # print(":++")
                 entity["image_link"] = item.xpath("./a/@data-original")[0]
                 entity["chapter"] = (
                     item.xpath("./a/span//text()")[0]
@@ -880,7 +968,20 @@ class LogicLinkkfYommi(object):
                 # logger.debug(f"link()::entity['link'] => {entity['link']}")
                 entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
                 entity["title"] = item.xpath(title_xpath)[0].strip()
-                entity["image_link"] = item.xpath("./a/@data-original")[0]
+                if len(item.xpath("./a/@style")) > 0:
+                    print(
+                        re.search(
+                            r"url\(((http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?)\)",
+                            item.xpath("./a/@style")[0],
+                        ).group()
+                    )
+
+                if item.xpath(".//a/@data-original"):
+                    entity["image_link"] = item.xpath(".//a/@data-original")[0]
+
+                else:
+                    entity["image_link"] = ""
+                # entity["image_link"] = item.xpath("./a/@data-original")[0]
                 entity["chapter"] = (
                     item.xpath("./a/span//text()")[0]
                     if len(item.xpath("./a/span//text()")) > 0
@@ -971,10 +1072,13 @@ class LogicLinkkfYommi(object):
             ):
                 return LogicLinkkfYommi.current_data
             url = "%s/%s" % (ModelSetting.get("linkkf_url"), code)
-            # logger.info(url)
+            logger.info(url)
 
-            html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            # html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            html_content = LogicLinkkfYommi.get_html_playwright(url)
             # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=True)
+
+            logger.debug(html_content)
 
             sys.setrecursionlimit(10**7)
             # logger.info(html_content)
@@ -1083,7 +1187,7 @@ class LogicLinkkfYommi(object):
             # tags = tree.xpath(
             #     '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
             # tags = tree.xpath("//ul/a")
-            tags = soup.select("ul > a")
+            tags = soup.select("ul > u > a")
 
             # logger.info("tags", tags)
             # re1 = re.compile(r'\/(?P<code>\d+)')
@@ -1137,7 +1241,7 @@ class LogicLinkkfYommi(object):
 
                 # logger.info('episode_code', episode_code)
                 # entity["url"] = t.attrib["href"]
-                entity["url"] = t["href"]
+                entity["url"] = f'https://linkkf.app{t["href"]}'
                 entity["season"] = data["season"]
 
                 # 저장경로 저장
@@ -1316,18 +1420,22 @@ class LogicLinkkfYommi(object):
                     .with_for_update()
                     .all()
                 )
-                # logger.debug(f"downloaded:: {downloaded}")
+                logger.debug(f"downloaded:: {downloaded}")
                 dl_codes = [dl.episodecode for dl in downloaded]
-                # logger.debug('dl_codes:: ', dl_codes)
-                # logger.info("downloaded codes :%s", dl_codes)
+                # logger.debug("dl_codes:: %s", dl_codes)
+                logger.info("downloaded codes :%s", dl_codes)
 
                 # if len(dl_codes) > 0:
                 data = LogicLinkkfYommi.get_title_info(code)
+                logger.debug(f"data:: {data}")
 
                 for episode in data["episode"]:
                     e_code = episode["code"]
                     if e_code not in dl_codes:
                         logger.info("Logic Queue added :%s", e_code)
+
+                        logger.debug(f"episode:: {episode}")
+                        print("temp==============")
                         LogicQueue.add_queue(episode)
 
             logger.debug("========================================")

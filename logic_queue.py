@@ -7,6 +7,8 @@ import sys
 import logging
 import threading
 import queue
+import platform
+import subprocess
 
 # import Queue
 # from .logic_queue import LogicQueue
@@ -29,6 +31,8 @@ import system
 from .model import ModelSetting, ModelLinkkf
 
 # from plugin import LogicModuleBase, FfmpegQueueEntity, FfmpegQueue, default_route_socketio
+
+from .tool import WVTool
 
 #########################################################
 package_name = __name__.split(".")[0]
@@ -228,18 +232,23 @@ class LogicQueue(object):
 
                 logger.debug(f"headers::: {headers}")
 
-                f = ffmpeg.Ffmpeg(
-                    entity.url[0],
-                    entity.info["filename"],
-                    plugin_id=entity.entity_id,
-                    listener=LogicQueue.ffmpeg_listener,
-                    max_pf_count=max_pf_count,
-                    #   referer=referer,
-                    call_plugin=package_name,
-                    save_path=save_path,
-                    headers=headers,
-                )
-                f.start()
+                if "nianv3c2.xyz" in entity.url[0]:
+                    logger.debug(f"new type {entity.url[0]}")
+                    WVTool.aria2c_download(entity.url[0], "./temp")
+                else:
+
+                    f = ffmpeg.Ffmpeg(
+                        entity.url[0],
+                        entity.info["filename"],
+                        plugin_id=entity.entity_id,
+                        listener=LogicQueue.ffmpeg_listener,
+                        max_pf_count=max_pf_count,
+                        #   referer=referer,
+                        call_plugin=package_name,
+                        save_path=save_path,
+                        headers=headers,
+                    )
+                    f.start()
 
                 LogicQueue.current_ffmpeg_count += 1
                 LogicQueue.download_queue.task_done()
@@ -284,6 +293,25 @@ class LogicQueue(object):
             except Exception as e:
                 logger.error("Exception:%s", e)
                 logger.error(traceback.format_exc())
+
+    @staticmethod
+    def remove_png_byte(path, output_path):
+        filename = path.name
+        print(path.path)
+        with open(path.path, "rb") as ifile:
+            with open(f"{output_path}/{filename}", "wb") as ofile:
+                ifile.read(8)
+                prev = None
+                while True:
+                    chunk = ifile.read(4096)
+                    if chunk:
+                        if prev:
+                            ofile.write(prev)
+                        prev = chunk
+                    else:
+                        break
+                if prev:
+                    ofile.write(prev[:-1])
 
     @staticmethod
     def ffmpeg_listener(**arg):
@@ -416,8 +444,11 @@ class LogicQueue(object):
 
     @staticmethod
     def program_auto_command(req):
+        logger.debug(f"program_auto_command routine ====================")
         try:
             from . import plugin
+
+            logger.debug(req)
 
             command = req.form["command"]
             entity_id = int(req.form["entity_id"])

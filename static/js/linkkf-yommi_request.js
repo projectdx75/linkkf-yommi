@@ -74,6 +74,7 @@ $("body").on("click", "#analysis_btn", function (e) {
     dataType: "json",
     success: function (ret) {
       if (ret.ret == "success" && ret.data != null) {
+        console.log(ret.data)
         make_program(ret.data);
       } else {
         $.notify("<strong>분석 실패</strong><br>" + ret.log, {
