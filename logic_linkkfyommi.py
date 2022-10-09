@@ -459,20 +459,20 @@ class LogicLinkkfYommi(object):
 
             if len(tree.xpath(xpath_select_query)) > 0:
                 print('ok')
-			    xpath_select_query = '//select[@class="switcher"]/option'
-			    url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
+		xpath_select_query = '//select[@class="switcher"]/option'
+		url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
             else:
                 print("here")
-			    #<script type="text/javascript">var player_data={"url":"366119m1","from":"sub",path:"https://linkkf.app/wp-content/themes/kfbeta16","ads":{"pre":null,"pause":null}}</script>
-		    	tt = re.search(r'var player_data=(.*?)<', response, re.S)
-			    json_string = tt.group(1)
-			    tt2 = re.search(r'"url":"(.*?)"', json_string, re.S)
-			    json_string2 = tt2.group(1)
-			    ttt = 'https://s2.ani1c12.top/player/index.php?data=' + json_string2
-			    response = scraper.get(ttt,headers=headers).text
-			    tree = html.fromstring(response)
-			    xpath_select_query = '//select[@id="server-list"]/option'
-			    url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
+		#<script type="text/javascript">var player_data={"url":"366119m1","from":"sub",path:"https://linkkf.app/wp-content/themes/kfbeta16","ads":{"pre":null,"pause":null}}</script>
+		tt = re.search(r'var player_data=(.*?)<', response, re.S)
+		json_string = tt.group(1)
+		tt2 = re.search(r'"url":"(.*?)"', json_string, re.S)
+		json_string2 = tt2.group(1)
+		ttt = 'https://s2.ani1c12.top/player/index.php?data=' + json_string2
+		response = scraper.get(ttt,headers=headers).text
+		tree = html.fromstring(response)
+		xpath_select_query = '//select[@id="server-list"]/option'
+		url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
 
             logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
 
