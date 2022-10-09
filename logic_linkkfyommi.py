@@ -140,39 +140,44 @@ class LogicLinkkfYommi(object):
         from playwright.sync_api import sync_playwright
         import time
 
-        start = time.time()
-        ua = (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/69.0.3497.100 Safari/537.36"
-        )
-        # from playwright_stealth import stealth_sync
+        try:
 
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            context = browser.new_context(
-                user_agent=ua,
+            start = time.time()
+            ua = (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/69.0.3497.100 Safari/537.36"
             )
-            LogicLinkkfYommi.referer = "https://linkkf.app"
+            # from playwright_stealth import stealth_sync
 
-            LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                context = browser.new_context(
+                    user_agent=ua,
+                )
+                LogicLinkkfYommi.referer = "https://linkkf.app"
 
-            logger.debug(f"headers::: {LogicLinkkfYommi.headers}")
+                LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
 
-            context.set_extra_http_headers(LogicLinkkfYommi.headers)
+                logger.debug(f"headers::: {LogicLinkkfYommi.headers}")
 
-            page = context.new_page()
+                context.set_extra_http_headers(LogicLinkkfYommi.headers)
 
-            page.set_extra_http_headers(LogicLinkkfYommi.headers)
-            # stealth_sync(page)
-            page.goto(url, wait_until="domcontentloaded")
+                page = context.new_page()
 
-            # print(page.request.headers)
-            # print(page.content())
+                page.set_extra_http_headers(LogicLinkkfYommi.headers)
+                # stealth_sync(page)
+                page.goto(url, wait_until="domcontentloaded")
 
-            print(f"run at {time.time() - start} sec")
+                # print(page.request.headers)
+                # print(page.content())
 
-            return page.content()
+                print(f"run at {time.time() - start} sec")
+
+                return page.content()
+        except ModuleNotFoundError:
+            os.system(f"pip install {package}")
+            os.system(f"playwright install")
 
     @staticmethod
     def get_html_cloudflare(url, cached=False):
