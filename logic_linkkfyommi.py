@@ -176,7 +176,7 @@ class LogicLinkkfYommi(object):
 
                 return page.content()
         except ModuleNotFoundError:
-            os.system(f"pip install {package}")
+            os.system(f"pip install playwright")
             os.system(f"playwright install")
 
     @staticmethod
