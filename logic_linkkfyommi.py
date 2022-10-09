@@ -132,6 +132,8 @@ class LogicLinkkfYommi(object):
             # return page.text
             # return page.content
         except Exception as e:
+            os.system(f"pip install playwright")
+            os.system(f"playwright install")
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
         except ModuleNotFoundError:
