@@ -446,6 +446,7 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def get_video_url(episode_url):
+        url2s = []
         try:
             # url = urlparse.urljoin(ModelSetting.get('linkkf_url'), episode_id)
             url = episode_url
@@ -455,18 +456,35 @@ class LogicLinkkfYommi(object):
             # logger.info(data)
             tree = html.fromstring(data)
             xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
-
             logger.debug(f"dev:: {len(tree.xpath(xpath_select_query))}")
 
             if len(tree.xpath(xpath_select_query)) > 0:
-                pass
+                print('ok')
+                xpath_select_query = '//select[@class="switcher"]/option'
+                for tag in tree.xpath(xpath_select_query):
+                    url2s2 = tag.attrib["value"]
+                    url2s.append(url2s2)
             else:
                 print("here")
-                xpath_select_query = '//select[@class="switcher"]/option'
+                #<script type="text/javascript">var player_data={"url":"366119m1","from":"sub",path:"https://linkkf.app/wp-content/themes/kfbeta16","ads":{"pre":null,"pause":null}}</script>
+                tt = re.search(r'var player_data=(.*?)<', data, re.S)
+                json_string = tt.group(1)
+                tt2 = re.search(r'"url":"(.*?)"', json_string, re.S)
+                json_string2 = tt2.group(1)
+                ttt = 'https://s2.ani1c12.top/player/index.php?data=' + json_string2
+                response = LogicLinkkfYommi.get_html(ttt)
+                tree = html.fromstring(response)
+                xpath_select_query = '//select[@id="server-list"]/option'
+                for tag in tree.xpath(xpath_select_query):
+                    url2s2 = tag.attrib["value"]
+                    if 'k40chan' in url2s2:
+                        pass
+                    else:
+                        url2s.append(url2s2)
 
             logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
 
-            url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
+            #url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
 
             # logger.info('dx: url', url)
             logger.info("dx: urls2:: %s", url2s)
@@ -996,7 +1014,11 @@ class LogicLinkkfYommi(object):
             # logger.info('tmp::>', tree.xpath('//div[@class="hrecipe"]/article/center/strong'))
             # tmp1 = tree.xpath("//div[contains(@id, 'related')]/ul/a")
             # tmp = tree1.find_element(By.Xpath, "//ul/a")
-            tmp = soup.select("ul > a")
+            tmp2 = soup.select("ul > a")
+            if len(tmp2) == 0:
+                tmp = soup.select("u > a")
+            else:
+                tmp = soup.select("ul > a")
 
             # logger.debug(f"tmp1 size:=> {str(len(tmp))}")
 
@@ -1070,7 +1092,11 @@ class LogicLinkkfYommi(object):
             # tmp = tree.xpath('//article/a')
             # 수정된
             # tmp = tree.xpath("//ul/a")
-            tmp = soup.select("ul > a")
+            tmp2 = soup.select("ul > a")
+            if len(tmp) == 0:
+                tmp = soup.select("u > a")
+            else:
+                tmp = soup.select("ul > a")
 
             # logger.debug(f"tmp size:=> {str(len(tmp))}")
             # logger.info(tmp)
@@ -1083,7 +1109,11 @@ class LogicLinkkfYommi(object):
             # tags = tree.xpath(
             #     '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
             # tags = tree.xpath("//ul/a")
-            tags = soup.select("ul > a")
+            tags2 = soup.select("ul > a")
+            if len(tags2) == 0:
+                tags = soup.select("u > a")
+            else:
+                tags = soup.select("ul > a")
 
             # logger.info("tags", tags)
             # re1 = re.compile(r'\/(?P<code>\d+)')
@@ -1137,7 +1167,11 @@ class LogicLinkkfYommi(object):
 
                 # logger.info('episode_code', episode_code)
                 # entity["url"] = t.attrib["href"]
-                entity["url"] = t["href"]
+                aa = t['href']
+                if '/player' in aa :
+                    entity["url"] = 'https://linkkf.app' + t["href"]
+                else:
+                    entity["url"] = t["href"]
                 entity["season"] = data["season"]
 
                 # 저장경로 저장
