@@ -137,7 +137,7 @@ class LogicLinkkfYommi(object):
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
         except ModuleNotFoundError:
-            os.system(f"pip install playwright")
+            os.system(f"pip install --ignore-installed playwright")
             os.system(f"playwright install")
 
     @staticmethod
