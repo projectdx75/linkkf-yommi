@@ -23,7 +23,7 @@ for package in packages:
 
     except ModuleNotFoundError:
         if package == "playwright":
-            os.system(f"pip3 install {package}")
+            os.system(f"pip3 install --ignore-installed playwright")
             os.system(f"playwright install")
     except ImportError:
         # main(["install", package])
