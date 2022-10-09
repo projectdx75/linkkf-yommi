@@ -23,13 +23,15 @@ for package in packages:
 
     except ModuleNotFoundError:
         if package == "playwright":
-            os.system(f"pip3 install --ignore-installed playwright")
-            os.system(f"playwright install")
+            pass
+            # os.system(f"pip3 install playwright")
+            # os.system(f"playwright install")
     except ImportError:
         # main(["install", package])
         if package == "playwright":
-            os.system(f"pip3 install --ignore-installed {package}")
-            os.system(f"playwright install")
+            pass
+            # os.system(f"pip3 install {package}")
+            # os.system(f"playwright install")
         else:
             os.system(f"pip3 install {package}")
 
@@ -132,13 +134,14 @@ class LogicLinkkfYommi(object):
             # return page.text
             # return page.content
         except Exception as e:
-            os.system(f"pip install playwright")
-            os.system(f"playwright install")
+            # os.system(f"pip install playwright")
+            # os.system(f"playwright install")
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
         except ModuleNotFoundError:
-            os.system(f"pip3 install --ignore-installed playwright")
-            os.system(f"playwright install")
+            # os.system(f"pip3 install playwright")
+            # os.system(f"playwright install")
+            pass
 
     @staticmethod
     def get_html_playwright(url):
@@ -181,8 +184,9 @@ class LogicLinkkfYommi(object):
 
                 return page.content()
         except ModuleNotFoundError:
-            os.system(f"pip3 install --ignore-installed playwright")
-            os.system(f"playwright install")
+            # os.system(f"pip3 install playwright")
+            # os.system(f"playwright install")
+            pass
 
     @staticmethod
     def get_html_cloudflare(url, cached=False):
