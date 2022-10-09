@@ -225,7 +225,7 @@ class LogicLinkkfYommi(object):
         elem = driver.find_element(By.XPATH, "//*")
         source_code = elem.get_attribute("outerHTML")
 
-        time.sleep(5.0)
+        time.sleep(4.0)
 
         return source_code.encode("utf-8")
 
