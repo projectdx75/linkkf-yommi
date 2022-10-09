@@ -469,7 +469,7 @@ class LogicLinkkfYommi(object):
                 tt2 = re.search(r'"url":"(.*?)"', json_string, re.S)
                 json_string2 = tt2.group(1)
                 ttt = 'https://s2.ani1c12.top/player/index.php?data=' + json_string2
-                response = scraper.get(ttt,headers=headers).text
+                response = LogicLinkkfYommi.get_html(ttt)
                 tree = html.fromstring(response)
                 xpath_select_query = '//select[@id="server-list"]/option'
                 url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
