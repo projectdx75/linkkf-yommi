@@ -464,7 +464,7 @@ class LogicLinkkfYommi(object):
             else:
                 print("here")
                 #<script type="text/javascript">var player_data={"url":"366119m1","from":"sub",path:"https://linkkf.app/wp-content/themes/kfbeta16","ads":{"pre":null,"pause":null}}</script>
-                tt = re.search(r'var player_data=(.*?)<', response, re.S)
+                tt = re.search(r'var player_data=(.*?)<', data, re.S)
                 json_string = tt.group(1)
                 tt2 = re.search(r'"url":"(.*?)"', json_string, re.S)
                 json_string2 = tt2.group(1)
