@@ -182,6 +182,15 @@ class LogicLinkkfYommi(object):
             # driver = webdriver.Chrome(
             #     ChromeDriverManager().install(), chrome_options=options
             # )
+        elif os_platform == "Linux":
+            driver_bin_path = os.path.join(
+                os.path.dirname(__file__), "bin", f"{os_platform}"
+            )
+            driver_path = f"{driver_bin_path}/chromedriver"
+            driver = webdriver.Chrome(
+                executable_path=driver_path, chrome_options=options
+            )
+
         else:
             # driver_bin_path = os.path.join(
             #     os.path.dirname(__file__), "bin", f"{os_platform}"
