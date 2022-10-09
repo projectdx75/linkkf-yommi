@@ -162,6 +162,8 @@ class LogicLinkkfYommi(object):
 
         os_platform = platform.system()
 
+        print(os_platform)
+
         options = webdriver.ChromeOptions()
         # 크롬드라이버 헤더 옵션추가 (리눅스에서 실행시 필수)
         options.add_argument("start-maximized")
