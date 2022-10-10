@@ -463,7 +463,10 @@ class LogicLinkkfYommi(object):
                 xpath_select_query = '//select[@class="switcher"]/option'
                 for tag in tree.xpath(xpath_select_query):
                     url2s2 = tag.attrib["value"]
-                    url2s.append(url2s2)
+                    if ''k40chan' in url2s2:
+                        pass
+                    else:
+                        url2s.append(url2s2)
             else:
                 print("here")
                 #<script type="text/javascript">var player_data={"url":"366119m1","from":"sub",path:"https://linkkf.app/wp-content/themes/kfbeta16","ads":{"pre":null,"pause":null}}</script>
