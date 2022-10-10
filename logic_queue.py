@@ -275,9 +275,12 @@ class LogicQueue(object):
                     res = requests.get(vtt_url, headers=headers)
                     vtt_data = res.text
                     vtt_status = res.status_code
+                    logger.info('%s',vtt_status)
                     if vtt_status == 200:
                         srt_data = convert_vtt_to_srt(vtt_data)
                         write_file(srt_data, srt_filepath)
+                    elif vtt_status == 404:
+                        pass
                     else:
                         logger.debug("자막파일 받을수 없슴")
 
