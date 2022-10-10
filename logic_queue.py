@@ -177,7 +177,7 @@ class LogicQueue(object):
 
                 import ffmpeg
 
-                max_pf_count = 100
+                max_pf_count = 100000
                 referer = None
                 save_path = ModelSetting.get("download_path")
                 if ModelSetting.get("auto_make_folder") == "True":
