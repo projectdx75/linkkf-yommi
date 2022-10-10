@@ -16,7 +16,9 @@ import urllib
 from urllib.parse import urlparse
 import json
 
-packages = ["beautifulsoup4", "requests-cache", "cloudscraper", "selenium-wire"]
+# "selenium-wire"
+packages = ["beautifulsoup4", "requests-cache", "cloudscraper"]
+
 for package in packages:
     try:
         import package
