@@ -76,10 +76,10 @@ class LogicLinkkfYommi(object):
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-        "cache-control": "no-cache",
+        "Cache-Control": "no-cache",
         "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6",
-        "Referer": "https://kfani.me"
-        # "Cookie": "_ga=GA1.1.686272908.1657029650; SL_G_WPT_TO=ko; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1; _ga_818056PXLM=GS1.1.1660193665.18.1.1660198068.0",
+        "Referer": "https://kfani.me",
+        "Cookie": "SL_G_WPT_TO=ko; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1",
     }
 
     session = None
@@ -93,8 +93,8 @@ class LogicLinkkfYommi(object):
             if LogicLinkkfYommi.referer is None:
                 LogicLinkkfYommi.referer = "https://linkkf.app/"
 
-            return LogicLinkkfYommi.get_html_requests(url)
-            # return LogicLinkkfYommi.get_html_cloudflare(url)
+            # return LogicLinkkfYommi.get_html_requests(url)
+            return LogicLinkkfYommi.get_html_cloudflare(url)
 
         except Exception as e:
             logger.error("Exception:%s", e)
@@ -144,7 +144,7 @@ class LogicLinkkfYommi(object):
 
         os_platform = platform.system()
 
-        print(os_platform)
+        # print(os_platform)
 
         options = webdriver.ChromeOptions()
         # 크롬드라이버 헤더 옵션추가 (리눅스에서 실행시 필수)
@@ -283,7 +283,7 @@ class LogicLinkkfYommi(object):
         #     browser={"browser": "chrome", "platform": "windows", "mobile": False},
         #     debug=True,
         # )
-        print("cloudflare protection bypass ==================")
+        logger.debug("cloudflare protection bypass ==================")
 
         LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
 
@@ -292,21 +292,24 @@ class LogicLinkkfYommi(object):
         # if LogicLinkkfYommi.session is None:
         #     LogicLinkkfYommi.session = requests.Session()
 
-        LogicLinkkfYommi.session = requests.Session()
+        # LogicLinkkfYommi.session = requests.Session()
+        re_sess = requests.Session()
+        # logger.debug(LogicLinkkfYommi.session)
 
-        sess = cloudscraper.create_scraper(
-            # browser={"browser": "firefox", "mobile": False},
-            browser={"browser": "chrome", "platform": "linux", "mobile": False},
-            debug=False,
-            sess=LogicLinkkfYommi.session,
-            delay=10,
-        )
+        # sess = cloudscraper.create_scraper(
+        #     # browser={"browser": "firefox", "mobile": False},
+        #     browser={"browser": "chrome", "mobile": False},
+        #     debug=True,
+        #     sess=LogicLinkkfYommi.session,
+        #     delay=10,
+        # )
+        scraper = cloudscraper.create_scraper()
 
         # print(scraper.get(url, headers=LogicLinkkfYommi.headers).content)
         # print(scraper.get(url).content)
         # return scraper.get(url, headers=LogicLinkkfYommi.headers).content
-        print(LogicLinkkfYommi.headers)
-        return sess.get(
+        logger.debug(LogicLinkkfYommi.headers)
+        return scraper.get(
             url, headers=LogicLinkkfYommi.headers, timeout=10
         ).content.decode("utf8", errors="replace")
 
@@ -365,7 +368,7 @@ class LogicLinkkfYommi(object):
 
                 print(vtt_elem)
                 # logger.debug(f"data::::::::::: {data}")
-                print(":::")
+                # print(":::")
 
                 match = re.compile(
                     r"<track.+src=\"(?P<vtt_url>.*?.vtt)\"", re.MULTILINE
@@ -593,7 +596,7 @@ class LogicLinkkfYommi(object):
 
             logger.info("get_video_url(): url: %s" % url)
             data = LogicLinkkfYommi.get_html(url)
-            print(data)
+            # print(data)
             # data = LogicLinkkfYommi.get_html_cloudflare(url)
             # logger.info(data)
             tree = html.fromstring(data)
@@ -613,14 +616,14 @@ class LogicLinkkfYommi(object):
 
                 # print(f"{index}.. {js_script.text_content()}")
                 if pattern.match(js_script.text_content()):
-                    print("match::::")
+                    logger.debug("match::::")
                     match_data = pattern.match(js_script.text_content())
-                    print(match_data.groups())
-                    print(type(match_data.groups()[0]))
+                    # print(match_data.groups())
+                    # print(type(match_data.groups()[0]))
                     iframe_info = json.loads(
                         match_data.groups()[0].replace("path:", '"path":')
                     )
-                    print(iframe_info)
+                    logger.debug(f"iframe_info:: {iframe_info}")
 
                 index += 1
 
@@ -645,7 +648,7 @@ class LogicLinkkfYommi(object):
             if len(tree.xpath(xpath_select_query)) > 0:
                 pass
             else:
-                print("here")
+                print("::here")
                 xpath_select_query = '//select[@class="switcher"]/option'
                 xpath_select_query = "//select/option"
 
@@ -666,7 +669,7 @@ class LogicLinkkfYommi(object):
                         continue
                     logger.debug(f"url: {url}, url2: {url2}")
                     ret = LogicLinkkfYommi.get_video_url_from_url(url, url2)
-                    print(f"ret::::> {ret}")
+                    logger.debug(f"ret::::> {ret}")
 
                     if ret is not None:
                         video_url = ret
@@ -891,7 +894,7 @@ class LogicLinkkfYommi(object):
                 # logger.debug(f"link()::entity['link'] => {entity['link']}")
                 entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
                 entity["title"] = item.xpath(title_xpath)[0].strip()
-                print(entity["title"])
+                # print(entity["title"])
 
                 # print(type(item.xpath("./a/@style")))
 
