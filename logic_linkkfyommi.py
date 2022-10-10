@@ -483,6 +483,7 @@ class LogicLinkkfYommi(object):
                         url2s.append(url2s2)
 
             logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
+            url2s.reverse()
 
             #url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
 
