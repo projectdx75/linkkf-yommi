@@ -92,17 +92,13 @@ class LogicLinkkfYommi(object):
         try:
             if LogicLinkkfYommi.referer is None:
                 LogicLinkkfYommi.referer = "https://linkkf.app/"
-            return LogicLinkkfYommi.get_html_cloudflare(url)
+
+            return LogicLinkkfYommi.get_html_requests(url)
+            # return LogicLinkkfYommi.get_html_cloudflare(url)
 
         except Exception as e:
-            # os.system(f"pip install playwright")
-            # os.system(f"playwright install")
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
-        except ModuleNotFoundError:
-            # os.system(f"pip3 install playwright")
-            # os.system(f"playwright install")
-            pass
 
     @staticmethod
     def get_html_requests(url, cached=False):
@@ -300,7 +296,7 @@ class LogicLinkkfYommi(object):
 
         sess = cloudscraper.create_scraper(
             # browser={"browser": "firefox", "mobile": False},
-            browser={"browser": "firefox", "platform": "windows", "mobile": False},
+            browser={"browser": "chrome", "platform": "linux", "mobile": False},
             debug=False,
             sess=LogicLinkkfYommi.session,
             delay=10,
