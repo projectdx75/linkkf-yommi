@@ -40,6 +40,8 @@ for package in packages:
 # third-party
 import requests
 
+# from fake_useragent import UserAgent
+
 # import requests_cache
 # from requests_cache import CachedSession
 from requests_cache import CachedSession
@@ -75,11 +77,18 @@ cache_path = os.path.dirname(__file__)
 class LogicLinkkfYommi(object):
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-        "Cache-Control": "no-cache",
-        "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+        "Cache-Control": "max-age=0",
         "Referer": "https://kfani.me",
-        "Cookie": "SL_G_WPT_TO=ko; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1",
+        # "Cookie": "SL_G_WPT_TO=ko; SL_GWPT_Show_Hide_tmp=1; SL_wptGlobTipTmp=1",
     }
 
     session = None
@@ -285,15 +294,24 @@ class LogicLinkkfYommi(object):
         # )
         logger.debug("cloudflare protection bypass ==================")
 
+        user_agents_list = [
+            "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36",
+        ]
+        # ua = UserAgent(verify_ssl=False)
+
+        LogicLinkkfYommi.headers["User-Agent"] = random.choice(user_agents_list)
+
         LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
 
         logger.debug(f"headers:: {LogicLinkkfYommi.headers}")
 
-        # if LogicLinkkfYommi.session is None:
-        #     LogicLinkkfYommi.session = requests.Session()
+        if LogicLinkkfYommi.session is None:
+            LogicLinkkfYommi.session = requests.Session()
 
         # LogicLinkkfYommi.session = requests.Session()
-        re_sess = requests.Session()
+        # re_sess = requests.Session()
         # logger.debug(LogicLinkkfYommi.session)
 
         # sess = cloudscraper.create_scraper(
@@ -303,14 +321,24 @@ class LogicLinkkfYommi(object):
         #     sess=LogicLinkkfYommi.session,
         #     delay=10,
         # )
-        scraper = cloudscraper.create_scraper()
+        # scraper = cloudscraper.create_scraper(sess=re_sess)
+        scraper = cloudscraper.create_scraper(
+            debug=True,
+            delay=10,
+            sess=LogicLinkkfYommi.session,
+            browser={
+                "custom": "linkkf",
+            },
+        )
 
         # print(scraper.get(url, headers=LogicLinkkfYommi.headers).content)
         # print(scraper.get(url).content)
         # return scraper.get(url, headers=LogicLinkkfYommi.headers).content
         logger.debug(LogicLinkkfYommi.headers)
         return scraper.get(
-            url, headers=LogicLinkkfYommi.headers, timeout=10
+            url,
+            headers=LogicLinkkfYommi.headers,
+            timeout=10,
         ).content.decode("utf8", errors="replace")
 
     @staticmethod
@@ -1295,6 +1323,12 @@ class LogicLinkkfYommi(object):
             #     '//*[@id="syno-nsc-ext-gen3"]/article/div[1]/article/a')
             # tags = tree.xpath("//ul/a")
             tags = soup.select("ul > u > a")
+            if len(tags) > 0:
+                pass
+            else:
+                tags = soup.select("ul > a")
+
+            logger.debug(len(tags))
 
             # logger.info("tags", tags)
             # re1 = re.compile(r'\/(?P<code>\d+)')
