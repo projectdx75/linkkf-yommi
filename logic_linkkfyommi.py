@@ -1185,7 +1185,7 @@ class LogicLinkkfYommi(object):
             # html_content = LogicLinkkfYommi.get_html_playwright(url)
             # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
 
-            logger.debug(html_content)
+            # logger.debug(html_content)
 
             sys.setrecursionlimit(10**7)
             # logger.info(html_content)
