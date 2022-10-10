@@ -981,8 +981,8 @@ class LogicLinkkfYommi(object):
             if LogicLinkkfYommi.referer is None:
                 LogicLinkkfYommi.referer = "https://linkkf.app"
 
-            # html_content = LogicLinkkfYommi.get_html(url, cached=False)
-            html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
+            html_content = LogicLinkkfYommi.get_html(url, cached=False)
+            # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
             # logger.debug(html_content)
             data = {"ret": "success", "page": page}
 
@@ -1178,6 +1178,8 @@ class LogicLinkkfYommi(object):
                 return LogicLinkkfYommi.current_data
             url = "%s/%s" % (ModelSetting.get("linkkf_url"), code)
             logger.info(url)
+
+            logger.debug(LogicLinkkfYommi.headers)
 
             html_content = LogicLinkkfYommi.get_html(url, cached=False)
             # html_content = LogicLinkkfYommi.get_html_playwright(url)
