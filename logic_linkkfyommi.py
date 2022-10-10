@@ -93,24 +93,7 @@ class LogicLinkkfYommi(object):
             if LogicLinkkfYommi.referer is None:
                 LogicLinkkfYommi.referer = "https://linkkf.app/"
             return LogicLinkkfYommi.get_html_cloudflare(url)
-            # return LogicLinkkfYommi.get_html_playwright(url)
-            # return LogicLinkkfYommi.get_html_selenium(url)
-            # return LogicLinkkfYommi.get_html_requests(url, False)
-            #
-            # if (
-            #     socket.gethostbyname(socket.gethostname()) == "192.168.0.32"
-            #     or socket.gethostbyname(socket.gethostname()) == "127.0.0.1"
-            # ):
-            #     print("dev================")
-            #     # print("test")
-            #     # import undetected_chromedriver as uc
-            #     #
-            #     # driver = uc.Chrome(use_subprocess=True)
-            #     # driver.get(url)
-            #
-            #     return LogicLinkkfYommi.get_html_cloudflare(url)
-            # return page.text
-            # return page.content
+
         except Exception as e:
             # os.system(f"pip install playwright")
             # os.system(f"playwright install")
@@ -310,10 +293,10 @@ class LogicLinkkfYommi(object):
 
         logger.debug(f"headers:: {LogicLinkkfYommi.headers}")
 
-        if LogicLinkkfYommi.session is None:
-            LogicLinkkfYommi.session = requests.Session()
+        # if LogicLinkkfYommi.session is None:
+        #     LogicLinkkfYommi.session = requests.Session()
 
-        # LogicLinkkfYommi.session = requests.Session()
+        LogicLinkkfYommi.session = requests.Session()
 
         sess = cloudscraper.create_scraper(
             # browser={"browser": "firefox", "mobile": False},
