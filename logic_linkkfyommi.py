@@ -73,7 +73,7 @@ cache_path = os.path.dirname(__file__)
 class LogicLinkkfYommi(object):
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
         "cache-control": "no-cache",
         "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6",
         "Referer": "https://kfani.me"
@@ -88,10 +88,11 @@ class LogicLinkkfYommi(object):
     def get_html(url, cached=False):
 
         try:
-            print("cloudflare protection bypass ==================")
-            # return LogicLinkkfYommi.get_html_cloudflare(url)
+            if LogicLinkkfYommi.referer is None:
+                LogicLinkkfYommi.referer = "https://linkkf.app/"
+            return LogicLinkkfYommi.get_html_cloudflare(url)
             # return LogicLinkkfYommi.get_html_playwright(url)
-            return LogicLinkkfYommi.get_html_selenium(url)
+            # return LogicLinkkfYommi.get_html_selenium(url)
             # return LogicLinkkfYommi.get_html_requests(url, False)
             #
             # if (
@@ -301,10 +302,11 @@ class LogicLinkkfYommi(object):
         #     browser={"browser": "chrome", "platform": "windows", "mobile": False},
         #     debug=True,
         # )
+        print("cloudflare protection bypass ==================")
 
         LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
 
-        # logger.debug(f"headers:: {LogicLinkkfYommi.headers}")
+        logger.debug(f"headers:: {LogicLinkkfYommi.headers}")
 
         if LogicLinkkfYommi.session is None:
             LogicLinkkfYommi.session = requests.Session()
@@ -312,7 +314,11 @@ class LogicLinkkfYommi(object):
         # LogicLinkkfYommi.session = requests.Session()
 
         sess = cloudscraper.create_scraper(
-            debug=False, sess=LogicLinkkfYommi.session, delay=10
+            # browser={"browser": "firefox", "mobile": False},
+            browser={"browser": "firefox", "platform": "windows", "mobile": False},
+            debug=False,
+            sess=LogicLinkkfYommi.session,
+            delay=10,
         )
 
         # print(scraper.get(url, headers=LogicLinkkfYommi.headers).content)
@@ -1189,9 +1195,9 @@ class LogicLinkkfYommi(object):
             url = "%s/%s" % (ModelSetting.get("linkkf_url"), code)
             logger.info(url)
 
-            # html_content = LogicLinkkfYommi.get_html(url, cached=True)
+            html_content = LogicLinkkfYommi.get_html(url, cached=False)
             # html_content = LogicLinkkfYommi.get_html_playwright(url)
-            html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=True)
+            # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
 
             logger.debug(html_content)
 
