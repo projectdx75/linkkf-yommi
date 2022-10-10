@@ -323,7 +323,7 @@ class LogicLinkkfYommi(object):
         # )
         # scraper = cloudscraper.create_scraper(sess=re_sess)
         scraper = cloudscraper.create_scraper(
-            debug=True,
+            # debug=True,
             delay=10,
             sess=LogicLinkkfYommi.session,
             browser={
