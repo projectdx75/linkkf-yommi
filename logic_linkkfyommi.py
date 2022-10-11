@@ -289,6 +289,33 @@ class LogicLinkkfYommi(object):
                 data3dict = json.loads(data3)
                 # print(data3dict)
                 video_url = data3dict[0]["file"]
+                
+            elif "k40chan" in url2:
+                # k40chan 계열 처리 => 방문해서 m3u8을 받아온다.
+                logger.debug("k40chan routine=================================")
+                LogicLinkkfYommi.referer = url2
+                # logger.debug(f"url2: {url2}")
+                data = LogicLinkkfYommi.get_html(url2)
+                # logger.info("dx: data", data)
+                regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
+
+                temp_url = re.findall(regex2, data)[0]
+                video_url = ""
+                ref = "https://kfani.me"
+                for i in temp_url:
+                    if i is None:
+                        continue
+                    video_url = i
+                    # video_url = '{1} -headers \'Referer: "{0}"\' -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64;
+                    # x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref,
+                    # video_url)
+
+                match = re.compile(r"<track.+src\=\"(?P<vtt_url>.*?.vtt)").search(data)
+                # logger.info("match group: %s", match.group('vtt_url'))
+                vtt_url = match.group("vtt_url")
+                # logger.info("vtt_url: %s", vtt_url)
+                # logger.debug(f"LogicLinkkfYommi.referer: {LogicLinkkfYommi.referer}")
+                referer_url = url2
 
             elif "linkkf" in url2:
                 logger.deubg("linkkf routine")
@@ -463,9 +490,9 @@ class LogicLinkkfYommi(object):
                 xpath_select_query = '//select[@class="switcher"]/option'
                 for tag in tree.xpath(xpath_select_query):
                     url2s2 = tag.attrib["value"]
-                    if 'k40chan' in url2s2:
-                        pass
-                    elif 'ani1c12' in url2s2:
+                   # if 'k40chan' in url2s2:
+                   #     pass
+                    if 'ani1c12' in url2s2:
                         pass
                     else:
                         url2s.append(url2s2)
@@ -482,10 +509,10 @@ class LogicLinkkfYommi(object):
                 xpath_select_query = '//select[@id="server-list"]/option'
                 for tag in tree.xpath(xpath_select_query):
                     url2s2 = tag.attrib["value"]
-                    if 'k40chan' in url2s2:
-                        pass
-                    else:
-                        url2s.append(url2s2)
+                    #if 'k40chan' in url2s2:
+                    #    pass
+                    #else:
+                    url2s.append(url2s2)
 
             logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
             #url2s.reverse()
