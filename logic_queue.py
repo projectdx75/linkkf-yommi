@@ -271,7 +271,7 @@ class LogicQueue(object):
                 # 임시
                 base_url = "https://kfani.me"
                 vtt_url = base_url + entity.url[2]
-
+                logger.info('%s',entity.url[2])
                 logger.debug(f"srt:url => {vtt_url}")
                 srt_filepath = os.path.join(
                     save_path, entity.info["filename"].replace(".mp4", ".ko.srt")
