@@ -274,7 +274,7 @@ class LogicQueue(object):
                     command = [FFMPEG, '-y', headers_command_new , '-i', source, '-c', 'copy', target]
                     logger.info('%s',command)
                     #os.system(' '.join(command))
-                    subprocess.call(command, shell=True)
+                    subprocess.run(command, shell=True)
                 LogicQueue.current_ffmpeg_count += 1
                 LogicQueue.download_queue.task_done()
 
