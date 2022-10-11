@@ -490,10 +490,10 @@ class LogicLinkkfYommi(object):
                 xpath_select_query = '//select[@class="switcher"]/option'
                 for tag in tree.xpath(xpath_select_query):
                     url2s2 = tag.attrib["value"]
-                    #if 'k40chan' in url2s2:
-                    #    pass
+                    if 'k40chan' in url2s2:
+                        continue
                     if 'ani1c12' in url2s2:
-                        pass
+                        continue
                     else:
                         url2s.append(url2s2)
             else:
@@ -509,10 +509,10 @@ class LogicLinkkfYommi(object):
                 xpath_select_query = '//select[@id="server-list"]/option'
                 for tag in tree.xpath(xpath_select_query):
                     url2s2 = tag.attrib["value"]
-                    #if 'k40chan' in url2s2:
-                    #    pass
-                    #else:
-                    url2s.append(url2s2)
+                    if 'k40chan' in url2s2:
+                        continue
+                    else:
+                        url2s.append(url2s2)
 
             logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
             #url2s.reverse()
