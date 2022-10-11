@@ -229,52 +229,26 @@ class LogicQueue(object):
                     "Referer": f"{referer}",
                 }
                 # logger.debug(f"referer: {referer}")
-                headers_command = []
+
                 logger.debug(f"headers::: {headers}")
-                for key, value in headers.items():
-                    if key.lower() == 'user-agent':
-                        headers_command.append('-user_agent')
-                        headers_command.append(value)
-                        pass
-                    else:
-                        headers_command.append('-headers')
-                        if platform.system() == 'Windows':
-                            headers_command.append('\'%s:%s\''%(key,value))
-                        else:
-                            headers_command.append(f'{key}:{value}')
+
                 if "nianv3c2.xyz" in entity.url[0]:
                     logger.debug(f"new type {entity.url[0]}")
                     WVTool.aria2c_download(entity.url[0], "./temp")
                 else:
-                    FFMPEG = '/usr/bin/ffmpeg'
-                    #f = ffmpeg.Ffmpeg(
-                    #    entity.url[0],
-                    #    entity.info["filename"],
-                    #    plugin_id=entity.entity_id,
-                     #   listener=LogicQueue.ffmpeg_listener,
-                    #    max_pf_count=max_pf_count,
+
+                    f = ffmpeg.Ffmpeg(
+                        entity.url[0],
+                        entity.info["filename"],
+                        plugin_id=entity.entity_id,
+                        listener=LogicQueue.ffmpeg_listener,
+                        max_pf_count=max_pf_count,
                         #   referer=referer,
-                    #    call_plugin=package_name,
-                    #    save_path=save_path,
-                    #    headers=headers,
-                    #)
-                    #f.start()
-					#7번 2번 경로와 파일
-                    #logger.info('1 = %s',entity.url[0])
-                    #logger.info('2 = %s',)
-                    #logger.info('3 = %s',entity.entity_id)
-                    #logger.info('4 = %s',LogicQueue.ffmpeg_listener)
-                    #logger.info('5 = %s',max_pf_count)
-                    #logger.info('6 = %s',package_name)
-                    #logger.info('7 = %s',)
-                    #logger.info('8 = %s',headers)
-                    target = save_path + '/' + entity.info["filename"]
-                    source = entity.url[0]
-                    headers_command_new = ' '.join(headers_command)
-                    command = [FFMPEG, '-y', headers_command_new , '-i', source, '-c', 'copy', target]
-                    logger.info('%s',command)
-                    #os.system(' '.join(command))
-                    subprocess.run(command, shell=True)
+                        call_plugin=package_name,
+                        save_path=save_path,
+                        headers=headers,
+                    )
+                    f.start()
                 LogicQueue.current_ffmpeg_count += 1
                 LogicQueue.download_queue.task_done()
 
