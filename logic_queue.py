@@ -71,11 +71,10 @@ class QueueEntity:
     @staticmethod
     def get_entity_by_entity_id(entity_id):
         ret_data = []
-        # logger.debug(type(QueueEntity.entity_list))
         for _ in QueueEntity.entity_list:
-            # logger.debug(type(_))
             if _.entity_id == entity_id:
                 ret_data.append(_)
+                return _
 
         # for _ in QueueEntity.entity_list:
         #     if _.entity_id == entity_id:
@@ -230,11 +229,11 @@ class LogicQueue(object):
                 }
                 # logger.debug(f"referer: {referer}")
 
-                logger.debug(f"headers::: {headers}")
+                # logger.debug(f"headers::: {headers}")
 
                 if "nianv3c2.xyz" in entity.url[0]:
                     logger.debug(f"new type {entity.url[0]}")
-                    WVTool.aria2c_download(entity.url[0], "./temp")
+                    # WVTool.aria2c_download(entity.url[0], "./temp")
                 else:
 
                     f = ffmpeg.Ffmpeg(
@@ -384,6 +383,8 @@ class LogicQueue(object):
             pass
 
         entity = QueueEntity.get_entity_by_entity_id(arg["plugin_id"])
+
+        # logger.debug(entity)
         if entity is None:
             return
         entity.ffmpeg_arg = arg

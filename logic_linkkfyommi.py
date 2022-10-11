@@ -210,24 +210,12 @@ class LogicLinkkfYommi(object):
 
         # driver.refresh()
         print(f"current_url:: {driver.current_url}")
-        # logger.debug(f"current_cookie:: {driver.get_cookies()}")
-        # cookies_list = driver.get_cookies()
-        #
-        # cookies_dict = {}
-        # for cookie in cookies_list:
-        #     cookies_dict[cookie["name"]] = cookie["value"]
-        #
-        # print(cookies_dict)
-
-        # LogicAniLife.cookies = cookies_list
-        # # LogicAniLife.headers["Cookie"] = driver.get_cookies()
-        # LogicAniLife.episode_url = driver.current_url
 
         # time.sleep(1)
         elem = driver.find_element(By.XPATH, "//*")
         source_code = elem.get_attribute("outerHTML")
 
-        time.sleep(4.0)
+        time.sleep(3.0)
 
         return source_code.encode("utf-8")
 
@@ -334,7 +322,7 @@ class LogicLinkkfYommi(object):
         # print(scraper.get(url, headers=LogicLinkkfYommi.headers).content)
         # print(scraper.get(url).content)
         # return scraper.get(url, headers=LogicLinkkfYommi.headers).content
-        logger.debug(LogicLinkkfYommi.headers)
+        # logger.debug(LogicLinkkfYommi.headers)
         return scraper.get(
             url,
             headers=LogicLinkkfYommi.headers,
@@ -644,14 +632,14 @@ class LogicLinkkfYommi(object):
 
                 # print(f"{index}.. {js_script.text_content()}")
                 if pattern.match(js_script.text_content()):
-                    logger.debug("match::::")
+                    # logger.debug("match::::")
                     match_data = pattern.match(js_script.text_content())
                     # print(match_data.groups())
                     # print(type(match_data.groups()[0]))
                     iframe_info = json.loads(
                         match_data.groups()[0].replace("path:", '"path":')
                     )
-                    logger.debug(f"iframe_info:: {iframe_info}")
+                    # logger.debug(f"iframe_info:: {iframe_info}")
 
                 index += 1
 
@@ -671,16 +659,13 @@ class LogicLinkkfYommi(object):
             # xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
             xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
 
-            logger.debug(f"dev:: {len(tree.xpath(xpath_select_query))}")
-
             if len(tree.xpath(xpath_select_query)) > 0:
                 pass
             else:
                 print("::here")
                 xpath_select_query = '//select[@class="switcher"]/option'
-                xpath_select_query = "//select/option"
-
-            logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
+                if len(tree.xpath(xpath_select_query)) == 0:
+                    xpath_select_query = "//select/option"
 
             url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
 
@@ -865,7 +850,7 @@ class LogicLinkkfYommi(object):
                 data["episode"].append(entity)
 
             json_file_path = os.path.join(download_path, "airing_list.json")
-            logger.debug("json_file_path:: %s", json_file_path)
+            # logger.debug("json_file_path:: %s", json_file_path)
 
             if os.path.is_file(json_file_path):
                 logger.debug("airing_list.json file deleted.")
@@ -947,7 +932,7 @@ class LogicLinkkfYommi(object):
                 data["episode"].append(entity)
 
             json_file_path = os.path.join(download_path, "airing_list.json")
-            logger.debug("json_file_path:: %s", json_file_path)
+            # logger.debug("json_file_path:: %s", json_file_path)
 
             with open(json_file_path, "w") as outfile:
                 json.dump(data, outfile)
@@ -1055,20 +1040,6 @@ class LogicLinkkfYommi(object):
                 )
                 # logger.info('entity:::', entity['title'])
                 data["episode"].append(entity)
-
-            # json_file_path = os.path.join(download_path, "airing_list.json")
-            # logger.debug("json_file_path:: %s", json_file_path)
-            # json_file_dir = os.path.dirname(json_file_path)
-            #
-            # if os.path.exists(json_file_path):
-            #     logger.debug("airing_list.json file deleted.")
-            #     os.remove(json_file_path)
-            #
-            # if not os.path.exists(json_file_dir):
-            #     os.makedirs(json_file_dir)
-            #
-            # with open(json_file_path, "w") as outfile:
-            #     json.dump(data, outfile)
 
             return data
 
