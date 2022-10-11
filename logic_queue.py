@@ -271,6 +271,7 @@ class LogicQueue(object):
                     target = save_path + '/' + entity.info["filename"]
                     source = entity.url[0]
                     command = [FFMPEG, '-y', headers_command , '-i', source, '-c', 'copy', target]
+                    logger.info('%s',command)
                     os.system(' '.join(command))
                 LogicQueue.current_ffmpeg_count += 1
                 LogicQueue.download_queue.task_done()
