@@ -597,65 +597,58 @@ class LogicLinkkfYommi(object):
         return [video_url, referer_url, vtt_url]
 
     @staticmethod
-    def get_video_url(episode_url):
+    def get_html_episode_content(url: str) -> str:
+        if url.startswith("http"):
+            html_data = LogicLinkkfYommi.get_html(url)
+        else:
+            url = f"https://linkkf.app{url}"
+
+            logger.info("get_video_url(): url: %s" % url)
+            data = LogicLinkkfYommi.get_html(url)
+
+            tree = html.fromstring(data)
+
+            tree = html.fromstring(data)
+
+            pattern = re.compile("var player_data=(.*)")
+
+            js_scripts = tree.xpath("//script")
+
+            iframe_info = None
+            index = 0
+
+            for js_script in js_scripts:
+
+                # print(f"{index}.. {js_script.text_content()}")
+                if pattern.match(js_script.text_content()):
+                    # logger.debug("match::::")
+                    match_data = pattern.match(js_script.text_content())
+                    iframe_info = json.loads(
+                        match_data.groups()[0].replace("path:", '"path":')
+                    )
+                    # logger.debug(f"iframe_info:: {iframe_info}")
+
+                index += 1
+
+            ##################################################
+            # iframe url:: https://s2.ani1c12.top/player/index.php?data='+player_data.url+'
+            ####################################################
+
+            url = f'https://s2.ani1c12.top/player/index.php?data={iframe_info["url"]}'
+            html_data = LogicLinkkfYommi.get_html(url)
+
+        return html_data
+
+    @staticmethod
+    def get_video_url(episode_url: str) -> list:
         # by k45734
         url2s = []
         url = None
         ###########
         try:
-            # regex = r"^(http|https):\/\/"
-            #
-            # # test_str = "https://linkkf.app/player/v350205-sub-1/"
-            #
-            # matches = re.compile(regex, episode_url)
-            #
-            # print(matches)
-            logger.debug(episode_url)
+            # logger.debug(episode_url)
 
-            if episode_url.startswith("http"):
-                iframe_url = episode_url
-            else:
-                url = f"https://linkkf.app{episode_url}"
-
-                logger.info("get_video_url(): url: %s" % url)
-                data = LogicLinkkfYommi.get_html(url)
-                # data = LogicLinkkfYommi.get_html_cloudflare(url)
-                # logger.info(data)
-                tree = html.fromstring(data)
-
-                tree = html.fromstring(data)
-
-                pattern = re.compile("var player_data=(.*)")
-
-                js_scripts = tree.xpath("//script")
-
-                iframe_info = None
-                index = 0
-
-                for js_script in js_scripts:
-
-                    # print(f"{index}.. {js_script.text_content()}")
-                    if pattern.match(js_script.text_content()):
-                        # logger.debug("match::::")
-                        match_data = pattern.match(js_script.text_content())
-                        iframe_info = json.loads(
-                            match_data.groups()[0].replace("path:", '"path":')
-                        )
-                        # logger.debug(f"iframe_info:: {iframe_info}")
-
-                    index += 1
-
-                ##################################################
-                #
-                # iframe url:: https://s2.ani1c12.top/player/index.php?data='+player_data.url+'
-                ####################################################
-
-                url = (
-                    f'https://s2.ani1c12.top/player/index.php?data={iframe_info["url"]}'
-                )
-                iframe_url = url
-
-            data = LogicLinkkfYommi.get_html(iframe_url)
+            data = LogicLinkkfYommi.get_html_episode_content(episode_url)
             tree = html.fromstring(data)
 
             xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
@@ -700,7 +693,7 @@ class LogicLinkkfYommi(object):
                 try:
                     if video_url is not None:
                         continue
-                    logger.debug(f"url: {url}, url2: {url2}")
+                    # logger.debug(f"url: {url}, url2: {url2}")
                     ret = LogicLinkkfYommi.get_video_url_from_url(url, url2)
                     logger.debug(f"ret::::> {ret}")
 
