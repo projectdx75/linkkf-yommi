@@ -249,7 +249,7 @@ class LogicQueue(object):
                         headers=headers,
                     )
                     f.start()
-
+                logger.info('%s',f)
                 LogicQueue.current_ffmpeg_count += 1
                 LogicQueue.download_queue.task_done()
 
