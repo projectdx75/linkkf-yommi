@@ -491,9 +491,9 @@ class LogicLinkkfYommi(object):
                 for tag in tree.xpath(xpath_select_query):
                     url2s2 = tag.attrib["value"]
                     if 'k40chan' in url2s2:
-                        continue
+                        pass
                     elif 'ani1c12' in url2s2:
-                        continue
+                        pass
                     else:
                         url2s.append(url2s2)
             else:
@@ -510,7 +510,7 @@ class LogicLinkkfYommi(object):
                 for tag in tree.xpath(xpath_select_query):
                     url2s2 = tag.attrib["value"]
                     if 'k40chan' in url2s2:
-                        continue
+                        pass
                     else:
                         url2s.append(url2s2)
 
