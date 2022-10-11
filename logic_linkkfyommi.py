@@ -682,21 +682,20 @@ class LogicLinkkfYommi(object):
                 xpath_select_query = "//select/option"
 
             logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
-
-            url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
-            #for tag in tree.xpath(xpath_select_query):
-            #    url2s2 = tag.attrib["value"]
-            #        if 'k40chan' in url2s2:
-            #            pass
-            #        else:
-            #            url2s.append(url2s2)
+            url2s1 = []
+            #url2s2 = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
+            #k40chan 영상주소와 이상하게 특정 영상주소가 죽은 경우 랜덤 선택하여 다운로드 해볼까
+            for tag in tree.xpath(xpath_select_query):
+                url2s2 = tag.attrib["value"]
+                url2s1.append(url2s2)
 
             # logger.info('dx: url', url)
-            logger.info("dx: urls2:: %s", url2s)
+            
 
             video_url = None
             referer_url = None  # dx
-
+            url2s = random.choices(url2s1, k=2)
+            logger.info("dx: urls2:: %s", url2s)
             for url2 in url2s:
                 logger.info('%s',url2)
                 if 'k40chan' in url2:
