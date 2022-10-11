@@ -106,20 +106,6 @@ class LogicQueue(object):
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
 
-    # @staticmethod
-    # def download_thread_function():
-    #     while True:
-    #         try:
-    #             entity = LogicQueue.download_queue.get()
-    #             logger.debug(
-    #                 "Queue receive item:%s %s", entity.title_id, entity.episode_id
-    #             )
-    #             # LogicAni.process(entity)
-    #             LogicQueue.download_queue.task_done()
-    #         except Exception as e:
-    #             logger.error("Exception:%s", e)
-    #             logger.error(traceback.format_exc())
-
     @staticmethod
     def download_thread_function():
         headers = None
@@ -136,14 +122,6 @@ class LogicQueue(object):
                     # logger.debug(LogicQueue.current_ffmpeg_count)
                     time.sleep(5)
                 entity = LogicQueue.download_queue.get()
-
-                # Todo: 고찰
-                # if entity.cancel:
-                #     continue
-
-                # logger.debug(
-                #     "download_thread_function()::entity.info['code'] >> %s", entity
-                # )
 
                 if entity is None:
                     continue
@@ -212,8 +190,6 @@ class LogicQueue(object):
                     }
                     # logger.info('referer: %s', referer)
 
-                # logger.info('filename::::>>>> %s', entity.info['filename'])
-                # logger.info('파일체크::::>', os.path.join(save_path, entity.info['filename']))
                 if os.path.exists(os.path.join(save_path, entity.info["filename"])):
                     entity.ffmpeg_status_kor = "파일 있음"
                     entity.ffmpeg_percent = 100
@@ -286,8 +262,10 @@ class LogicQueue(object):
                     if vtt_status == 200:
                         srt_data = convert_vtt_to_srt(vtt_data)
                         write_file(srt_data, srt_filepath)
+                    elif vtt_status == 404:
+                        pass
                     else:
-                        logger.debug("자막파일 받을수 없슴")
+                        logger.debug("자막 파일 받을수 없슴")
 
             except Exception as e:
                 logger.error("Exception:%s", e)

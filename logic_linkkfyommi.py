@@ -440,6 +440,28 @@ class LogicLinkkfYommi(object):
                 # print(data3dict)
                 video_url = data3dict[0]["file"]
 
+            elif "k40chan" in url2:
+                # k40chan 계열 처리 => 방문해서 m3u8을 받아온다.
+                # k45734 님 소스 반영 (확인은 안해봄 잘 동작할꺼라고 믿고,)
+                logger.debug("k40chan routine=================================")
+                LogicLinkkfYommi.referer = url2
+                data = LogicLinkkfYommi.get_html(url2)
+
+                regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
+
+                temp_url = re.findall(regex2, data)[0]
+                video_url = ""
+                ref = "https://kfani.me"
+                for i in temp_url:
+                    if i is None:
+                        continue
+                    video_url = i
+
+                match = re.compile(r"<track.+src\=\"(?P<vtt_url>.*?.vtt)").search(data)
+                vtt_url = match.group("vtt_url")
+
+                referer_url = url2
+
             elif "linkkf" in url2:
                 logger.deubg("linkkf routine")
                 # linkkf 계열 처리 => URL 리스트를 받아오고, 하나 골라 방문 해서 m3u8을 받아온다.
@@ -596,6 +618,9 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def get_video_url(episode_url):
+        # by k45734
+        url2s = []
+        ###########
         try:
             # regex = r"^(http|https):\/\/"
             #
@@ -652,22 +677,42 @@ class LogicLinkkfYommi(object):
             )
             html_data = LogicLinkkfYommi.get_html(iframe_url)
 
-            # logger.info(html_data)
-
             tree = html.fromstring(html_data)
 
             # xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
             xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
 
             if len(tree.xpath(xpath_select_query)) > 0:
-                pass
+                # by k45734
+                print("ok")
+                xpath_select_query = '//select[@class="switcher"]/option'
+                for tag in tree.xpath(xpath_select_query):
+                    url2s2 = tag.attrib["value"]
+                    if "k40chan" in url2s2:
+                        pass
+                    elif "ani1c12" in url2s2:
+                        pass
+                    else:
+                        url2s.append(url2s2)
             else:
                 print("::here")
-                xpath_select_query = '//select[@class="switcher"]/option'
-                if len(tree.xpath(xpath_select_query)) == 0:
-                    xpath_select_query = "//select/option"
+                # <script type="text/javascript">var player_data={"url":"366119m1","from":"sub",path:"https://linkkf.app/wp-content/themes/kfbeta16","ads":{"pre":null,"pause":null}}</script>
+                tt = re.search(r"var player_data=(.*?)<", data, re.S)
+                json_string = tt.group(1)
+                tt2 = re.search(r'"url":"(.*?)"', json_string, re.S)
+                json_string2 = tt2.group(1)
+                ttt = "https://s2.ani1c12.top/player/index.php?data=" + json_string2
+                response = LogicLinkkfYommi.get_html(ttt)
+                tree = html.fromstring(response)
+                xpath_select_query = '//select[@id="server-list"]/option'
+                for tag in tree.xpath(xpath_select_query):
+                    url2s2 = tag.attrib["value"]
+                    if "k40chan" in url2s2:
+                        pass
+                    else:
+                        url2s.append(url2s2)
 
-            url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
+            # url2s = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
 
             # logger.info('dx: url', url)
             logger.info("dx: urls2:: %s", url2s)
@@ -721,9 +766,7 @@ class LogicLinkkfYommi(object):
                         LogicLinkkfYommi.current_data["season"],
                         entity["title"],
                     )
-                #    tmp = data['filename'].split('.')
-                #    tmp[0] = new_title
-                #    data['filename'] = '.'.join(tmp)
+
                 return LogicLinkkfYommi.current_data
             else:
                 ret["ret"] = False
@@ -896,12 +939,6 @@ class LogicLinkkfYommi(object):
 
             for item in tmp_items:
                 entity = {}
-                # entity["link"] = item.xpath(".//a/@href")[0]
-                # entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
-                # entity["title"] = item.xpath('.//span[@class="name-film"]//text()')[
-                #     0
-                # ].strip()
-                # entity["image_link"] = item.xpath('.//img[@class="photo"]/@src')[0]
 
                 entity["link"] = item.xpath(".//a/@href")[0]
                 # logger.debug(f"link()::entity['link'] => {entity['link']}")
@@ -998,16 +1035,6 @@ class LogicLinkkfYommi(object):
             # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
             # logger.debug(html_content)
             data = {"ret": "success", "page": page}
-
-            # download_path = ModelSetting.get("download_path")
-
-            # json_file_path = os.path.join(download_path, "airing_list.json")
-            # if os.path.exists(json_file_path):
-            #     with open(json_file_path, "r") as json_f:
-            #         file_data = json.load(json_f)
-            #         data["latest_anime_code"] = file_data["episode"][0]["code"]
-
-            # data["latest_anime_code"] = "352787"
 
             tree = html.fromstring(html_content)
 
@@ -1199,14 +1226,12 @@ class LogicLinkkfYommi(object):
             # logger.info(tree)
 
             data = {"code": code, "ret": False}
-            # //*[@id="body"]/div/div[1]/article/center/strong
-            # tmp = tree.xpath('/html/body/div[2]/div/div/article/center/strong'
-            #                  )[0].text_content().strip().encode('utf8')
-            # tmp = tree.xpath('//*[@id="body"]/div/div[1]/article/center/strong')[0].text_content().strip()
-            # logger.info('tmp::>', tree.xpath('//div[@class="hrecipe"]/article/center/strong'))
-            # tmp1 = tree.xpath("//div[contains(@id, 'related')]/ul/a")
-            # tmp = tree1.find_element(By.Xpath, "//ul/a")
-            tmp = soup.select("ul > a")
+
+            tmp2 = soup.select("ul > a")
+            if len(tmp2) == 0:
+                tmp = soup.select("u > a")
+            else:
+                tmp = soup.select("ul > a")
 
             # logger.debug(f"tmp1 size:=> {str(len(tmp))}")
 
@@ -1239,13 +1264,6 @@ class LogicLinkkfYommi(object):
             )
             # logger.info(f"title:: {data['title']}")
             try:
-                # data['poster_url'] = tree.xpath(
-                #     '//*[@id="body"]/div/div/div[1]/center/img'
-                # )[0].attrib['data-src']
-
-                # data["poster_url"] = tree.xpath(
-                #     '//*[@id="body"]/div/div[1]/div[1]/center/img'
-                # )[0].attrib["data-lazy-src"]
                 data["poster_url"] = tree.xpath(
                     '//div[@class="myui-content__thumb"]/a/@data-original'
                 )
@@ -1266,7 +1284,7 @@ class LogicLinkkfYommi(object):
                 data["poster_url"] = None
 
             data["rate"] = tree.xpath('span[@class="tag-score"]')
-            # tag_score = tree.xpath('//span[@class="taq-score"]').text_content().strip()
+
             tag_score = tree.xpath('//span[@class="taq-score"]')[0].text_content()
             # logger.debug(tag_score)
             tag_count = (
@@ -1275,15 +1293,13 @@ class LogicLinkkfYommi(object):
                 .strip()
             )
             data_rate = tree.xpath('//div[@class="rating"]/div/@data-rate')
-            # logger.debug("data_rate::> %s", data_rate)
-            # tmp = tree.xpath('//*[@id="relatedpost"]/ul/li')
-            # tmp = tree.xpath('//article/a')
-            # 수정된
-            # tmp = tree.xpath("//ul/a")
-            tmp = soup.select("ul > a")
 
-            # logger.debug(f"tmp size:=> {str(len(tmp))}")
-            # logger.info(tmp)
+            tmp2 = soup.select("ul > a")
+            if len(tmp) == 0:
+                tmp = soup.select("u > a")
+            else:
+                tmp = soup.select("ul > a")
+
             if tmp is not None:
                 data["episode_count"] = str(len(tmp))
             else:
@@ -1351,9 +1367,11 @@ class LogicLinkkfYommi(object):
                 else:
                     entity["code"] = data["code"]
 
-                # logger.info('episode_code', episode_code)
-                # entity["url"] = t.attrib["href"]
-                entity["url"] = f'https://linkkf.app{t["href"]}'
+                aa = t["href"]
+                if "/player" in aa:
+                    entity["url"] = "https://linkkf.app" + t["href"]
+                else:
+                    entity["url"] = t["href"]
                 entity["season"] = data["season"]
 
                 # 저장경로 저장
@@ -1369,10 +1387,6 @@ class LogicLinkkfYommi(object):
                 data["episode"].append(entity)
                 entity["image"] = data["poster_url"]
 
-                # entity['title'] = t.text_content().strip().encode('utf8')
-
-                # entity['season'] = data['season']
-                # logger.debug(f"save_folder::2> {data['save_folder']}")
                 entity["filename"] = LogicLinkkfYommi.get_filename(
                     data["save_folder"], data["season"], entity["title"]
                 )
@@ -1489,8 +1503,10 @@ class LogicLinkkfYommi(object):
             if vtt_status == 200:
                 srt_data = convert_vtt_to_srt(vtt_data)
                 write_file(srt_data, srt_filepath)
+            elif vtt_status == 404:
+                pass
             else:
-                logger.debug("자막파일 받을수 없슴")
+                logger.debug("자막 파일 받을수 없슴")
 
     @staticmethod
     def chunks(l, n):
