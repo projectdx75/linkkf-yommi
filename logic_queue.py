@@ -246,7 +246,7 @@ class LogicQueue(object):
                     logger.debug(f"new type {entity.url[0]}")
                     WVTool.aria2c_download(entity.url[0], "./temp")
                 else:
-					FFMPEG = 'ffmpeg'
+                    FFMPEG = 'ffmpeg'
                     #f = ffmpeg.Ffmpeg(
                     #    entity.url[0],
                     #    entity.info["filename"],
