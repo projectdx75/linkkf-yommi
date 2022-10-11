@@ -270,7 +270,8 @@ class LogicQueue(object):
                     #logger.info('8 = %s',headers)
                     target = save_path + '/' + entity.info["filename"]
                     source = entity.url[0]
-                    command = [FFMPEG, '-y', headers_command , '-i', source, '-c', 'copy', target]
+                    headers_command_new = ' '.join(headers_command)
+                    command = [FFMPEG, '-y', headers_command_new , '-i', source, '-c', 'copy', target]
                     logger.info('%s',command)
                     os.system(' '.join(command))
                 LogicQueue.current_ffmpeg_count += 1
