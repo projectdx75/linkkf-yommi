@@ -249,8 +249,14 @@ class LogicQueue(object):
                         headers=headers,
                     )
                     f.start()
-                    for ii in f:
-                        logger.info('%s',f)
+                    logger.info('1 = %s',entity.url[0])
+                    logger.info('2 = %s',entity.info["filename"])
+                    logger.info('3 = %s',entity.entity_id)
+                    logger.info('4 = %s',LogicQueue.ffmpeg_listener)
+                    logger.info('5 = %s',max_pf_count)
+                    logger.info('6 = %s',package_name)
+                    logger.info('7 = %s',save_path)
+                    logger.info('8 = %s',headers)
                 LogicQueue.current_ffmpeg_count += 1
                 LogicQueue.download_queue.task_done()
 
