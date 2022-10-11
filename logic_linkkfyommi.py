@@ -727,7 +727,7 @@ class LogicLinkkfYommi(object):
             for url2 in url2s:
                 logger.info('%s',url2)
                 if 'k40chan' in url2:
-                    pass
+                    continue
                 try:
 
                     if video_url is not None:
