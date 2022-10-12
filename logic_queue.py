@@ -236,7 +236,7 @@ class LogicQueue(object):
                     logger.debug(f"new type {entity.url[0]}")
                     WVTool.aria2c_download(entity.url[0], "./temp")
                 else:
-                    target = save_path + '/' + entity.info["filename"]
+                    target = entity.info["save_folder"] + '/' + entity.info["filename"]
                     source = entity.url[0]
                     headers_command = []
                     for key, value in headers.items():
