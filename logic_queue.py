@@ -236,7 +236,6 @@ class LogicQueue(object):
                     logger.debug(f"new type {entity.url[0]}")
                     WVTool.aria2c_download(entity.url[0], "./temp")
                 else:
-                    FFMPEG = os.path.join(bin_dir, 'ffmpeg' + ('.exe' if platform.system() == 'Windows' else ''))FFMPEG = os.path.join(bin_dir, 'ffmpeg' + ('.exe' if platform.system() == 'Windows' else ''))
                     target = save_path + '/' + entity.info["filename"]
                     source = entity.url[0]
                     headers_command = []
@@ -252,7 +251,7 @@ class LogicQueue(object):
                             else:
                                 headers_command.append(f'{key}:{value}')
                     hh2 = ' '.join(headers_command)
-                    command = [FFMPEG, '-y', hh2, '-i', source, '-c', 'copy', target]
+                    command = ['ffmpeg', '-y', hh2, '-i', source, '-c', 'copy', target]
                     logger.info('%s',command)
                     f = ffmpeg.Ffmpeg(
                         entity.url[0],
