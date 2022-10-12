@@ -659,11 +659,11 @@ class LogicLinkkfYommi(object):
             ##################################################
             #
             # iframe url:: https://s2.ani1c12.top/player/index.php?data='+player_data.url+'
-            check_url = iframe_info["url"]
-            if check_url.startswith("url"):
-                iframe_url = LogicLinkkfYommi.get_html(url)
-            else:
+            # 프레임이 없으면 무시하고 기존처럼 처리 하기			
+            try:
                 iframe_url = (f'https://s2.ani1c12.top/player/index.php?data={iframe_info["url"]}')
+            except:
+                iframe_url = LogicLinkkfYommi.get_html(url)   
             html_data = LogicLinkkfYommi.get_html(iframe_url)
 
             # logger.info(html_data)
