@@ -663,7 +663,7 @@ class LogicLinkkfYommi(object):
             try:
                 iframe_url = (f'https://s2.ani1c12.top/player/index.php?data={iframe_info["url"]}')
             except:
-                iframe_url = LogicLinkkfYommi.get_html(url)   
+                iframe_url = url
             html_data = LogicLinkkfYommi.get_html(iframe_url)
 
             # logger.info(html_data)
