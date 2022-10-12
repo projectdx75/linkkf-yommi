@@ -673,10 +673,13 @@ class LogicLinkkfYommi(object):
             logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
             url2s1 = []
             #url2s2 = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
-            #k40chan 영상주소와 이상하게 특정 영상주소가 죽은 경우 랜덤 선택하여 다운로드 해볼까
+            #k40chan 영상주소는 ffmpeg 로 실패함 어떤 코드가 들어가야 되는지 몰라서 제외하고 영상소스를 선택할수 없어서 램덤으로 선택하여 영상소스를 선택하고 영상소가 죽었을경우에 유용?
             for tag in tree.xpath(xpath_select_query):
                 url2s2 = tag.attrib["value"]
-                url2s1.append(url2s2)
+                if 'k40chan' in url2s2
+                    pass
+                else:
+                    url2s1.append(url2s2)
 
             # logger.info('dx: url', url)
             
@@ -687,8 +690,6 @@ class LogicLinkkfYommi(object):
             logger.info("dx: urls2:: %s", url2s)
             for url2 in url2s:
                 logger.info('%s',url2)
-                if 'k40chan' in url2:
-                    continue
                 try:
 
                     if video_url is not None:
