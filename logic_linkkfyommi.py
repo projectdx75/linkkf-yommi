@@ -652,7 +652,7 @@ class LogicLinkkfYommi(object):
                     iframe_info = json.loads(
                         match_data.groups()[0].replace("path:", '"path":')
                     )
-                    logger.debug(f"iframe_info:: {iframe_info}")
+                    logger.info(f"iframe_info:: {iframe_info}")
 
                 index += 1
 
