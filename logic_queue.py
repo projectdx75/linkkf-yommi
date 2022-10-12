@@ -254,7 +254,7 @@ class LogicQueue(object):
                     command = ['ffmpeg', '-y', hh2, '-i', source, '-c', 'copy', target]
                     logger.info('%s',command)
                     test = ' '.join(command)
-                    subprocess.Popen(test, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, encoding='utf8')
+                    subprocess.Popen(test, universal_newlines=True, encoding='utf8')
                     f = ffmpeg.Ffmpeg(
                         entity.url[0],
                         entity.info["filename"],
