@@ -622,7 +622,7 @@ class LogicLinkkfYommi(object):
                 url = episode_url
             else:
                 url = f"https://linkkf.app{episode_url}"
-            logger.info('%s',episode_url)
+
             logger.info("get_video_url(): url: %s" % url)
             data = LogicLinkkfYommi.get_html(url)
             # print(data)
@@ -1391,7 +1391,11 @@ class LogicLinkkfYommi(object):
 
                 # logger.info('episode_code', episode_code)
                 # entity["url"] = t.attrib["href"]
-                entity["url"] = f'https://linkkf.app{t["href"]}'
+                check_url = t["href"]
+                if check_url.startswith("http"):
+                    entity["url"] = t["href"]
+                else:
+                    entity["url"] = f'https://linkkf.app{t["href"]}'
                 entity["season"] = data["season"]
 
                 # 저장경로 저장
