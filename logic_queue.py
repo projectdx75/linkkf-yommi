@@ -251,7 +251,7 @@ class LogicQueue(object):
                             else:
                                 headers_command.append(f'{key}:{value}')
                     hh2 = ' '.join(headers_command)
-                    command = ['ffmpeg', '-y', hh2, '-i', source, '-c', 'copy', target]
+                    command = ['/usr/bin/ffmpeg', '-y', hh2, '-i', source, '-c', 'copy', target]
                     logger.info('%s',command)
                     test = ' '.join(command)
                     subprocess.call(test, universal_newlines=True, encoding='utf8')
