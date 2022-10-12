@@ -24,12 +24,12 @@
 <script type="text/javascript">
 const package_name = 'linkkf-yommi';
 let current_data = null;
+const protocol = window.location.protocol;
+const socket = io.connect(protocol + "//" + document.domain + ":" + location.port + "/" + package_name);
 
 console.log(io)
 
 $(document).ready(function(){
-  const protocol = window.location.protocol;
-  const socket = io.connect(protocol + "//" + document.domain + ":" + location.port + "/" + package_name);
 
   socket.on('on_connect', function(data){
     if (data != null) {

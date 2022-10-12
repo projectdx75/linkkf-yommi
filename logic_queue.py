@@ -76,10 +76,10 @@ class QueueEntity:
             # logger.debug(type(_))
             if _.entity_id == entity_id:
                 ret_data.append(_)
-
+                return _
         # for _ in QueueEntity.entity_list:
         #     if _.entity_id == entity_id:
-        #         return _
+
         # return None
 
 
@@ -234,7 +234,7 @@ class LogicQueue(object):
 
                 if "nianv3c2.xyz" in entity.url[0]:
                     logger.debug(f"new type {entity.url[0]}")
-                    WVTool.aria2c_download(entity.url[0], "./temp")
+                    #WVTool.aria2c_download(entity.url[0], "./temp")
                 else:
                     #target = save_path + '/' + entity.info["filename"]
                     #if not os.path.exists('{}'.format(save_path)):

@@ -210,24 +210,12 @@ class LogicLinkkfYommi(object):
 
         # driver.refresh()
         print(f"current_url:: {driver.current_url}")
-        # logger.debug(f"current_cookie:: {driver.get_cookies()}")
-        # cookies_list = driver.get_cookies()
-        #
-        # cookies_dict = {}
-        # for cookie in cookies_list:
-        #     cookies_dict[cookie["name"]] = cookie["value"]
-        #
-        # print(cookies_dict)
-
-        # LogicAniLife.cookies = cookies_list
-        # # LogicAniLife.headers["Cookie"] = driver.get_cookies()
-        # LogicAniLife.episode_url = driver.current_url
-
-        # time.sleep(1)
+        
+        
         elem = driver.find_element(By.XPATH, "//*")
         source_code = elem.get_attribute("outerHTML")
 
-        time.sleep(4.0)
+        time.sleep(3.0)
 
         return source_code.encode("utf-8")
 
@@ -334,7 +322,7 @@ class LogicLinkkfYommi(object):
         # print(scraper.get(url, headers=LogicLinkkfYommi.headers).content)
         # print(scraper.get(url).content)
         # return scraper.get(url, headers=LogicLinkkfYommi.headers).content
-        logger.debug(LogicLinkkfYommi.headers)
+        #logger.debug(LogicLinkkfYommi.headers)
         return scraper.get(
             url,
             headers=LogicLinkkfYommi.headers,

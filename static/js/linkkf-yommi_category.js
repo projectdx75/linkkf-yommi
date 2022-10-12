@@ -16,7 +16,7 @@ $("#anime_category").on("click", function (e) {
 
     switch (e.target.id) {
         case "ing":
-            console.log("ing")
+            console.log("ing.....")
 
             spinner_loading.style.display = "block";
             current_cate = "ing";
@@ -134,7 +134,7 @@ const get_anime_list = (page, type) => {
         cache: false,
         dataType: "json",
         success: (ret) => {
-            console.log("ret::>", ret);
+            //console.log("ret::>", ret);
             current_screen_movie_data = ret;
             total_page = ret.total_page;
 
@@ -563,7 +563,7 @@ $("body").on("click", "#search_tvdb_btn", function (e) {
 $("body").on("click", "#add_whitelist", function (e) {
     e.preventDefault();
     let data_code = $(this).attr("data-code");
-    console.log(data_code);
+    //console.log(data_code);
     $.ajax({
         url: "/" + package_name + "/ajax/add_whitelist",
         type: "POST",
