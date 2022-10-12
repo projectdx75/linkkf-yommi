@@ -622,7 +622,7 @@ class LogicLinkkfYommi(object):
                 url = episode_url
             else:
                 url = f"https://linkkf.app{episode_url}"
-
+            logger.info('%s',episode_url)
             logger.info("get_video_url(): url: %s" % url)
             data = LogicLinkkfYommi.get_html(url)
             # print(data)
