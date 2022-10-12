@@ -236,25 +236,27 @@ class LogicQueue(object):
                     logger.debug(f"new type {entity.url[0]}")
                     WVTool.aria2c_download(entity.url[0], "./temp")
                 else:
-                    target = save_path + '/' + entity.info["filename"]
-                    source = entity.url[0]
-                    headers_command = []
-                    for key, value in headers.items():
-                        if key.lower() == 'user-agent':
-                            headers_command.append('-user_agent')
-                            headers_command.append(value)
-                            pass
-                        else:
-                            headers_command.append('-headers')
-                            if platform.system() == 'Windows':
-                                headers_command.append('\'%s:%s\''%(key,value))
-                            else:
-                                headers_command.append(f'{key}:{value}')
-                    hh2 = ' '.join(headers_command)
-                    command = ['/usr/bin/ffmpeg', '-y', hh2, '-i', source, '-c', 'copy', target]
-                    logger.info('%s',command)
-                    test = ' '.join(command)
-                    subprocess.call(test, universal_newlines=True, encoding='utf8')
+                    #target = save_path + '/' + entity.info["filename"]
+                    #if not os.path.exists('{}'.format(save_path)):
+                    #    os.makedirs('{}'.format(save_path))
+                    #source = entity.url[0]
+                    #headers_command = []
+                    #for key, value in headers.items():
+                    #    if key.lower() == 'user-agent':
+                    #        headers_command.append('-user_agent')
+                    #        headers_command.append(value)
+                    #        pass
+                    #    else:
+                    #        headers_command.append('-headers')
+                    #        if platform.system() == 'Windows':
+                    #            headers_command.append('\'%s:%s\''%(key,value))
+                     #       else:
+                     #           headers_command.append(f'{key}:{value}')
+                    #hh2 = ' '.join(headers_command)
+                   # command = ['ffmpeg', '-y', hh2, '-i', source, '-c', 'copy', target]
+                    #logger.info('%s',command)
+                    #test = ' '.join(command)
+                    #subprocess.call(test, universal_newlines=True, encoding='utf8')
                     f = ffmpeg.Ffmpeg(
                         entity.url[0],
                         entity.info["filename"],
