@@ -295,7 +295,8 @@ function make_screen_movie_list(data, page) {
         page_elem = '<span class="badge bg-warning">' + page + "</span>";
     }
 
-    str += "<div id='page_caption' style='border-bottom: aqua 1px solid; margin-bottom: 5px'>";
+    // str += "<div id='page_caption' style='border-bottom: aqua 1px solid; margin-bottom: 5px'>";
+    str += "<div id='page_caption' style='padding-bottom: 3px'>";
     str +=
         '<button type="button" class="btn btn-info">Page ' +
         page_elem +

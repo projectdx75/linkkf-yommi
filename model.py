@@ -226,3 +226,11 @@ class ModelLinkkf(db.Model):
 
 
 #########################################################
+
+#########################################################
+# class ModelLinkkfEpisode(db.Model):
+#
+#     __tablename__ = f"plugin_{package_name}_linkkf_episode"
+#     __table_args__ = {"mysql_collate": "utf8_general_ci"}
+#     __bind_key__ = package_name
+#     pass
