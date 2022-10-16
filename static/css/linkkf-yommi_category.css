@@ -225,3 +225,11 @@ button#add_whitelist {
 button.btn-favorite {
   background-color: #e0ff42;
 }
+
+
+body {
+    font-family: NanumSquareNeo,system-ui,-apple-system,Segoe UI,Roboto,Helvetica Neue,Noto Sans,Liberation Sans,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+}
+body {
+    background-image: linear-gradient(90deg, #233f48, #6c6fa2, #768dae);
+}

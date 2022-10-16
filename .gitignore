@@ -3,4 +3,13 @@
 test.ipynb
 .idea
 .vscode
+*.pyo
+*.pyc
 /linkkf_cache.sqlite
+bin/Darwin/mp4decrypt
+bin/Darwin/mp4dump
+bin/Darwin/mp4dump_
+bin/Darwin/mp4info
+bin/Linux/mp4decrypt
+bin/Linux/mp4dump
+bin/Linux/mp4info

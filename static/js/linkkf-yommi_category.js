@@ -134,7 +134,7 @@ const get_anime_list = (page, type) => {
         cache: false,
         dataType: "json",
         success: (ret) => {
-            //console.log("ret::>", ret);
+            // console.log("ret::>", ret);
             current_screen_movie_data = ret;
             total_page = ret.total_page;
 
@@ -295,7 +295,8 @@ function make_screen_movie_list(data, page) {
         page_elem = '<span class="badge bg-warning">' + page + "</span>";
     }
 
-    str += "<div id='page_caption' style='border-bottom: aqua 1px solid; margin-bottom: 5px'>";
+    // str += "<div id='page_caption' style='border-bottom: aqua 1px solid; margin-bottom: 5px'>";
+    str += "<div id='page_caption' style='padding-bottom: 3px'>";
     str +=
         '<button type="button" class="btn btn-info">Page ' +
         page_elem +
@@ -563,7 +564,7 @@ $("body").on("click", "#search_tvdb_btn", function (e) {
 $("body").on("click", "#add_whitelist", function (e) {
     e.preventDefault();
     let data_code = $(this).attr("data-code");
-    //console.log(data_code);
+    // console.log(data_code);
     $.ajax({
         url: "/" + package_name + "/ajax/add_whitelist",
         type: "POST",
@@ -709,24 +710,6 @@ $("body").on("click", "#check_download_btn", function (e) {
     });
 });
 
-// $("#go_modal_airing").on("shown.bs.modal", function () {
-//   // {#get_airing_list()#}
-//   $("#exModal").trigger("focus");
-// });
-
-// $("#go_modal_airing").click(function (e) {
-//   e.preventDefault();
-//   console.log("open modal");
-//   // $("#exModal").bootstrapToggle();
-//   if (current_airing_data === "") {
-//     get_airing_list();
-//   }
-//   $("#inner_airing").toggle();
-//   $("#airing_list").toggle();
-// });
-
-// $("#go_modal_airing").attr("class", "btn btn-primary");
-
 $(document).ready(function () {
     $("#input_search").keydown(function (key) {
         if (key.keyCode === 13) {
@@ -743,17 +726,6 @@ $(document).ready(function () {
     // });
 });
 
-// <!--<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.7.0/dist/lazyload.min.js"></script>-->
-
-// <!--<script>-->
-// <!--  lazyLoadInstance.update();-->
-// <!--</script>-->
-// <!--<script>-->
-// <!--  const lazyLoadInstance = new LazyLoad({-->
-// <!--  // Your custom settings go here-->
-// <!--});-->
-// <!--  lazyLoadInstance.update()-->
-// <!--</script>-->
 window.lazyLoadOptions = {
     elements_selector:
         "img[data-lazy-src],.rocket-lazyload,iframe[data-lazy-src]",
