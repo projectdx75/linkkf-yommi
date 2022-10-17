@@ -118,7 +118,12 @@ body {
     background-image: linear-gradient(90deg, #33242c, #263341, #17273a);
 }
 
-
+@media (min-width: 1280px) {
+  #request {
+    max-width: 80%;
+    margin: 0 auto;
+  }
+}
 
 @media (min-width: 992px) {
   .container {
