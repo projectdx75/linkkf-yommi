@@ -1,20 +1,13 @@
 {% extends "base.html" %} {% block content %}
 
-<div>
-  <form id="program_list">
+<div id="request">
+  <form id="program_list" style="padding-bottom: 1em;">
+    <div class="card p-lg-5 p-md-3 py-2 border-light">
     {{ macros.setting_input_text_and_buttons('code', '작품 Code',
     [['analysis_btn', '분석'], ['go_linkkf_btn', 'Go Linkkf'],
     ['go_modal_airing', '방영중']], desc='URL: https://linkkf.app/[코드]/
     형식에서 코드부분 숫자 (예> 22005 원피스)') }}
-    <!--    {#-->
-    <!--    <botton-->
-    <!--      id="go_modal_airing"-->
-    <!--      type="button"-->
-    <!--      class="btn btn-primary"-->
-    <!--      data-toggle="modal"-->
-    <!--      data-target="#exModal"-->
-    <!--      >방영중</botton-->
-    <!--    >#}-->
+    </div>
   </form>
   <form id="airing_list_form">
     <div id="airing_list"></div>

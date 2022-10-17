@@ -158,7 +158,9 @@ function make_program(data) {
   tmp = m_button_group(tmp);
   str += tmp;
   // program
-  str += m_hr_black();
+  // str += m_hr_black();
+  str += "<div class='card p-lg-5 mt-md-3 p-md-3 border-light'>"
+
   str += m_row_start(0);
   tmp = "";
   if (data.poster_url != null)
@@ -185,7 +187,8 @@ function make_program(data) {
   str += m_col(9, tmp);
   str += m_row_end();
 
-  str += m_hr_black();
+  // str += m_hr_black();
+  str += "</div>"
   for (i in data.episode) {
     str += m_row_start();
     // tmp = '<img src="' + data.episode[i].image + '" class="img-fluid">'
