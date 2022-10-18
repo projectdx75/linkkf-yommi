@@ -97,6 +97,34 @@ button.code-button {
   display: none;
 }
 
+.card {
+    border: none;
+    box-shadow: inset 1px 1px hsl(0deg 0% 100% / 20%), inset -1px -1px hsl(0deg 0% 100% / 10%), 1px 3px 24px -1px rgb(0 0 0 / 15%);
+    background-color: transparent;
+    background-image: linear-gradient(125deg,hsla(0,0%,100%,.3),hsla(0,0%,100%,.2) 70%);
+    backdrop-filter: blur(5px);
+}
+.card.border-light {
+    --bs-border-opacity: 1;
+    border-color: rgba(var(--bs-light-rgb),var(--bs-border-opacity))!important;
+}
+#request {
+  color: aliceblue;
+}
+body {
+    font-family: NanumSquareNeo,system-ui,-apple-system,Segoe UI,Roboto,Helvetica Neue,Noto Sans,Liberation Sans,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+}
+body {
+    background-image: linear-gradient(90deg, #33242c, #263341, #17273a);
+}
+
+@media (min-width: 1280px) {
+  #request {
+    max-width: 80%;
+    margin: 0 auto;
+  }
+}
+
 @media (min-width: 992px) {
   .container {
     max-width: 96%;
@@ -111,7 +139,9 @@ button.code-button {
   .container {
     max-width: 96%;
   }
+
   .form-inline .form-control {
     width: 98%;
 
+  }
 }

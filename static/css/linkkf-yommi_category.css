@@ -110,6 +110,13 @@ button.code-button {
   }
 }
 
+@media (min-width: 1280px) {
+  #yommi_wrapper {
+    max-width: 80%;
+    margin: 0 auto;
+  }
+}
+
 #screen_movie_list {
   margin-top: 10px;
 }
