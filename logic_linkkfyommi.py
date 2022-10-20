@@ -679,6 +679,8 @@ class LogicLinkkfYommi(object):
                     url2s2 = tag.attrib["value"]
                     if "k40chan" in url2s2:
                         pass
+                    elif "k39aha" in url2s2:
+                        pass
                     else:
                         url2s.append(url2s2)
 
