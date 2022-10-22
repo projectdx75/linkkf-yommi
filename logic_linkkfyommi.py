@@ -100,7 +100,7 @@ class LogicLinkkfYommi(object):
 
         try:
             if LogicLinkkfYommi.referer is None:
-                LogicLinkkfYommi.referer = "https://linkkf.app/"
+                LogicLinkkfYommi.referer = "https://mobikf.ncctvgroup.com"
 
             # return LogicLinkkfYommi.get_html_requests(url)
             return LogicLinkkfYommi.get_html_cloudflare(url)
@@ -126,7 +126,7 @@ class LogicLinkkfYommi(object):
             else:
                 LogicLinkkfYommi.session = requests.Session()
 
-        LogicLinkkfYommi.referer = "https://linkkf.app"
+        LogicLinkkfYommi.referer = "https://mobikf.ncctvgroup.com"
 
         LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
 
@@ -194,7 +194,7 @@ class LogicLinkkfYommi(object):
                 ChromeDriverManager().install(), chrome_options=options
             )
 
-        LogicLinkkfYommi.headers["Referer"] = "https://linkkf.app/"
+        LogicLinkkfYommi.headers["Referer"] = "https://mobikf.ncctvgroup.com/"
 
         driver.header_overrides = LogicLinkkfYommi.headers
         # stealth(
@@ -239,7 +239,7 @@ class LogicLinkkfYommi(object):
                 context = browser.new_context(
                     user_agent=ua,
                 )
-                LogicLinkkfYommi.referer = "https://linkkf.app"
+                LogicLinkkfYommi.referer = "https://mobikf.ncctvgroup.com"
 
                 LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
 
@@ -342,7 +342,7 @@ class LogicLinkkfYommi(object):
             if "ani1" in url2:
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
                 logger.debug("ani1 routine=========================")
-                LogicLinkkfYommi.referer = "https://linkkf.app"
+                LogicLinkkfYommi.referer = "https://mobikf.ncctvgroup.com"
                 # logger.debug(f"url2: {url2}")
                 ani1_html = LogicLinkkfYommi.get_html(url2)
 
@@ -600,7 +600,7 @@ class LogicLinkkfYommi(object):
         try:
             # regex = r"^(http|https):\/\/"
             #
-            # # test_str = "https://linkkf.app/player/v350205-sub-1/"
+            # # test_str = "https://mobikf.ncctvgroup.com/player/v350205-sub-1/"
             #
             # matches = re.compile(regex, episode_url)
             #
@@ -609,7 +609,7 @@ class LogicLinkkfYommi(object):
             if episode_url.startswith("http"):
                 url = episode_url
             else:
-                url = f"https://linkkf.app{episode_url}"
+                url = f"https://mobikf.ncctvgroup.com{episode_url}"
 
             logger.info("get_video_url(): url: %s" % url)
             data = LogicLinkkfYommi.get_html(url)
@@ -1009,7 +1009,7 @@ class LogicLinkkfYommi(object):
             logger.debug(f"get_anime_list_info():url >> {url}")
 
             if LogicLinkkfYommi.referer is None:
-                LogicLinkkfYommi.referer = "https://linkkf.app"
+                LogicLinkkfYommi.referer = "https://mobikf.ncctvgroup.com"
 
             html_content = LogicLinkkfYommi.get_html(url, cached=False)
             # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
@@ -1388,7 +1388,7 @@ class LogicLinkkfYommi(object):
                 if check_url.startswith("http"):
                     entity["url"] = t["href"]
                 else:
-                    entity["url"] = f'https://linkkf.app{t["href"]}'
+                    entity["url"] = f'https://mobikf.ncctvgroup.com{t["href"]}'
                 entity["season"] = data["season"]
 
                 # 저장경로 저장
@@ -1458,7 +1458,7 @@ class LogicLinkkfYommi(object):
                 ret = "%s.S%sE%s.720p-LK.mp4" % (maintitle, season, epi_no)
             else:
                 logger.debug("NOT MATCH")
-                ret = "%s.720p-SA.mp4" % maintitle
+                ret = "%s.720p-LK.mp4" % maintitle
 
             return Util.change_text_for_use_filename(ret)
         except Exception as e:
