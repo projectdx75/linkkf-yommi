@@ -294,7 +294,7 @@ class LogicLinkkfYommi(object):
 
         LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
 
-        logger.debug(f"headers:: {LogicLinkkfYommi.headers}")
+        # logger.debug(f"headers:: {LogicLinkkfYommi.headers}")
 
         if LogicLinkkfYommi.session is None:
             LogicLinkkfYommi.session = requests.Session()
