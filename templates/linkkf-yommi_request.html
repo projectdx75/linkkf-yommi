@@ -1,56 +1,83 @@
 {% extends "base.html" %} {% block content %}
-
-<div id="request">
-  <form id="program_list" style="padding-bottom: 1em;">
-    <div class="card p-lg-5 p-md-3 py-2 border-light">
-    {{ macros.setting_input_text_and_buttons('code', '작품 Code',
-    [['analysis_btn', '분석'], ['go_linkkf_btn', 'Go Linkkf'],
-    ['go_modal_airing', '방영중']], desc='URL: https://mobikf.ncctvgroup.com/[코드]/
-    형식에서 코드부분 숫자 (예> 22005 원피스)') }}
+<div id="preloader" class="loader">
+    <div class="loader-inner">
+        <div class="loader-line-wrap">
+            <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+            <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+            <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+            <div class="loader-line"></div>
+        </div>
+        <div class="loader-line-wrap">
+            <div class="loader-line"></div>
+        </div>
     </div>
-  </form>
-  <form id="airing_list_form">
-    <div id="airing_list"></div>
-  </form>
-  <form id="program_auto_form">
-    <div id="episode_list"></div>
-  </form>
+</div>
+<div id="request">
+    <form id="program_list" style="padding-bottom: 1em;">
+        <div class="card p-lg-5 p-md-3 py-2 border-light">
+            {{ macros.setting_input_text_and_buttons('code', '작품 Code',
+            [['analysis_btn', '분석'], ['go_linkkf_btn', 'Go Linkkf'],
+            ['go_modal_airing', '방영중']], desc='URL: https://mobikf.ncctvgroup.com/[코드]/
+            형식에서 코드부분 숫자 (예> 22005 원피스)') }}
+        </div>
+    </form>
+    <form id="airing_list_form">
+        <div id="airing_list"></div>
+    </form>
+    <form id="program_auto_form">
+        <div id="episode_list"></div>
+    </form>
 </div>
 <!--전체-->
 <link
-  href="{{ url_for('.static', filename='css/%s.css' % arg['template_name'])
+        href="{{ url_for('.static', filename='css/%s.css' % arg['template_name'])
 }}"
-  type="text/css"
-  rel="stylesheet"
+        type="text/css"
+        rel="stylesheet"
 />
 <script type="text/javascript">
-  const package_name = "linkkf-yommi";
-  const linkkf_url = "{{arg['linkkf_url']}}";
+    const package_name = "linkkf-yommi";
+    const linkkf_url = "{{arg['linkkf_url']}}";
+    // let code;
+    // let code = ''
 
-  $(document).ready(function () {
-    // console.log ('current_code::', {{arg['current_code']}})
-    // {#console.log(params)#}
-    // {#code = params.code#}
-    // {#console.log('code:::> ', code)#}
+    const loader = document.getElementById("preloader");
 
-    if ("{{arg['current_code']}}" !== "") {
-      code = "{{arg['current_code']}}";
-      document.getElementById("code").value = "{{arg['current_code']}}";
-      document.getElementById("analysis_btn").click();
-
-      // {#$('[data-tooltip="true"]').tooltip();#}
-      // {#$('.bootstrap-tooltip').tooltip();#}
+    const delay = (n) => {
+        return new Promise(function (resolve) {
+            setTimeout(resolve, n * 1000);
+        });
     }
 
-    // console.log('params.code:::> ', params.code)
+    const dismissLoadingScreen = async function () {
+        console.log("Before the delay")
+        await delay(2)
+        loader.style.display = "none";
+    };
 
-    if (params.code === "") {
-    } else {
-      document.getElementById("code").value = params.code;
-      document.getElementById("analysis_btn").click();
-    }
-    // console.log('code:::' ,code)
-  });
+    $(document).ready(function () {
+
+        if ("{{arg['current_code']}}" !== "") {
+            code = "{{arg['current_code']}}";
+            document.getElementById("code").value = "{{arg['current_code']}}";
+            document.getElementById("analysis_btn").click();
+        }
+
+        // console.log('params.code:::> ', params.code)
+
+        if (params.code === "") {
+        } else {
+            document.getElementById("code").value = params.code;
+            document.getElementById("analysis_btn").click();
+        }
+        // console.log('code:::' ,code)
+    });
 </script>
 <script src="{{ url_for('.static', filename='js/%s.js' % arg['template_name']) }}"></script>
 {% endblock %}
