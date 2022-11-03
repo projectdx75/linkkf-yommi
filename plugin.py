@@ -382,17 +382,17 @@ def ajax(sub):
             logger.error(traceback.format_exc())
 
     elif sub == "web_list":
-        try:
-            logger.info(f"web_list(): {request.form['search_word']}")
+       # try:
+           # logger.info(f"web_list(): {request.form['search_word']}")
             # data = []
             # logger.info("db :::>", ModelLinkkf.web_list(request))
-            data = [{}]
+            #data = [{}]
             # dummy_data = {"ret": "success", "method": "web_list", "data": data}
-            return jsonify(ModelLinkkf.web_list(request))
+        return jsonify(ModelLinkkf.web_list(request))
             # return jsonify(dummy_data)
-        except Exception as e:
-            logger.error("Exception: %s", e)
-            logger.error(traceback.format_exc())
+        #except Exception as e:
+       #     logger.error("Exception: %s", e)
+       #     logger.error(traceback.format_exc())
     elif sub == "db_remove":
         return jsonify(ModelLinkkf.delete_by_id(request.form["id"]))
     # reset_db
