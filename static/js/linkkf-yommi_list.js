@@ -165,10 +165,9 @@ $("body").on("click", "#request_btn", function (e) {
 
 function make_list(data) {
   //console.log(data)
-  let tmp,
-    tmp2 = "";
+  let tmp, tmp2 = "";
   // console.log(data)
-  if (data.length > 0) {
+  //if (data.length > 0) {
     let str = "";
     for (let i in data) {
       // console.log(data[i]);
