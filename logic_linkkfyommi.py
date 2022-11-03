@@ -9,10 +9,12 @@ import re
 import random
 import urllib
 
+# sjva 공용
+from framework import app, db, socketio, path_data, path_app_root, py_queue
+from framework.util import Util, AlchemyEncoder
+from tool_base import ToolBaseNotify
+from framework.logger import get_logger
 
-# import pip
-
-# import urlparse
 from urllib.parse import urlparse
 import json
 
@@ -26,38 +28,30 @@ for package in packages:
     except ModuleNotFoundError:
         if package == "playwright":
             pass
-            # os.system(f"pip3 install playwright")
-            # os.system(f"playwright install")
     except ImportError:
-        # main(["install", package])
         if package == "playwright":
             pass
-            # os.system(f"pip3 install {package}")
-            # os.system(f"playwright install")
         else:
-            os.system(f"pip3 install {package}")
+            os.system("{} install {}".format(app.config['config']['pip']),package)
 
 # third-party
 import requests
 
-# from fake_useragent import UserAgent
-
-# import requests_cache
-# from requests_cache import CachedSession
 from requests_cache import CachedSession
-import cloudscraper
+try:
+	import cloudscraper
+except ImportError:
+	os.system("{} install cloudscraper".format(app.config['config']['pip']))
+	import cloudscraper
+
 
 # import cfscrape
 from lxml import html
-from bs4 import BeautifulSoup
-
-# import snoop
-# from snoop import spy
-
-# sjva 공용
-from framework import db
-from framework.util import Util
-from framework.logger import get_logger
+try:
+	from bs4 import BeautifulSoup
+except ImportError:
+	os.system("{} install BeautifulSoup4".format(app.config['config']['pip']))
+	from bs4 import BeautifulSoup
 
 # 패키지
 # from .plugin import package_name, logger
