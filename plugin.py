@@ -23,22 +23,17 @@ from flask_login import login_required
 from flask_socketio import SocketIO, emit, send
 
 # sjva 공용
-from framework import app, db, socketio, path_data, path_app_root, py_queue
+from framework.logger import get_logger
+from framework import app, db, scheduler, socketio, path_app_root
 from framework.util import Util, AlchemyEncoder
-from tool_base import ToolBaseNotify
-#from framework.logger import get_logger
-from .model import ModelSetting, ModelLinkkf, ModelLinkkfProgram
-from urllib.parse import urlparse
-import json
-# 패키지
-from .plugin import P
-logger = P.logger
+from system.logic import SystemLogic
 
 # 패키지
 
 from .logic import Logic
 from .logic_linkkfyommi import LogicLinkkfYommi
 from .logic_queue import QueueEntity, LogicQueue
+from .model import ModelSetting, ModelLinkkf
 
 # blueprint = Blueprint(package_name,
 #                       package_name,
@@ -47,7 +42,7 @@ from .logic_queue import QueueEntity, LogicQueue
 #                                                    'templates'))
 
 package_name = __name__.split(".")[0]
-#logger = get_logger(package_name)
+logger = get_logger(package_name)
 
 #########################################################
 # 플러그인 공용
