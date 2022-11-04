@@ -13,11 +13,14 @@ import urllib
 from framework import app, db, socketio, path_data, path_app_root, py_queue
 from framework.util import Util, AlchemyEncoder
 from tool_base import ToolBaseNotify
-from framework.logger import get_logger
-
+#from framework.logger import get_logger
+from .model import ModelSetting, ModelLinkkf, ModelLinkkfProgram
+from .logic_queue import LogicQueue
 from urllib.parse import urlparse
 import json
-
+# 패키지
+from .plugin import P
+logger = P.logger
 # "selenium-wire"
 packages = ["beautifulsoup4", "requests-cache", "cloudscraper"]
 
@@ -53,15 +56,10 @@ except ImportError:
 	os.system("{} install BeautifulSoup4".format(app.config['config']['pip']))
 	from bs4 import BeautifulSoup
 
-# 패키지
-# from .plugin import package_name, logger
-# from anime_downloader.logic_ohli24 import ModelOhli24Item
-from .model import ModelSetting, ModelLinkkf, ModelLinkkfProgram
-from .logic_queue import LogicQueue
 
 #########################################################
 package_name = __name__.split(".")[0]
-logger = get_logger(package_name)
+#logger = get_logger(package_name)
 cache_path = os.path.dirname(__file__)
 
 
