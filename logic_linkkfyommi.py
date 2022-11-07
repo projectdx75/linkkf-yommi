@@ -94,7 +94,7 @@ class LogicLinkkfYommi(object):
 
         try:
             if LogicLinkkfYommi.referer is None:
-                LogicLinkkfYommi.referer = "https://mobikf.ncctvgroup.com"
+                LogicLinkkfYommi.referer = f"{ModelSetting.get('linkkf_url')}"
 
             # return LogicLinkkfYommi.get_html_requests(url)
             return LogicLinkkfYommi.get_html_cloudflare(url)
@@ -120,7 +120,7 @@ class LogicLinkkfYommi(object):
             else:
                 LogicLinkkfYommi.session = requests.Session()
 
-        LogicLinkkfYommi.referer = "https://mobikf.ncctvgroup.com"
+        LogicLinkkfYommi.referer = f"{ModelSetting.get('linkkf_url')}"
 
         LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
 
@@ -188,7 +188,7 @@ class LogicLinkkfYommi(object):
                 ChromeDriverManager().install(), chrome_options=options
             )
 
-        LogicLinkkfYommi.headers["Referer"] = "https://mobikf.ncctvgroup.com/"
+        LogicLinkkfYommi.headers["Referer"] = f"{ModelSetting.get('linkkf_url')}"
 
         driver.header_overrides = LogicLinkkfYommi.headers
         # stealth(
@@ -233,7 +233,7 @@ class LogicLinkkfYommi(object):
                 context = browser.new_context(
                     user_agent=ua,
                 )
-                LogicLinkkfYommi.referer = "https://mobikf.ncctvgroup.com"
+                LogicLinkkfYommi.referer = f"{ModelSetting.get('linkkf_url')}"
 
                 LogicLinkkfYommi.headers["Referer"] = LogicLinkkfYommi.referer
 
@@ -336,7 +336,7 @@ class LogicLinkkfYommi(object):
             if "ani1" in url2:
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
                 logger.debug("ani1 routine=========================")
-                LogicLinkkfYommi.referer = "https://mobikf.ncctvgroup.com"
+                LogicLinkkfYommi.referer = f"{ModelSetting.get('linkkf_url')}"
                 # logger.debug(f"url2: {url2}")
                 ani1_html = LogicLinkkfYommi.get_html(url2)
 
@@ -1003,7 +1003,7 @@ class LogicLinkkfYommi(object):
             logger.debug(f"get_anime_list_info():url >> {url}")
 
             if LogicLinkkfYommi.referer is None:
-                LogicLinkkfYommi.referer = "https://mobikf.ncctvgroup.com"
+                LogicLinkkfYommi.referer = f"{ModelSetting.get('linkkf_url')}"
 
             html_content = LogicLinkkfYommi.get_html(url, cached=False)
             # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
@@ -1382,7 +1382,7 @@ class LogicLinkkfYommi(object):
                 if check_url.startswith("http"):
                     entity["url"] = t["href"]
                 else:
-                    entity["url"] = f'https://mobikf.ncctvgroup.com{t["href"]}'
+                    entity["url"] = f"{ModelSetting.get('linkkf_url')}{t['href']}"
                 entity["season"] = data["season"]
 
                 # 저장경로 저장
