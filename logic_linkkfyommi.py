@@ -398,11 +398,12 @@ class LogicLinkkfYommi(object):
                 # logger.debug(f"url2: {url2}")
                 data = LogicLinkkfYommi.get_html(url2)
                 # logger.info("dx: data", data)
-                regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)|https:\/\/.*?m3u8'
+                regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
+                regex3 = r'https:\/\/.*?m3u8'
                 try:
                     temp_url = re.findall(regex2, data)[0]
                 except:
-                    temp_url = re.findall(regex2, data)
+                    temp_url = re.findall(regex3, data)
                 logger.debug("temp_url: data", temp_url)
                 video_url = ""
                 ref = "https://kfani.me"
@@ -413,8 +414,10 @@ class LogicLinkkfYommi(object):
                     # video_url = '{1} -headers \'Referer: "{0}"\' -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64;
                     # x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref,
                     # video_url)
-
-                match = re.compile(r"<track.+src=\"(?P<vtt_url>.*?.vtt)|url: \'(?P<vtt_url>.*?.vtt)", re.MULTILINE).search(data)
+                try:
+                    match = re.compile(r"<track.+src=\"(?P<vtt_url>.*?.vtt)", re.MULTILINE).search(data)
+                except:
+                    match = re.compile(r"url: \'(?P<vtt_url>.*?.vtt)", re.MULTILINE).search(data)
                 # logger.info("match group: %s", match.group('vtt_url'))
                 vtt_url = match.group("vtt_url")
                 logger.info("vtt_url: %s", vtt_url)
