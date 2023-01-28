@@ -658,6 +658,7 @@ class LogicLinkkfYommi(object):
 
     @staticmethod
     def get_video_url(episode_url: str) -> list:
+        # 메일로 커밋 정보가 날아와서 잘되는걸로 판단하고 그냥 복사 붙여넣기 하고 적용함(@k45734)
         # url2s = []
         try:
             # regex = r"^(http|https):\/\/"
