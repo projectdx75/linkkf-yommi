@@ -683,7 +683,8 @@ class LogicLinkkfYommi(object):
 
             video_url = None
             referer_url = None  # dx
-            url2s = random.choices(url2s1, k=2)
+            url2s = random.sample(url2s1, k=2)
+           # url2s = random.choices(url2s1, k=2)
             logger.info("dx: urls2:: %s", url2s)
             for url2 in url2s:
                 logger.info('%s',url2)
