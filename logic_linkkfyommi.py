@@ -399,8 +399,11 @@ class LogicLinkkfYommi(object):
                 data = LogicLinkkfYommi.get_html(url2)
                 # logger.info("dx: data", data)
                 regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
-
-                temp_url = re.findall(regex2, data)[0]
+                try:
+				    temp_url = re.findall(regex2, data)[0]
+                except:
+                    temp_url = re.findall(regex2, data)
+                logger.info("temp_url: data", temp_url)
                 video_url = ""
                 ref = "https://kfani.me"
                 for i in temp_url:
