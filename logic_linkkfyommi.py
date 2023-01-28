@@ -400,7 +400,7 @@ class LogicLinkkfYommi(object):
                 # logger.info("dx: data", data)
                 regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
                 try:
-				    temp_url = re.findall(regex2, data)[0]
+                    temp_url = re.findall(regex2, data)[0]
                 except:
                     temp_url = re.findall(regex2, data)
                 logger.info("temp_url: data", temp_url)
