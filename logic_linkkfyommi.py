@@ -403,7 +403,7 @@ class LogicLinkkfYommi(object):
                     temp_url = re.findall(regex2, data)[0]
                 except:
                     temp_url = re.findall(regex2, data)
-                logger.info("temp_url: data", temp_url)
+                logger.debug("temp_url: data", temp_url)
                 video_url = ""
                 ref = "https://kfani.me"
                 for i in temp_url:
@@ -414,9 +414,7 @@ class LogicLinkkfYommi(object):
                     # x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref,
                     # video_url)
 
-                match = re.compile(
-                    r"<track.+src=\"(?P<vtt_url>.*?.vtt)", re.MULTILINE
-                ).search(data)
+                match = re.compile(r"<track.+src=\"(?P<vtt_url>.*?.vtt)", re.MULTILINE).search(data)
                 # logger.info("match group: %s", match.group('vtt_url'))
                 vtt_url = match.group("vtt_url")
                 logger.info("vtt_url: %s", vtt_url)
