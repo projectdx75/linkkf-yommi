@@ -2,33 +2,14 @@
 
 <div id="yommi_wrapper">
   <div class="input-group mb-2">
-    <input
-      id="input_search"
-      type="search"
-      class="form-control rounded"
-      placeholder="Search"
-      aria-label="Search"
-      aria-describedby="search-addon"
-    />
-    <button id="btn_search" type="button" class="btn btn-primary">
-      search
-    </button>
+    <input id="input_search" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon"/>
+    <button id="btn_search" type="button" class="btn btn-primary">search</button>
   </div>
-  <div
-    id="anime_category"
-    class="btn-group"
-    role="group"
-    aria-label="linkkf buttons"
-  >
+  <div id="anime_category" class="btn-group" role="group" aria-label="linkkf buttons">
     <button id="ing" type="button" class="btn btn-success">방영중</button>
     <button id="movie" type="button" class="btn btn-primary">극장판</button>
-    <button id="complete_anilist" type="button" class="btn btn-dark">
-      완결
-    </button>
-    <button id="top_view" type="button" class="btn btn-yellow">
-      Top
-    </button>
-
+    <button id="complete_anilist" type="button" class="btn btn-dark">완결</button>
+    <button id="top_view" type="button" class="btn btn-yellow">Top</button>
   </div>
 
   <form id="airing_list_form">
@@ -47,28 +28,16 @@
   </div>
 </div>
 <!--전체-->
-<link
-  href="{{ url_for('.static', filename='css/%s.css' % arg['template_name']) }}"
-  type="text/css"
-  rel="stylesheet"
-/>
+<link href="{{ url_for('.static', filename='css/%s.css' % arg['template_name']) }}" type="text/css" rel="stylesheet"/>
 <script>
-  "use strict";
-  const package_name = '{{ arg["package_name"] }}';
-  const linkkf_url = "{{arg['linkkf_url']}}";
+  "use strict"
+  const package_name = '{{ arg["package_name"] }}'
+  const linkkf_url = "{{arg['linkkf_url']}}"
 </script>
 
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"
-  integrity="sha512-jNDtFf7qgU0eH/+Z42FG4fw3w7DM/9zbgNPe3wfJlCylVDTT3IgKW5r92Vy9IHa6U50vyMz5gRByIu4YIXFtaQ=="
-  crossorigin="anonymous"
-  referrerpolicy="no-referrer"
-></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js" integrity="sha512-jNDtFf7qgU0eH/+Z42FG4fw3w7DM/9zbgNPe3wfJlCylVDTT3IgKW5r92Vy9IHa6U50vyMz5gRByIu4YIXFtaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script src="{{ url_for('.static', filename='js/%s.js' % arg['template_name']) }}"></script>
-<script
-  async
-  src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.7.0/dist/lazyload.min.js"
-></script>
+<script async src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.7.0/dist/lazyload.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
 {% endblock %}
