@@ -416,12 +416,11 @@ class LogicLinkkfYommi(object):
                     # video_url)
                 try:
                     match = re.compile(r"<track.+src=\"(?P<vtt_url>.*?.vtt)", re.MULTILINE).search(data)
-					vtt_url = match.group("vtt_url")
+                    vtt_url = match.group("vtt_url")
                 except:
                     match2 = re.compile(r"url: \'(?P<vtt_url>.*?.vtt)", re.MULTILINE).search(data)
-					vtt_url = match2.group("vtt_url")
+                    vtt_url = match2.group("vtt_url")
                 # logger.info("match group: %s", match.group('vtt_url'))
-                
                 logger.info("vtt_url: %s", vtt_url)
                 # logger.debug(f"LogicLinkkfYommi.referer: {LogicLinkkfYommi.referer}")
                 referer_url = url2
