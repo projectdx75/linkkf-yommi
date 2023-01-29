@@ -87,7 +87,7 @@ cache_path = os.path.dirname(__file__)
 class LogicLinkkfYommi(object):
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/104.0.0.0 Safari/537.36",
+                      "Chrome/104.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.5",
         "Accept-Encoding": "gzip, deflate",
@@ -398,14 +398,16 @@ class LogicLinkkfYommi(object):
                 LogicLinkkfYommi.referer = url2
                 # logger.debug(f"url2: {url2}")
                 data = LogicLinkkfYommi.get_html(url2)
-                # logger.info("dx: data", data)
+                logger.info(f"dx: data {data}")
                 regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
                 regex3 = r"https:\/\/.*?m3u8"
+
                 try:
+
                     temp_url = re.findall(regex2, data)[0]
                 except:
                     temp_url = re.findall(regex3, data)
-                logger.debug("temp_url: data", temp_url)
+                logger.debug(f"temp_url: data {temp_url}")
                 video_url = ""
                 ref = "https://kfani.me"
                 for i in temp_url:
@@ -415,16 +417,20 @@ class LogicLinkkfYommi(object):
                     # video_url = '{1} -headers \'Referer: "{0}"\' -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64;
                     # x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref,
                     # video_url)
+
+                # @k45734
+                vtt_url = None
                 try:
-                    match = re.compile(
+                    _match1 = re.compile(
                         r"<track.+src=\"(?P<vtt_url>.*?.vtt)", re.MULTILINE
                     ).search(data)
+                    vtt_url = _match1.group("vtt_url")
                 except:
-                    match = re.compile(
+                    _match2 = re.compile(
                         r"url: \'(?P<vtt_url>.*?.vtt)", re.MULTILINE
                     ).search(data)
-                # logger.info("match group: %s", match.group('vtt_url'))
-                vtt_url = match.group("vtt_url")
+                    vtt_url = _match2.group("vtt_url")
+
                 logger.info("vtt_url: %s", vtt_url)
 
                 referer_url = url2
@@ -1215,21 +1221,21 @@ class LogicLinkkfYommi(object):
     def get_title_info(code):
         try:
             if (
-                LogicLinkkfYommi.current_data is not None
-                and LogicLinkkfYommi.current_data["code"] == code
-                and LogicLinkkfYommi.current_data["ret"]
+                    LogicLinkkfYommi.current_data is not None
+                    and LogicLinkkfYommi.current_data["code"] == code
+                    and LogicLinkkfYommi.current_data["ret"]
             ):
                 return LogicLinkkfYommi.current_data
             url = "%s/%s" % (ModelSetting.get("linkkf_url"), code)
             logger.info(url)
 
-            logger.debug(LogicLinkkfYommi.headers)
+            # logger.debug(f"LogicLinkkfYommi.headers: {LogicLinkkfYommi.headers}")
 
             html_content = LogicLinkkfYommi.get_html(url, cached=False)
             # html_content = LogicLinkkfYommi.get_html_playwright(url)
             # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
 
-            sys.setrecursionlimit(10**7)
+            sys.setrecursionlimit(10 ** 7)
             # logger.info(html_content)
             tree = html.fromstring(html_content)
             # tree = etree.fromstring(
@@ -1482,8 +1488,8 @@ class LogicLinkkfYommi(object):
 
         headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/71.0.3554.0 Safari/537.36Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36",
+                          "Chrome/71.0.3554.0 Safari/537.36Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36",
             "Referer": f"{referer}",
         }
         # logger.debug(headers)
@@ -1525,7 +1531,7 @@ class LogicLinkkfYommi(object):
     @staticmethod
     def chunks(l, n):
         n = max(1, n)
-        return (l[i : i + n] for i in range(0, len(l), n))
+        return (l[i: i + n] for i in range(0, len(l), n))
 
     @staticmethod
     def get_info_by_code(code):
