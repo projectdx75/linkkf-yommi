@@ -49,7 +49,7 @@ from requests_cache import CachedSession
 try:
     import cloudscraper
 except ImportError:
-    os.system("{} install cloudscraper".format(app.config["config"]["pip"]))
+    os.system(f'{app.config["config"]["pip"]} install cloudscraper')
     import cloudscraper
 
 # import cfscrape
@@ -58,7 +58,7 @@ from lxml import html
 try:
     from bs4 import BeautifulSoup
 except ImportError:
-    os.system("{} install BeautifulSoup4".format(app.config["config"]["pip"]))
+    os.system(f'{app.config["config"]["pip"]} install BeautifulSoup4')
     from bs4 import BeautifulSoup
 
 # import snoop
@@ -87,7 +87,7 @@ cache_path = os.path.dirname(__file__)
 class LogicLinkkfYommi(object):
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
-                      "Chrome/104.0.0.0 Safari/537.36",
+        "Chrome/104.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Language": "en-US,en;q=0.5",
         "Accept-Encoding": "gzip, deflate",
@@ -1221,9 +1221,9 @@ class LogicLinkkfYommi(object):
     def get_title_info(code):
         try:
             if (
-                    LogicLinkkfYommi.current_data is not None
-                    and LogicLinkkfYommi.current_data["code"] == code
-                    and LogicLinkkfYommi.current_data["ret"]
+                LogicLinkkfYommi.current_data is not None
+                and LogicLinkkfYommi.current_data["code"] == code
+                and LogicLinkkfYommi.current_data["ret"]
             ):
                 return LogicLinkkfYommi.current_data
             url = "%s/%s" % (ModelSetting.get("linkkf_url"), code)
@@ -1235,7 +1235,7 @@ class LogicLinkkfYommi(object):
             # html_content = LogicLinkkfYommi.get_html_playwright(url)
             # html_content = LogicLinkkfYommi.get_html_cloudflare(url, cached=False)
 
-            sys.setrecursionlimit(10 ** 7)
+            sys.setrecursionlimit(10**7)
             # logger.info(html_content)
             tree = html.fromstring(html_content)
             # tree = etree.fromstring(
@@ -1488,8 +1488,8 @@ class LogicLinkkfYommi(object):
 
         headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/71.0.3554.0 Safari/537.36Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                          "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36",
+            "Chrome/71.0.3554.0 Safari/537.36Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36",
             "Referer": f"{referer}",
         }
         # logger.debug(headers)
@@ -1531,7 +1531,7 @@ class LogicLinkkfYommi(object):
     @staticmethod
     def chunks(l, n):
         n = max(1, n)
-        return (l[i: i + n] for i in range(0, len(l), n))
+        return (l[i : i + n] for i in range(0, len(l), n))
 
     @staticmethod
     def get_info_by_code(code):
