@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
+import asyncio
 import os
 import sys
 import traceback
@@ -15,6 +16,9 @@ from urllib.parse import urlparse
 # import urlparse
 # from urllib.parse import urlparse
 import json
+
+import aiohttp
+
 
 # "selenium-wire"
 packages = ["beautifulsoup4", "requests-cache", "cloudscraper"]
@@ -54,6 +58,8 @@ except ImportError:
 
 # import cfscrape
 from lxml import html
+
+from .lib.utils import yommi_timeit, yommi_async_timeit
 
 try:
     from bs4 import BeautifulSoup
@@ -857,12 +863,16 @@ class LogicLinkkfYommi(object):
         ret = {}
 
         logger.debug(f"args: {args}")
+        logger.debug(f"type:: {type(args[0])}")
+        logger.debug(f"title: {args[0]['data_title']}")
+        logger.debug(f"LogicLinkkfYommi.current_data:: {LogicLinkkfYommi.current_data}")
         try:
 
             if len(args) == 0:
                 code = str(LogicLinkkfYommi.current_data["code"])
             else:
-                code = str(args[0])
+                # code = str(args[0])
+                code = str(args[0]["data_code"])
 
             whitelist_program = ModelSetting.get("whitelist_program")
             whitelist_programs = [
@@ -898,6 +908,83 @@ class LogicLinkkfYommi(object):
             ret["ret"] = False
             ret["log"] = str(e)
         return ret
+
+    @staticmethod
+    async def fetch_url(session, url):
+        async with session.get(url) as resp:
+            # print(type(resp.text()))
+            data = []
+            html_content = await resp.text()
+            tree = html.fromstring(html_content)
+            tmp_items = tree.xpath('//div[@class="myui-vodlist__box"]')
+            for item in tmp_items:
+                entity = {}
+                entity["link"] = item.xpath(".//a/@href")[0]
+                entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
+                data.append(entity["code"])
+            return data
+
+    @staticmethod
+    # def flatten_list(nested_list):
+    #     flat_list = []
+    #     if isinstance(nested_list, list):
+    #         for sublist in nested_list:
+    #             flat_list.extend(flatten_list(sublist))
+    #     else:
+    #         flat_list.append(nested_list)
+    #     return flat_list
+    def flatten_list(nested_list):
+        flat_list = []
+        for sublist in nested_list:
+            for item in sublist:
+                flat_list.append(item)
+        return flat_list
+
+    @staticmethod
+    @yommi_async_timeit
+    async def get_airing_code():
+        try:
+            data = []
+            url = f"https://mobikf.ncctvgroup.com/airing/page/1/"
+
+            html_content = LogicLinkkfYommi.get_html(url)
+            tree = html.fromstring(html_content)
+            tmp_total = tree.xpath("//div[@id='wp_page']/a[last()]/text()")
+            total_page = int(tmp_total[0])
+            # logger.debug(tmp_total[0])
+
+            async with aiohttp.ClientSession() as session:
+                tasks = [
+                    LogicLinkkfYommi.fetch_url(
+                        session, f"https://mobikf.ncctvgroup.com/airing/page/{page}/"
+                    )
+                    for page in range(1, total_page + 1)
+                ]
+                responses = await asyncio.gather(*tasks)
+                data = LogicLinkkfYommi.flatten_list(responses)
+                logger.debug(responses)
+
+            # logger.debug(urls)
+
+            # for i in range(1, total_page + 1):
+            #     url = f"https://mobikf.ncctvgroup.com/airing/page/{i}/"
+            #     logger.debug(url)
+            #     html_content = LogicLinkkfYommi.get_html(url)
+            #     logger.debug(html_content)
+            #     tree = html.fromstring(html_content)
+            #     tmp_items = tree.xpath('//div[@class="item"]')
+            #     for item in tmp_items:
+            #         entity = {}
+            #         entity["link"] = item.xpath(".//a/@href")[0]
+            #         entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
+            #         data.append(entity["code"])
+
+            logger.debug(data)
+            return data
+
+        except Exception as e:
+            logger.error("Exception:%s", e)
+            logger.error(traceback.format_exc())
 
     @staticmethod
     def get_airing_info():
