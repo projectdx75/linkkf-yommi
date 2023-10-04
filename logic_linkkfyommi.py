@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
+import asyncio
 import os
 import sys
 import traceback
@@ -15,6 +16,9 @@ from urllib.parse import urlparse
 # import urlparse
 # from urllib.parse import urlparse
 import json
+
+import aiohttp
+
 
 # "selenium-wire"
 packages = ["beautifulsoup4", "requests-cache", "cloudscraper"]
@@ -54,6 +58,8 @@ except ImportError:
 
 # import cfscrape
 from lxml import html
+
+from .lib.utils import yommi_timeit, yommi_async_timeit
 
 try:
     from bs4 import BeautifulSoup
@@ -435,6 +441,42 @@ class LogicLinkkfYommi(object):
 
                 referer_url = url2
 
+            elif "top" in url2:
+                # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
+                logger.debug(" *.*.top routine=================================")
+                LogicLinkkfYommi.referer = url2
+                # logger.debug(f"url2: {url2}")
+                data = LogicLinkkfYommi.get_html(url2)
+                # logger.info("dx: data", data)
+                regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
+                regex3 = r"https:\/\/.*?m3u8"
+                try:
+                    temp_url = re.findall(regex2, data)[0]
+                except:
+                    temp_url = re.findall(regex3, data)
+                logger.debug("temp_url: data", temp_url)
+                video_url = ""
+                ref = "https://kfani.me"
+                for i in temp_url:
+                    if i is None:
+                        continue
+                    video_url = i
+
+                try:
+                    match = re.compile(
+                        r"<track.+src=\"(?P<vtt_url>.*?.vtt)", re.MULTILINE
+                    ).search(data)
+                    vtt_url = match.group("vtt_url")
+                except:
+                    match2 = re.compile(
+                        r"url: \'(?P<vtt_url>.*?.vtt)", re.MULTILINE
+                    ).search(data)
+                    vtt_url = match2.group("vtt_url")
+                # logger.info("match group: %s", match.group('vtt_url'))
+                logger.info("vtt_url: %s", vtt_url)
+                # logger.debug(f"LogicLinkkfYommi.referer: {LogicLinkkfYommi.referer}")
+                referer_url = url2
+
             elif "kftv" in url2:
                 # kftv 계열 처리 => url의 id로 https://yt.kftv.live/getLinkStreamMd5/df6960891d226e24b117b850b44a2290 페이지
                 # 접속해서 json 받아오고, json에서 url을 추출해야함
@@ -723,34 +765,42 @@ class LogicLinkkfYommi(object):
                 )
             except:
                 iframe_url = url
-            html_data = LogicLinkkfYommi.get_html(iframe_url)
 
-            # logger.info(html_data)
+            logger.info(f"iframe_url: {iframe_url}")
+            while True:
+                try:
+                    html_data = LogicLinkkfYommi.get_html(url)
+                    tree = html.fromstring(html_data)
+                    # logger.debug(html_data)
+                    break
+                except:
+                    pass
+                # xpath_select_query = '//select/option'
+                # pattern = re.compile("'https:\/\/.*?kfani.me\/.*?'").findall(html_data)
+            pattern = re.compile("player_post\('https:\/\/.*?'").findall(html_data)
+            # logger.debug(pattern)
+            # logger.debug(f"dev:: {len(tree.xpath(xpath_select_query))}")
 
-            tree = html.fromstring(html_data)
+            # if len(pattern) > 0:
+            #    pass
+            # else:
+            # print("::here")
+            #    pattern = re.compile('"https:\/\/.*?kfani.me\/.*?"').findall(html_data)
 
-            # xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
-            xpath_select_query = '//*[@id="body"]/div/span/center/select/option'
-
-            logger.debug(f"dev:: {len(tree.xpath(xpath_select_query))}")
-
-            if len(tree.xpath(xpath_select_query)) > 0:
-                pass
-            else:
-                print("::here")
-                xpath_select_query = '//select[@class="switcher"]/option'
-                xpath_select_query = "//select/option"
-
-            logger.debug(f"dev1:: {len(tree.xpath(xpath_select_query))}")
+            logger.debug(f"dev1:: {len(pattern)}")
+            logger.debug(f"pattern: {pattern}")
             url2s1 = []
             # url2s2 = [tag.attrib["value"] for tag in tree.xpath(xpath_select_query)]
             # k40chan 영상주소는 ffmpeg 로 실패함 어떤 코드가 들어가야 되는지 몰라서 제외하고 영상소스를 선택할수 없어서 램덤으로 선택하여 영상소스를 선택하고 영상소가 죽었을경우에 유용?
-            for tag in tree.xpath(xpath_select_query):
-                url2s2 = tag.attrib["value"]
+            for tag in pattern:
+                # url2s2 = tag.attrib["value"]
+                url2s2 = tag[13:-1]
                 # if 'k40chan' in url2s2:
                 #    pass
                 # elif 'k39aha' in url2s2:
                 if "ds" in url2s2:
+                    pass
+                elif "hls" in url2s2:
                     pass
                 else:
                     url2s1.append(url2s2)
@@ -759,7 +809,11 @@ class LogicLinkkfYommi(object):
 
             video_url = None
             referer_url = None  # dx
-            url2s = random.sample(url2s1, 2)
+            try:
+                url2s = random.sample(url2s1, 2)
+            except:
+                url2s = random.sample(url2s1, 1)
+
             # url2s = random.choices(url2s1, k=2)
             logger.info("dx: urls2:: %s", url2s)
             for url2 in url2s:
@@ -857,12 +911,16 @@ class LogicLinkkfYommi(object):
         ret = {}
 
         logger.debug(f"args: {args}")
+        logger.debug(f"type:: {type(args[0])}")
+        logger.debug(f"title: {args[0]['data_title']}")
+        logger.debug(f"LogicLinkkfYommi.current_data:: {LogicLinkkfYommi.current_data}")
         try:
 
             if len(args) == 0:
                 code = str(LogicLinkkfYommi.current_data["code"])
             else:
-                code = str(args[0])
+                # code = str(args[0])
+                code = str(args[0]["data_code"])
 
             whitelist_program = ModelSetting.get("whitelist_program")
             whitelist_programs = [
@@ -898,6 +956,83 @@ class LogicLinkkfYommi(object):
             ret["ret"] = False
             ret["log"] = str(e)
         return ret
+
+    @staticmethod
+    async def fetch_url(session, url):
+        async with session.get(url) as resp:
+            # print(type(resp.text()))
+            data = []
+            html_content = await resp.text()
+            tree = html.fromstring(html_content)
+            tmp_items = tree.xpath('//div[@class="myui-vodlist__box"]')
+            for item in tmp_items:
+                entity = {}
+                entity["link"] = item.xpath(".//a/@href")[0]
+                entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
+                data.append(entity["code"])
+            return data
+
+    @staticmethod
+    # def flatten_list(nested_list):
+    #     flat_list = []
+    #     if isinstance(nested_list, list):
+    #         for sublist in nested_list:
+    #             flat_list.extend(flatten_list(sublist))
+    #     else:
+    #         flat_list.append(nested_list)
+    #     return flat_list
+    def flatten_list(nested_list):
+        flat_list = []
+        for sublist in nested_list:
+            for item in sublist:
+                flat_list.append(item)
+        return flat_list
+
+    @staticmethod
+    @yommi_async_timeit
+    async def get_airing_code():
+        try:
+            data = []
+            url = f"https://mobikf.ncctvgroup.com/airing/page/1/"
+
+            html_content = LogicLinkkfYommi.get_html(url)
+            tree = html.fromstring(html_content)
+            tmp_total = tree.xpath("//div[@id='wp_page']/a[last()]/text()")
+            total_page = int(tmp_total[0])
+            # logger.debug(tmp_total[0])
+
+            async with aiohttp.ClientSession() as session:
+                tasks = [
+                    LogicLinkkfYommi.fetch_url(
+                        session, f"https://mobikf.ncctvgroup.com/airing/page/{page}/"
+                    )
+                    for page in range(1, total_page + 1)
+                ]
+                responses = await asyncio.gather(*tasks)
+                data = LogicLinkkfYommi.flatten_list(responses)
+                logger.debug(responses)
+
+            # logger.debug(urls)
+
+            # for i in range(1, total_page + 1):
+            #     url = f"https://mobikf.ncctvgroup.com/airing/page/{i}/"
+            #     logger.debug(url)
+            #     html_content = LogicLinkkfYommi.get_html(url)
+            #     logger.debug(html_content)
+            #     tree = html.fromstring(html_content)
+            #     tmp_items = tree.xpath('//div[@class="item"]')
+            #     for item in tmp_items:
+            #         entity = {}
+            #         entity["link"] = item.xpath(".//a/@href")[0]
+            #         entity["code"] = re.search(r"[0-9]+", entity["link"]).group()
+            #         data.append(entity["code"])
+
+            logger.debug(data)
+            return data
+
+        except Exception as e:
+            logger.error("Exception:%s", e)
+            logger.error(traceback.format_exc())
 
     @staticmethod
     def get_airing_info():

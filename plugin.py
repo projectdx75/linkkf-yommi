@@ -3,6 +3,7 @@
 # 고정영역
 #########################################################
 # python
+import asyncio
 import os
 import sys
 import traceback
@@ -84,7 +85,7 @@ menu = {
 }
 
 plugin_info = {
-    "version": "0.3.1.0",
+    "version": "0.3.2.0",
     "name": "linkkf-yommi",
     "category_name": "vod",
     "icon": "",
@@ -230,7 +231,32 @@ def ajax(sub):
         except Exception as e:
             logger.error("Exception:%s", e)
             logger.error(traceback.format_exc())
+    elif sub == "get_airing_code":
+        try:
 
+            # code = request.form["code"]
+            # loop = asyncio.get_event_loop()
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+            data = loop.run_until_complete(LogicLinkkfYommi.get_airing_code())
+            # data = LogicLinkkfYommi.get_airing_code()
+            # logger.debug("data::> %s", data)
+            # current_data = data
+
+            # return jsonify(data)
+            # if data["ret"] == "error":
+            #     return jsonify(data)
+            # else:
+            #     return jsonify({"ret": "success", "data": data})
+            return jsonify({"ret": "success", "data": data})
+        except Exception as e:
+            logger.error("Exception:%s", e)
+            logger.error(traceback.format_exc())
+            # except IndexError as e:
+            #     logger.error("Exception:%s", e)
+            #     logger.error(traceback.format_exc())
+            return jsonify({"ret": "error", "log": e})
     elif sub == "screen_movie_list":
         try:
             logger.debug("request:::> %s", request.form["page"])
@@ -275,7 +301,8 @@ def ajax(sub):
             params = request.get_json()
             logger.debug(params)
             if params is not None:
-                code = params["data_code"]
+                # code = params["data_code"]
+                code = params
                 logger.debug(f"params: {code}")
                 ret = LogicLinkkfYommi.add_whitelist(code)
             else:

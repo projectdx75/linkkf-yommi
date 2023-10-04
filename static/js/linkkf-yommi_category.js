@@ -304,7 +304,7 @@ function make_screen_movie_list(data, page) {
     str += "</div>";
     str += '<div id="inner_screen_movie" class="row infinite-scroll">';
     for (let i in data.episode) {
-        if ( data.episode[i].code === data.latest_anime_code) {
+        if (data.episode[i].code === data.latest_anime_code) {
             new_anime = false
         }
 
@@ -315,7 +315,7 @@ function make_screen_movie_list(data, page) {
         }
 
         tmp = '<div class="col-6 col-sm-4 col-md-3">';
-        tmp += '<div class="card '+ new_style +'">';
+        tmp += '<div class="card ' + new_style + '">';
         // tmp += '<div class="card-header">';
 
         // tmp +=
@@ -338,7 +338,7 @@ function make_screen_movie_list(data, page) {
         tmp +=
             '<button id="add_whitelist" name="add_whitelist" class="btn btn-sm btn-favorite mb-1" data-code="' +
             data.episode[i].code +
-            '"><p class="card-text">' +
+            '" data-title="' + data.episode[i].title + '"><p class="card-text">' +
             data.episode[i].code +
             " <i class=\"bi bi-heart-fill\"></i></p></button>";
         tmp +=
@@ -564,12 +564,13 @@ $("body").on("click", "#search_tvdb_btn", function (e) {
 $("body").on("click", "#add_whitelist", function (e) {
     e.preventDefault();
     let data_code = $(this).attr("data-code");
+    let data_title = $(this).attr("data-title");
     // console.log(data_code);
     $.ajax({
         url: "/" + package_name + "/ajax/add_whitelist",
         type: "POST",
         cache: false,
-        data: JSON.stringify({data_code: data_code}),
+        data: JSON.stringify({data_code: data_code, data_title: data_title}),
         contentType: "application/json;charset=UTF-8",
         dataType: "json",
         success: function (ret) {
@@ -586,6 +587,8 @@ $("body").on("click", "#add_whitelist", function (e) {
         },
     });
 });
+
+
 
 $("body").on("click", "#apply_new_title_btn", function (e) {
     e.preventDefault();
