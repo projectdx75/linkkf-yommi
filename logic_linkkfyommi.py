@@ -1341,7 +1341,9 @@ class LogicLinkkfYommi(object):
             data["episode"] = []
 
             if tree.xpath('//*[@id="wp_page"]//text()'):
-                data["total_page"] = tree.xpath('//div[@id="wp_page"]//text()')[-1]
+                data["total_page"] = tree.xpath('//div[@id="wp_page"]//text()')[
+                    -1
+                ]
             else:
                 data["total_page"] = 0
 
@@ -1451,7 +1453,14 @@ class LogicLinkkfYommi(object):
                     '//div[@class="myui-content__thumb"]/a/@data-original'
                 )
                 # print(tree.xpath('//div[@class="myui-content__detail"]/text()'))
-                if len(tree.xpath('//div[@class="myui-content__detail"]/text()')) > 3:
+                if (
+                    len(
+                        tree.xpath(
+                            '//div[@class="myui-content__detail"]/text()'
+                        )
+                    )
+                    > 3
+                ):
                     data["detail"] = [
                         {
                             "info": tree.xpath(

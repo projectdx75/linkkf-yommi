@@ -31,6 +31,7 @@ const get_airing_list = () => {
         $.notify("<strong>분석 실패</strong><br>" + ret.log, {
           type: "warning",
         });
+        div_visible = true;
       }
     },
   });
