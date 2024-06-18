@@ -363,10 +363,16 @@ class LogicLinkkfYommi(object):
                 # logger.debug(f"url2: {url2}")
                 ani1_html = LogicLinkkfYommi.get_html(url2)
 
-                tree = html.fromstring(ani1_html)
-                option_url = tree.xpath("//select[@id='server-list']/option[1]/@value")
+                # print(ani1_html)
 
-                # logger.debug(f"option_url:: {option_url}")
+                tree = html.fromstring(ani1_html)
+                option_url = tree.xpath(
+                    "//select[@id='server-list']/option[1]/@value"
+                )
+
+                # print(":option_url")
+                logger.debug(f"option_url:: {option_url}")
+                # print(":")
 
                 data = LogicLinkkfYommi.get_html(option_url[0])
                 # print(type(data))
@@ -388,7 +394,7 @@ class LogicLinkkfYommi(object):
                 vtt_elem = data_tree.xpath("//track/@src")[0]
                 # vtt_elem = data_tree.xpath("//*[contains(@src, '.vtt']")[0]
 
-                # print(vtt_elem)
+                print(vtt_elem)
 
                 match = re.compile(
                     r"<track.+src=\"(?P<vtt_url>.*?.vtt)\"", re.MULTILINE
@@ -420,12 +426,7 @@ class LogicLinkkfYommi(object):
                     if i is None:
                         continue
                     video_url = i
-                    # video_url = '{1} -headers \'Referer: "{0}"\' -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64;
-                    # x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36"'.format(ref,
-                    # video_url)
 
-                # @k45734
-                vtt_url = None
                 try:
                     _match1 = re.compile(
                         r"<track.+src=\"(?P<vtt_url>.*?.vtt)", re.MULTILINE
@@ -443,8 +444,9 @@ class LogicLinkkfYommi(object):
 
             elif "top" in url2:
                 # kfani 계열 처리 => 방문해서 m3u8을 받아온다.
-                #
-                logger.debug(" *.*.top routine=================================")
+                logger.debug(
+                    " *.*.top routine================================="
+                )
                 LogicLinkkfYommi.referer = url2
                 # logger.debug(f"url2: {url2}")
                 data = LogicLinkkfYommi.get_html(url2)
@@ -663,10 +665,14 @@ class LogicLinkkfYommi(object):
                 LogicLinkkfYommi.referer = url
                 data2 = LogicLinkkfYommi.get_html(url2)
                 # logger.info(data2)
-                match = re.compile(r"src\=\"(?P<video_url>http.*?\.mp4)").search(data2)
+                match = re.compile(
+                    r"src\=\"(?P<video_url>http.*?\.mp4)"
+                ).search(data2)
                 video_url = match.group("video_url")
 
-                match = re.compile(r"src\=\"(?P<vtt_url>http.*?.vtt)").search(data2)
+                match = re.compile(r"src\=\"(?P<vtt_url>http.*?.vtt)").search(
+                    data2
+                )
                 logger.info("match group: %s", match.group("video_url"))
                 vtt_url = match.group("vtt_url")
 
@@ -884,13 +890,14 @@ class LogicLinkkfYommi(object):
                 LogicLinkkfYommi.current_data["save_folder"] = new_title
                 program.save_folder = new_title
                 db.session.commit()
-
+                total_epi = None
                 for entity in LogicLinkkfYommi.current_data["episode"]:
                     entity["save_folder"] = new_title
                     entity["filename"] = LogicLinkkfYommi.get_filename(
                         LogicLinkkfYommi.current_data["save_folder"],
                         LogicLinkkfYommi.current_data["season"],
                         entity["title"],
+                        total_epi,
                     )
 
                 return LogicLinkkfYommi.current_data
