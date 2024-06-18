@@ -1411,26 +1411,24 @@ class LogicLinkkfYommi(object):
             # logger.info(tree)
 
             data = {"code": code, "ret": False}
-
-            tmp2 = soup.select("ul > a")
-            if len(tmp2) == 0:
-                tmp = soup.select("u > a")
-            else:
-                tmp = soup.select("ul > a")
+            tmp = soup.select("ul > a")
 
             # logger.debug(f"tmp1 size:=> {str(len(tmp))}")
 
             try:
                 tmp = (
-                    tree.xpath('//div[@class="hrecipe"]/article/center/strong')[0]
+                    tree.xpath('//div[@class="hrecipe"]/article/center/strong')[
+                        0
+                    ]
                     .text_content()
                     .strip()
                 )
             except IndexError:
-                tmp = tree.xpath("//article/center/strong")[0].text_content().strip()
-
-            # print(tmp)
-            # logger.info(tmp)
+                tmp = (
+                    tree.xpath("//article/center/strong")[0]
+                    .text_content()
+                    .strip()
+                )
             match = re.compile(r"(?P<season>\d+)기").search(tmp)
             if match:
                 data["season"] = match.group("season")
