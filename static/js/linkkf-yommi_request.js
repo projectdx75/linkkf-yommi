@@ -457,26 +457,3 @@ $("#go_modal_airing").click(function (e) {
 
 $("#go_modal_airing").attr("class", "btn btn-primary");
 
-// {#$(function () {#}
-// {#  $('[data-tooltip="true"]').tooltip()#}
-// {#});#}
-
-//   <!--{#-->
-// <!--<script src="https://unpkg.com/@popperjs/core@2"></script>-->
-// <!--#} {#-->
-// <!--<script src="https://unpkg.com/tippy.js@6"></script>-->
-// <!--#} {#-->
-// <!--<script>-->
-// <!--  // #}-->
-// <!--  // {#        tippy('.code-button',#}-->
-// <!--  // {#            { content: 'aaaa', // tooltip 내용#}-->
-// <!--  // {#                placement: 'top', // 상단 위치#}-->
-// <!--  // {#                trigger: 'hover', // :hover가 아닌 click시 노출#}-->
-// <!--  // {#                hideOnClick : 'toggle', // click시, toggle() 액션#}-->
-// <!--  // {#                animation: 'shift-away' // 아래에서 위로 올라오며 등장#}-->
-// <!--  // {#        })#}-->
-// <!--  // {##}-->
-// <!--  // {##}-->
-// <!--  // {#-->
-// <!--</script>-->
-// <!--#}--

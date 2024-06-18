@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
-import os
+import os,re
 import traceback
 import sys
 import logging
