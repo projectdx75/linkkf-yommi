@@ -244,9 +244,15 @@ class LogicQueue(object):
 
                 # vtt_url = base_url + entity.url[2]
                 # 임시
-                base_url = "https://kfani.me"
-                vtt_url = base_url + entity.url[2]
-
+                #base_url = "https://kfani.me"
+                #vtt_url = base_url + entity.url[2]
+                ret = re.compile(r'(http(s)?:\/\/)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}')
+                base_url_vtt = ret.match(entity.url[1])
+                if 'https' in entity.url[2]:
+                    vtt_url = entity.url[2]
+                else:
+                    vtt_url = base_url_vtt[0] + entity.url[2]
+                logger.info('%s',entity.url[2])
                 logger.debug(f"srt:url => {vtt_url}")
                 srt_filepath = os.path.join(
                     save_path, entity.info["filename"].replace(".mp4", ".ko.srt")
@@ -262,10 +268,8 @@ class LogicQueue(object):
                     if vtt_status == 200:
                         srt_data = convert_vtt_to_srt(vtt_data)
                         write_file(srt_data, srt_filepath)
-                    elif vtt_status == 404:
-                        pass
                     else:
-                        logger.debug("자막 파일 받을수 없슴")
+                        logger.debug("자막파일 받을수 없슴")
 
             except Exception as e:
                 logger.error("Exception:%s", e)
