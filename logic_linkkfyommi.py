@@ -492,28 +492,6 @@ class LogicLinkkfYommi(object):
                 # print(data3dict)
                 video_url = data3dict[0]["file"]
 
-            elif "k40chan" in url2:
-                # k40chan 계열 처리 => 방문해서 m3u8을 받아온다.
-                # k45734 님 소스 반영 (확인은 안해봄 잘 동작할꺼라고 믿고,)
-                logger.debug("k40chan routine=================================")
-                LogicLinkkfYommi.referer = url2
-                data = LogicLinkkfYommi.get_html(url2)
-
-                regex2 = r'"([^\"]*m3u8)"|<source[^>]+src=\"([^"]+)'
-
-                temp_url = re.findall(regex2, data)[0]
-                video_url = ""
-                # ref = "https://kfani.me"
-                for i in temp_url:
-                    if i is None:
-                        continue
-                    video_url = i
-
-                match = re.compile(r"<track.+src\=\"(?P<vtt_url>.*?.vtt)").search(data)
-                vtt_url = match.group("vtt_url")
-
-                referer_url = url2
-
             elif "linkkf" in url2:
                 logger.deubg("linkkf routine")
                 # linkkf 계열 처리 => URL 리스트를 받아오고, 하나 골라 방문 해서 m3u8을 받아온다.
@@ -843,36 +821,47 @@ class LogicLinkkfYommi(object):
                     pass
                 elif "hls" in url2s2:
                     pass
+                elif "subkf" in url2s2:
+                    pass
                 else:
                     url2s1.append(url2s2)
-
-            # logger.info('dx: url', url)
+            result = []
+            for value in url2s1:
+                if value not in result:
+                    result.append(value)
+            logger.debug(f"last_url:: {len(result)}")
 
             video_url = None
             referer_url = None  # dx
             try:
-                url2s = random.sample(url2s1, 2)
+                url2s = random.sample(result, 2)
             except:
-                url2s = random.sample(url2s1, 1)
-
+                url2s = random.sample(result, 1)
             # url2s = random.choices(url2s1, k=2)
-            logger.info("dx: urls2:: %s", url2s)
+            logger.debug("dx: urls2:: %s", url2s)
+            cnt = 1
             for url2 in url2s:
+                logger.debug("%s", url2)
                 try:
-
-                    if video_url is not None:
-                        continue
-                    logger.debug(f"url: {url}, url2: {url2}")
+                    # if video_url is not None:
+                    #    continue
+                    logger.debug(f"url: {url}, url2: {url2}, count: {cnt}")
                     ret = LogicLinkkfYommi.get_video_url_from_url(url, url2)
                     logger.debug(f"ret::::> {ret}")
-
-                    if ret is not None:
+                    if ret == None:
+                        pass
+                    else:
+                        # if ret is not None:
                         video_url = ret
                         referer_url = url2
-                except Exception as e:
-                    logger.error("Exception:%s", e)
-                    logger.error(traceback.format_exc())
+                        break
 
+                # except Exception as e:
+                # logger.error("Exception:%s", e)
+                # logger.error(traceback.format_exc())
+                except:
+                    pass
+                cnt += 1
             # logger.info(video_url)
 
             # return [video_url, referer_url]
@@ -929,12 +918,13 @@ class LogicLinkkfYommi(object):
                 LogicLinkkfYommi.current_data["season"] = season
                 program.season = season
                 db.session.commit()
-
+                total_epi = None
                 for entity in LogicLinkkfYommi.current_data["episode"]:
                     entity["filename"] = LogicLinkkfYommi.get_filename(
                         LogicLinkkfYommi.current_data["save_folder"],
                         LogicLinkkfYommi.current_data["season"],
                         entity["title"],
+                        total_epi,
                     )
                 return LogicLinkkfYommi.current_data
             else:
@@ -952,9 +942,6 @@ class LogicLinkkfYommi(object):
         ret = {}
 
         logger.debug(f"args: {args}")
-        logger.debug(f"type:: {type(args[0])}")
-        logger.debug(f"title: {args[0]['data_title']}")
-        logger.debug(f"LogicLinkkfYommi.current_data:: {LogicLinkkfYommi.current_data}")
         try:
 
             if len(args) == 0:
@@ -1482,8 +1469,10 @@ class LogicLinkkfYommi(object):
                 data["poster_url"] = None
 
             data["rate"] = tree.xpath('span[@class="tag-score"]')
-
-            tag_score = tree.xpath('//span[@class="taq-score"]')[0].text_content()
+            # tag_score = tree.xpath('//span[@class="taq-score"]').text_content().strip()
+            tag_score = tree.xpath('//span[@class="taq-score"]')[
+                0
+            ].text_content()
             # logger.debug(tag_score)
             tag_count = (
                 tree.xpath('//span[contains(@class, "taq-count")]')[0]
@@ -1491,13 +1480,15 @@ class LogicLinkkfYommi(object):
                 .strip()
             )
             data_rate = tree.xpath('//div[@class="rating"]/div/@data-rate')
+            # logger.debug("data_rate::> %s", data_rate)
+            # tmp = tree.xpath('//*[@id="relatedpost"]/ul/li')
+            # tmp = tree.xpath('//article/a')
+            # 수정된
+            # tmp = tree.xpath("//ul/a")
+            tmp = soup.select("ul > a")
 
-            tmp2 = soup.select("ul > a")
-            if len(tmp) == 0:
-                tmp = soup.select("u > a")
-            else:
-                tmp = soup.select("ul > a")
-
+            # logger.debug(f"tmp size:=> {str(len(tmp))}")
+            # logger.info(tmp)
             if tmp is not None:
                 data["episode_count"] = str(len(tmp))
             else:
@@ -1512,7 +1503,7 @@ class LogicLinkkfYommi(object):
                 pass
             else:
                 tags = soup.select("ul > a")
-
+            total_epi_no = len(tags)
             logger.debug(len(tags))
 
             # logger.info("tags", tags)
@@ -1523,7 +1514,9 @@ class LogicLinkkfYommi(object):
             # logger.debug(f"save_folder::> {data['save_folder']}")
 
             program = (
-                db.session.query(ModelLinkkfProgram).filter_by(programcode=code).first()
+                db.session.query(ModelLinkkfProgram)
+                .filter_by(programcode=code)
+                .first()
             )
 
             if program is None:
@@ -1552,45 +1545,69 @@ class LogicLinkkfYommi(object):
 
                 # 고유id임을 알수 없는 말도 안됨..
                 # 에피소드 코드가 고유해야 상태값 갱신이 제대로 된 값에 넣어짐
-                p = re.compile(r"([0-9]+)화?")
-                m_obj = p.match(entity["title"])
-                # logger.info(m_obj.group())
+                p = re.compile(r"([0-9.]+)화?")
+                try:
+                    m_obj = p.match(entity["title"])
+                except:
+                    m_obj = None
+                logger.debug(entity["title"])
                 # entity['code'] = data['code'] + '_' +str(idx)
 
                 episode_code = None
-                # logger.debug(f"m_obj::> {m_obj}")
+                try:
+                    logger.debug(
+                        f"m_obj::> {m_obj.group(0)} {data['title']} {entity['title']}"
+                    )
+                    logger.debug(
+                        f"m_obj::> {m_obj.group(1)} {data['title']} {entity['title']}"
+                    )
+                except:
+                    pass
                 if m_obj is not None:
                     episode_code = m_obj.group(1)
                     entity["code"] = data["code"] + episode_code.zfill(4)
                 else:
                     entity["code"] = data["code"]
 
-                # logger.info('episode_code', episode_code)
+                logger.debug("episode_code", entity["code"])
                 # entity["url"] = t.attrib["href"]
                 check_url = t["href"]
                 if check_url.startswith("http"):
                     entity["url"] = t["href"]
                 else:
-                    entity["url"] = f"{ModelSetting.get('linkkf_url')}{t['href']}"
+                    entity["url"] = (
+                        f"{ModelSetting.get('linkkf_url')}{t['href']}"
+                    )
                 entity["season"] = data["season"]
 
                 # 저장경로 저장
                 tmp_save_path = ModelSetting.get("download_path")
                 if ModelSetting.get("auto_make_folder") == "True":
-                    program_path = os.path.join(tmp_save_path, entity["save_folder"])
+                    program_path = os.path.join(
+                        tmp_save_path, entity["save_folder"]
+                    )
                     entity["save_path"] = program_path
                     if ModelSetting.get("linkkf_auto_make_season_folder"):
                         entity["save_path"] = os.path.join(
-                            entity["save_path"], "Season %s" % int(entity["season"])
+                            entity["save_path"],
+                            "Season %s" % int(entity["season"]),
                         )
 
                 data["episode"].append(entity)
                 entity["image"] = data["poster_url"]
 
+                # entity['title'] = t.text_content().strip().encode('utf8')
+
+                # entity['season'] = data['season']
+                # logger.debug(f"save_folder::2> {data['save_folder']}")
                 entity["filename"] = LogicLinkkfYommi.get_filename(
-                    data["save_folder"], data["season"], entity["title"]
+                    data["save_folder"],
+                    data["season"],
+                    entity["title"],
+                    total_epi_no,
                 )
                 idx = idx + 1
+                total_epi_no -= 1
             data["ret"] = True
             # logger.info('data', data)
             LogicLinkkfYommi.current_data = data
@@ -1612,16 +1629,64 @@ class LogicLinkkfYommi(object):
             return data
 
     @staticmethod
-    def get_filename(maintitle, season, title):
+    def get_filename(maintitle, season, title, total_epi):
         try:
-            # logger.debug("get_filename()===")
-            # logger.info("title:: %s", title)
-            # logger.info("maintitle:: %s", maintitle)
+            logger.debug(
+                "get_filename()= %s %s %s %s",
+                maintitle,
+                season,
+                title,
+                total_epi,
+            )
             match = re.compile(
                 r"(?P<title>.*?)\s?((?P<season>\d+)기)?\s?((?P<epi_no>\d+)화?)"
             ).search(title)
             if match:
-                epi_no = int(match.group("epi_no"))
+                # epi_no_ckeck = match.group("epi_no")
+                # logger.debug('EP 문자 %s', epi_no_ckeck)
+                # if ' ' in title:
+                #    tes = title.find(' ')
+                #    epi_no = int(title[0:tes])
+                #    title = epi_no
+                #    logger.debug('EP 포함 문자(공백) %s', epi_no)
+                # elif 'OVA' in title:
+                #    tes = title.find('OVA')
+                #    check = int(tes)
+                #    if check == 0:
+                #        epi_no = total_epi
+                #    else:
+                #        epi_no = int(title[0:tes])
+                #    title = epi_no
+                #    logger.debug('EP 포함 문자(OVA) %s', epi_no)
+                # elif 'SP' in title:
+                #    tes = title.find('SP')
+                #    epi_no = int(title[0:tes])
+                #    title = epi_no
+                #    logger.debug('EP 포함 문자 (SP) %s', epi_no)
+                # elif '-' in title:
+                #    tes = title.find('-')
+                #    epi_no = int(title[0:tes])
+                #    title = epi_no
+                #    logger.debug('EP 포함 문자(-) %s', epi_no)
+                # else:
+                #    epi_no = int(match.group("epi_no"))
+                #    logger.debug('EP 문자 %s', epi_no)
+                # try:
+                #    logger.debug("epi_no: %s %s", int(epi_no), int(title))
+                #    if epi_no == int(title):
+                #        if epi_no < 10:
+                #            epi_no = "0%s" % epi_no
+                #        else:
+                #            epi_no = "%s" % epi_no
+                # except:
+                #    logger.debug("epi_no: %s %s", int(epi_no), float(title))
+                #    if epi_no < 10:
+                #        epi_no = '0%.1f'%float(title)
+                #    epi_no = "0%s-pt1" % epi_no
+                #    else:
+                #        epi_no = '%.1f'%float(title)
+                #    epi_no = "%s-pt1" % epi_no
+                epi_no = total_epi
                 if epi_no < 10:
                     epi_no = "0%s" % epi_no
                 else:
@@ -1658,9 +1723,10 @@ class LogicLinkkfYommi(object):
 
         if ani_url[1] is not None:
             referer = ani_url[1]
+        else:
+            referer = "https://kfani.me"
 
         logger.debug(f"referer:: {referer}")
-        referer = "https://kfani.me"
 
         headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -1668,29 +1734,38 @@ class LogicLinkkfYommi(object):
             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3554.0 Safari/537.36",
             "Referer": f"{referer}",
         }
-        # logger.debug(headers)
+        logger.debug(headers)
 
         save_path = ModelSetting.get("download_path")
         if ModelSetting.get("auto_make_folder") == "True":
             program_path = os.path.join(save_path, info["save_folder"])
             save_path = program_path
             if ModelSetting.get("linkkf_auto_make_season_folder"):
-                save_path = os.path.join(save_path, "Season %s" % int(info["season"]))
+                save_path = os.path.join(
+                    save_path, "Season %s" % int(info["season"])
+                )
 
-        ourls = parse.urlparse(ani_url[1])
+        # ourls = parse.urlparse(ani_url[1])
         # print(ourls)
         # logger.info('ourls:::>', ourls)
-        base_url = f"{ourls.scheme}://{ourls.netloc}"
+        # base_url = f"{ourls.scheme}://{ourls.netloc}"
         # logger.info('base_url:::>', base_url)
+        ret = re.compile(r"(http(s)?:\/\/)([a-z0-9\w]+\.*)+[a-z0-9]{2,4}")
+        base_url_vtt = ret.match(ani_url[1])
 
-        # vtt_url = base_url + ani_url[2]
+        # Todo: 임시 커밋 로직 해결하면 다시 처리
+        # if "linkkf.app" in base_url:
+        #     base_url = f"{ourls.scheme}://kfani.me"
+        vtt_url = base_url_vtt[0] + ani_url[2]
         # https://kfani.me/s/354776m5.vtt
-        vtt_url = "https://kfani.me" + ani_url[2]
+        # vtt_url = "https://kfani.me" + ani_url[2]
 
-        # logger.debug(f"srt:url => {vtt_url}")
+        logger.debug(f"srt:url => {vtt_url}")
         srt_filepath = os.path.join(
             save_path, info["filename"].replace(".mp4", ".ko.srt")
         )
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
         # logger.info('srt_filepath::: %s', srt_filepath)
         if ani_url[2] is not None and not os.path.exists(srt_filepath):
             res = requests.get(vtt_url, headers=headers)
@@ -1699,10 +1774,8 @@ class LogicLinkkfYommi(object):
             if vtt_status == 200:
                 srt_data = convert_vtt_to_srt(vtt_data)
                 write_file(srt_data, srt_filepath)
-            elif vtt_status == 404:
-                pass
             else:
-                logger.debug("자막 파일 받을수 없슴")
+                logger.debug("자막파일 받을수 없슴")
 
     @staticmethod
     def chunks(l, n):
@@ -1717,6 +1790,7 @@ class LogicLinkkfYommi(object):
             if LogicLinkkfYommi.current_data is not None:
                 for t in LogicLinkkfYommi.current_data["episode"]:
                     if t["code"] == code:
+                        logger.debug(t["code"])
                         return t
         except Exception as e:
             logger.error("Exception:%s", e)
